@@ -16,6 +16,12 @@ public class PlayerMove : MonoBehaviour
     private List<Vector3> tracePoints = new List<Vector3>(); // 포인트 위치 저장
     private List<GameObject> shapes = new List<GameObject>(); // 도형 리스트 (공격 후 초기화)
 
+    private bool isReplaying = false;
+    [SerializeField] private GameObject Illusion;
+
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+
     private Coroutine eraseCoroutine;
 
     private void Awake()
@@ -26,6 +32,9 @@ public class PlayerMove : MonoBehaviour
         lineRenderer.startWidth = lineWidth;
         lineRenderer.endWidth = lineWidth;
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
     }
 
     private void Update()
@@ -35,7 +44,8 @@ public class PlayerMove : MonoBehaviour
 
         Vector2 inputDir = new Vector2(x, y).normalized;
 
-        transform.Translate(inputDir * moveSpeed * Time.deltaTime);
+        if (!isReplaying)
+            transform.Translate(inputDir * moveSpeed * Time.deltaTime);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -47,7 +57,10 @@ public class PlayerMove : MonoBehaviour
             if (shapes.Count > 0)
                 ActivateShapes();
             else
+            {
+                isReplaying = true;
                 eraseCoroutine = StartCoroutine(EraseFromStart());
+            }
             isTracing = false;
         }
 
@@ -55,6 +68,17 @@ public class PlayerMove : MonoBehaviour
         if (isTracing)
         {
             RecordPosition();
+        }
+
+        if (isReplaying)
+        {
+            spriteRenderer.color = new Color(0, 0, 0, 0);
+            Illusion.SetActive(true);
+        }
+        else
+        {
+            spriteRenderer.color = originalColor;
+            Illusion.SetActive(false);
         }
     }
 
@@ -115,6 +139,7 @@ public class PlayerMove : MonoBehaviour
         while (tracePoints.Count > 1)
         {
             // 가장 오래된 포인트 제거
+            Illusion.transform.position = tracePoints[0];
             tracePoints.RemoveAt(0);
             lineRenderer.positionCount = tracePoints.Count;
             lineRenderer.SetPositions(tracePoints.ToArray());
@@ -130,6 +155,7 @@ public class PlayerMove : MonoBehaviour
         }
         lineRenderer.positionCount = 0;
         eraseCoroutine = null;
+        isReplaying = false;
         Destroy(colliderObj);
     }
 
