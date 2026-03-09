@@ -34,6 +34,7 @@ coverage/
 
 # Visual Studio cache directory
 .vscode/
+.vs/
 
 # JetBrains IDE files
 ## User specific
