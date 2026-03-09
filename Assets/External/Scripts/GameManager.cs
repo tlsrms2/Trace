@@ -1,59 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private static GameManager instance = null;
+    public static GameManager Instance;
+
+    public bool IsPaused { get; private set; }
 
     void Awake()
     {
-        if (null == instance)
-        {
-            instance = this;
+        Instance = this;
+    }
 
-            DontDestroyOnLoad(this.gameObject);
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
         }
+    }
+
+    public void TogglePause()
+    {
+        if (IsPaused)
+            ResumeGame();
         else
-        {
-            Destroy(this.gameObject);
-        }
-    }
-
-    public static GameManager Instance
-    {
-        get
-        {
-            if (null == instance)
-            {
-                return null;
-            }
-            return instance;
-        }
-    }
-
-    public void InitGame()
-    {
-
+            PauseGame();
     }
 
     public void PauseGame()
     {
-
+        IsPaused = true;
+        Time.timeScale = 0f;
+        UIManager.Instance.ShowPause();
     }
 
-    public void ContinueGame()
+    public void ResumeGame()
     {
-
-    }
-
-    public void RestartGame()
-    {
-
-    }
-
-    public void StopGame()
-    {
-
+        IsPaused = false;
+        Time.timeScale = 1f;
+        UIManager.Instance.HidePause();
     }
 }
