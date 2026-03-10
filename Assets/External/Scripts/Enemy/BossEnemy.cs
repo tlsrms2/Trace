@@ -29,10 +29,9 @@ public class BossEnemy : Enemy
     private float initialWidth;
 
 
-    private float timer;
-
     private LineRenderer lineRenderer;
     private Vector2 _originalPosition;
+    private Vector3 _originalScale;
 
     protected override void Awake()
     {
@@ -47,6 +46,7 @@ public class BossEnemy : Enemy
     private void OnEnable()
     {
         _originalPosition = transform.position;
+        _originalScale = transform.localScale;
         StartCoroutine(BossIntroSequence());
     }
 
@@ -109,17 +109,16 @@ public class BossEnemy : Enemy
     {
         while (true)
         {
-            // yield return new WaitForSeconds(2f);
-            // Dash();
-            // yield return new WaitForSeconds(1f);
-            // Dash();
-            // yield return new WaitForSeconds(1f);
-            // StartCoroutine(BackToOriginalPosition());
-            // yield return new WaitForSeconds(2f);
-            // Shoot();
-            // yield return new WaitForSeconds(2f);
-            StartCoroutine(SpecialAttack());
-            yield return new WaitForSeconds(4f);
+            Dash();
+            yield return new WaitForSeconds(1f);
+            Dash();
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(BackToOriginalPosition(transform.position));
+            yield return new WaitForSeconds(2f);
+            Shoot();
+            yield return new WaitForSeconds(2f);
+            yield return StartCoroutine(SpecialAttack());
+            yield return new WaitForSeconds(2f);
         }
     }
 
@@ -147,12 +146,13 @@ public class BossEnemy : Enemy
         }
     }
 
-    IEnumerator BackToOriginalPosition()
-    {
+    IEnumerator BackToOriginalPosition(Vector2 startPosition)
+    {;
+        transform.localScale = Vector3.one;
+        transform.position = startPosition;
+
         float returnDuration = 0.5f; 
         float elapsedTime = 0f;
-
-        Vector2 startPosition = transform.position;
 
         while (elapsedTime < returnDuration)
         {
@@ -187,11 +187,8 @@ public class BossEnemy : Enemy
     #endregion
 
     #region 패턴 3: 특수 공격
-    private specialAttackInfo ReadySpecialAttack()
+    private specialAttackInfo ReadySpecialAttack(int step)
     {
-        timer = alertTime;
-        lineRenderer.enabled = true;
-
         specialAttackInfo info = new specialAttackInfo();
 
         if (mainCam != null)
@@ -210,52 +207,29 @@ public class BossEnemy : Enemy
 
             Vector3 startPos = Vector3.zero;
             
-            if (Random.Range(0, 2) == 0)
+            // 정해진 방향과 위치를 세팅
+            switch (step)
             {
-                // Y축을 95% 안전 구역 내에서 랜덤 재설정
-                float randomY = Random.Range(camPos.y - safeY, camPos.y + safeY);
-                if (Random.Range(0, 2) == 0) // 우측
-                {
-                    startPos = new Vector3(camPos.x + outX, randomY, 0);
-                    direction = Vector3.left;
-                }
-                else // 좌측
-                {
-                    startPos = new Vector3(camPos.x - outX, randomY, 0);
-                    direction = Vector3.right;
-                }
-            }
-            else
-            {
-                // X축을 95% 안전 구역 내에서 랜덤 재설정
-                float randomX = Random.Range(camPos.x - safeX, camPos.x + safeX);
-                if (Random.Range(0, 2) == 0) // 상단
-                {
-                    startPos = new Vector3(randomX, camPos.y + outY, 0);
+                case 0: // 위
+                    startPos = new Vector3(Random.Range(-safeX, safeX) + camPos.x, camPos.y + outY, 0f);
                     direction = Vector3.down;
-                }
-                else // 하단
-                {
-                    startPos = new Vector3(randomX, camPos.y - outY, 0);
+                    break;
+                case 1: // 왼쪽
+                    startPos = new Vector3(camPos.x - outX, Random.Range(-safeY, safeY) + camPos.y, 0f);
+                    direction = Vector3.right;
+                    break;
+                case 2: // 아래
+                    startPos = new Vector3(Random.Range(-safeX, safeX) + camPos.x, camPos.y - outY, 0f);
                     direction = Vector3.up;
-                }
+                    break;
+                case 3: // 오른쪽
+                    startPos = new Vector3(camPos.x + outX, Random.Range(-safeY, safeY) + camPos.y, 0f);
+                    direction = Vector3.left;
+                    break;
             }
-
-            // 스포너가 정해준 위치를 무시하고, 계산된 완벽한 95% 위치로 내 위치 덮어쓰기!
-            transform.position = startPos;
 
             // 도착 지점 계산 (내 위치에서 반대편 화면 밖까지)
             Vector3 endPos = startPos + direction * (Mathf.Abs(direction.x) > 0 ? outX * 2 : outY * 2);
-
-            // 3. LineRenderer (경로 표시) 설정
-            lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, startPos);
-            lineRenderer.SetPosition(1, endPos);
-
-            initialWidth = transform.localScale.x;
-            lineRenderer.startWidth = initialWidth;
-            lineRenderer.endWidth = initialWidth;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
 
             info.startPos = startPos;
             info.endPos = endPos;
@@ -267,42 +241,94 @@ public class BossEnemy : Enemy
 
     private IEnumerator SpecialAttack()
     {
-        for (int i = 0; i < 4; i++)
+        Vector2 startPosition = transform.position;
+        Vector2 targetPosition = startPosition + (Vector2.up * introDownDistance);
+
+        Vector3 startScale = _originalScale;
+        Vector3 targetScale = startScale * 4f;
+
+        float scaleDuration = 1f;
+        float scaleTimer = 0f;
+
+
+
+        while (scaleTimer < scaleDuration)
         {
-            specialInfo[i] = ReadySpecialAttack();
-            Debug.Log($"Special Attack {i + 1}: StartPos={specialInfo[i].startPos}, EndPos={specialInfo[i].endPos}, Direction={specialInfo[i].direction}");
-        }
+            scaleTimer += Time.deltaTime;
+            float t = scaleTimer / scaleDuration;
 
-        for (int i = 0; i < 4; i++)
-        {
-            StartCoroutine(SpecialAttackRoutine(specialInfo[i]));
-            yield return new WaitForSeconds(2.5f);
-        }
-    }
-
-    private IEnumerator SpecialAttackRoutine(specialAttackInfo info)
-    {
-        float timer = alertTime;
-
-        while (timer > 0f)
-        {
-            timer -= Time.deltaTime;
-            float ratio = Mathf.Clamp01(timer / alertTime);
-
-            lineRenderer.startWidth = initialWidth * ratio;
-            lineRenderer.endWidth = initialWidth * ratio;
-
-            float blinkSpeed = Mathf.Lerp(30f, 5f, ratio);
-            float alpha = Mathf.Abs(Mathf.Sin(Time.time * blinkSpeed));
-            Color c = pathColor;
-            c.a = alpha;
-            lineRenderer.startColor = c;
-            lineRenderer.endColor = c;
+            transform.localScale = Vector3.Lerp(startScale, targetScale, t);
+            transform.position = Vector2.Lerp(startPosition, targetPosition, t);
 
             yield return null;
         }
+
+        transform.position = targetPosition;
+        transform.localScale = targetScale;
+
+        yield return new WaitForSeconds(1f);
+
+        LineRenderer[] warningLines = new LineRenderer[4];
+
+        initialWidth = 1.0f;
+
+        for (int i = 0; i < 4; i++)
+        {
+            specialInfo[i] = ReadySpecialAttack(i);
+
+            GameObject lineObj = new GameObject($"WarningLine_{i}");
+            LineRenderer lr = lineObj.AddComponent<LineRenderer>();
+
+            lr.positionCount = 2;
+            lr.SetPosition(0, specialInfo[i].startPos);
+            lr.SetPosition(1, specialInfo[i].endPos);
+            lr.startWidth = initialWidth;
+            lr.endWidth = initialWidth;
+            lr.material = new Material(Shader.Find("Sprites/Default"));
+            lr.startColor = pathColor;
+            lr.endColor = pathColor;
+
+            warningLines[i] = lr;
+
+            yield return new WaitForSeconds(0.5f);
+        }
         
-        lineRenderer.enabled = false;
+        float timer = alertTime;
+        
+        for (int i = 0; i < 4; i++)
+        {
+            float attackAlertTimer = 0.5f;
+            while (attackAlertTimer > 0f)
+            {
+                attackAlertTimer -= Time.deltaTime;
+                
+                float ratio = Mathf.Clamp01(attackAlertTimer / 0.5f);
+                float blinkSpeed = Mathf.Lerp(30f, 5f, ratio);
+                float alpha = Mathf.Abs(Mathf.Sin(Time.time * blinkSpeed));
+                
+                Color c = pathColor;
+                c.a = alpha;
+
+                warningLines[i].startColor = c;
+                warningLines[i].endColor = c;
+
+                warningLines[i].startWidth = initialWidth * ratio;
+                warningLines[i].endWidth = initialWidth * ratio;
+
+                yield return null;
+            }
+
+            Destroy(warningLines[i].gameObject);
+
+            yield return StartCoroutine(SpecialAttackDash(specialInfo[i]));
+        }
+
+        yield return StartCoroutine(BackToOriginalPosition(_originalPosition + (Vector2.up * introDownDistance)));
+    }
+
+    private IEnumerator SpecialAttackDash(specialAttackInfo info)
+    {
+        transform.position = info.startPos;
 
         float dashTimer = 0f;
         float dashDuration = 0.5f;
