@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -8,8 +9,8 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("이동 속도")][SerializeField] private float moveSpeed = 5f;
     [Tooltip("포인트 간 최소 거리")][SerializeField] private float minDistance = 0.1f;
     [Tooltip("선 굵기")][SerializeField] private float lineWidth = 0.2f;
-    [Tooltip("도형 완성 거리 보정값")]
-    [SerializeField] private float closeThreshold = 0.2f;
+    [Tooltip("선 데미지")]
+    [SerializeField] private int lineDamage = 5;
 
     private LineRenderer lineRenderer;
     private bool isTracing = false;
@@ -135,6 +136,8 @@ public class PlayerMove : MonoBehaviour
         edgeCol.points = points2D;
         edgeCol.isTrigger = true;
         edgeCol.tag = "Attack";
+        AttackData data = edgeCol.AddComponent<AttackData>();
+        data.Damage = lineDamage;
 
         while (tracePoints.Count > 1)
         {
