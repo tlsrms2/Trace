@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 
 public enum GamePhase { Paused, Replay, RealTime, GameOver }
@@ -12,6 +13,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float CurrentGauge;
     [SerializeField] private float ConsumptionRate = 20f;
     [SerializeField] private float RecoveryRate = 10f;
+
+    public bool isPaused => CurrentPhase == GamePhase.Paused;
 
     void Awake()
     {
@@ -99,19 +102,15 @@ public class GameManager : MonoBehaviour
         switch (nextPhase)
         {
             case GamePhase.Paused:
-                Time.timeScale = 0f; 
                 break;
 
             case GamePhase.Replay:
-                Time.timeScale = 1f;
                 break;
 
             case GamePhase.RealTime:
-                Time.timeScale = 1f;
                 break;
 
             case GamePhase.GameOver:
-                Time.timeScale = 0f;
                 break;
         }
     }
