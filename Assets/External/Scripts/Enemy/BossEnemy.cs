@@ -50,6 +50,21 @@ public class BossEnemy : Enemy
         StartCoroutine(BossIntroSequence());
     }
 
+    private IEnumerator PausedWait(float time)
+    {
+        float timer = 0f;
+        while (timer < time)
+        {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
+
     
     #region 보스 인트로 
     private IEnumerator BossIntroSequence()
@@ -74,9 +89,8 @@ public class BossEnemy : Enemy
         // 위치 보정
         transform.position = _originalPosition;
 
-        StartCoroutine(ShowWarningEffect(1f));
-
-        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(ShowWarningEffect(1f));
+        yield return StartCoroutine(PausedWait(1f));
         
         StartCoroutine(PatternLoop());
     }
@@ -91,6 +105,12 @@ public class BossEnemy : Enemy
 
         while (timer < duration)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
+
             float xOffset = Random.Range(-shakeMagnitude, shakeMagnitude);
             float yOffset = Random.Range(-shakeMagnitude, shakeMagnitude);
             
@@ -110,15 +130,15 @@ public class BossEnemy : Enemy
         while (true)
         {
             Dash();
-            yield return new WaitForSeconds(1f);
+            yield return StartCoroutine(PausedWait(1f));
             Dash();
-            yield return new WaitForSeconds(1f);
+            yield return StartCoroutine(PausedWait(1f));
             StartCoroutine(BackToOriginalPosition(transform.position));
-            yield return new WaitForSeconds(2f);
+            yield return StartCoroutine(PausedWait(2f));
             Shoot();
-            yield return new WaitForSeconds(2f);
+            yield return StartCoroutine(PausedWait(2f));
             yield return StartCoroutine(SpecialAttack());
-            yield return new WaitForSeconds(2f);
+            yield return StartCoroutine(PausedWait(2f));
         }
     }
 
@@ -131,8 +151,14 @@ public class BossEnemy : Enemy
 
     IEnumerator DashAttackRoutine(Vector2 dir)
     {
+        while (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+        {
+            yield return null;
+            continue;
+        }
+
         spriteRenderer.color = Color.red; 
-        yield return new WaitForSeconds(0.25f);
+        yield return StartCoroutine(PausedWait(0.25f));
         
         spriteRenderer.color = Color.green;
         float dashDuration = 0.25f; 
@@ -147,7 +173,7 @@ public class BossEnemy : Enemy
     }
 
     IEnumerator BackToOriginalPosition(Vector2 startPosition)
-    {;
+    {
         transform.localScale = Vector3.one;
         transform.position = startPosition;
 
@@ -156,6 +182,12 @@ public class BossEnemy : Enemy
 
         while (elapsedTime < returnDuration)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
+
             transform.position = Vector2.Lerp(startPosition, _originalPosition, elapsedTime / returnDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
@@ -250,10 +282,14 @@ public class BossEnemy : Enemy
         float scaleDuration = 1f;
         float scaleTimer = 0f;
 
-
-
         while (scaleTimer < scaleDuration)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
+
             scaleTimer += Time.deltaTime;
             float t = scaleTimer / scaleDuration;
 
@@ -266,7 +302,7 @@ public class BossEnemy : Enemy
         transform.position = targetPosition;
         transform.localScale = targetScale;
 
-        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(PausedWait(1f));
 
         LineRenderer[] warningLines = new LineRenderer[4];
 
@@ -274,6 +310,12 @@ public class BossEnemy : Enemy
 
         for (int i = 0; i < 4; i++)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
+
             specialInfo[i] = ReadySpecialAttack(i);
 
             GameObject lineObj = new GameObject($"WarningLine_{i}");
@@ -289,8 +331,8 @@ public class BossEnemy : Enemy
             lr.endColor = pathColor;
 
             warningLines[i] = lr;
-
-            yield return new WaitForSeconds(0.5f);
+            
+            yield return StartCoroutine(PausedWait(0.5f));
         }
         
         float timer = alertTime;
@@ -300,6 +342,12 @@ public class BossEnemy : Enemy
             float attackAlertTimer = 0.5f;
             while (attackAlertTimer > 0f)
             {
+                if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 attackAlertTimer -= Time.deltaTime;
                 
                 float ratio = Mathf.Clamp01(attackAlertTimer / 0.5f);
@@ -335,9 +383,14 @@ public class BossEnemy : Enemy
 
         while (dashTimer < dashDuration)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
+
             dashTimer += Time.deltaTime;
             transform.position += info.direction * speed * Time.deltaTime;
-
             yield return null;
         }
     }

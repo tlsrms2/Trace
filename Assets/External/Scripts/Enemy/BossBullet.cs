@@ -16,13 +16,13 @@ public class BossBullet : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            return;
         transform.position += (Vector3)(moveDir * speed * Time.deltaTime);
     }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("충돌함: " + collision.gameObject.name);
-
         if (collision.gameObject.CompareTag("Wall"))
         {
             bounceCount++;
