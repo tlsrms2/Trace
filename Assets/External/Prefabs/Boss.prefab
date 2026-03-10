@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f41cbc57aba5bba40812b54f71138a64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
-  speed: 0
+  speed: 50
   increaseSpeed: 0
   Hp: 20
   muzzles:
@@ -300,6 +300,8 @@ MonoBehaviour:
   dashSpeed: 20
   introDownDistance: 8
   introDuration: 2
+  alertTime: 2
+  pathColor: {r: 1, g: 0, b: 0, a: 0.5}
 --- !u!1 &7571092974899525130
 GameObject:
   m_ObjectHideFlags: 0
