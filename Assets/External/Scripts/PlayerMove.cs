@@ -22,12 +22,14 @@ public class PlayerMove : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
+    private Rigidbody2D playerRigidbody;
 
     private Coroutine eraseCoroutine;
 
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
+        playerRigidbody = GetComponent<Rigidbody2D>();
         lineRenderer.positionCount = 0;
         lineRenderer.useWorldSpace = true;
         lineRenderer.startWidth = lineWidth;
@@ -46,7 +48,7 @@ public class PlayerMove : MonoBehaviour
         Vector2 inputDir = new Vector2(x, y).normalized;
 
         if (!isReplaying)
-            transform.Translate(inputDir * moveSpeed * Time.deltaTime);
+            playerRigidbody.linearVelocity = inputDir * moveSpeed;
 
         if (Input.GetKeyDown(KeyCode.Space) && !isReplaying)
         {
@@ -111,7 +113,6 @@ public class PlayerMove : MonoBehaviour
         {
             tracePoints.Add(tracePoints[0]);
             CreateShape(tracePoints);
-            ActivateShapes();
         }
         isReplaying = true;
         eraseCoroutine = StartCoroutine(EraseFromStart());
@@ -151,6 +152,8 @@ public class PlayerMove : MonoBehaviour
         eraseCoroutine = null;
         isReplaying = false;
         Destroy(colliderObj);
+
+        ActivateShapes();
     }
 
     private void CreateShape(List<Vector3> points)
