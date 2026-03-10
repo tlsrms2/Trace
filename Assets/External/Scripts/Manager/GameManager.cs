@@ -1,10 +1,14 @@
-using NUnit.Framework;
+using System;
 using UnityEngine;
 
 public enum GamePhase { Paused, Replay, RealTime, GameOver }
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    public event Action OnTraceStarted;
+    public event Action OnTraceEnded;
+
     public bool IsPaused { get; private set; }
     public GamePhase CurrentPhase = GamePhase.RealTime;
     
@@ -30,17 +34,16 @@ public class GameManager : MonoBehaviour
             TogglePause();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            switch (CurrentPhase)
-            {
-                case GamePhase.Paused:
-                    ChangePhase(GamePhase.Replay); 
-                    break;
-                case GamePhase.RealTime:
-                    ChangePhase(GamePhase.Paused);
-                    break;
-            }
+        if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.RealTime)
+        {
+            ChangePhase(GamePhase.Paused);
         }
+
+        if (Input.GetKeyUp(KeyCode.Space) && CurrentPhase == GamePhase.Paused)
+        {
+            ChangePhase(GamePhase.Replay);
+        }
+
         HandleGauge();
     }
 
@@ -84,7 +87,7 @@ public class GameManager : MonoBehaviour
             if (CurrentGauge <= 0)
             {
                 CurrentGauge = 0;
-                ChangePhase(GamePhase.Replay); 
+                ChangePhase(GamePhase.Replay);
             }
         }
         else if (CurrentPhase == GamePhase.RealTime)
@@ -96,6 +99,20 @@ public class GameManager : MonoBehaviour
     public void ChangePhase(GamePhase nextPhase)
     {
         if (CurrentPhase == nextPhase) return;
+
+        switch (CurrentPhase)
+        {
+            case GamePhase.Paused:
+                OnTraceEnded?.Invoke();
+                break;
+
+            case GamePhase.RealTime:
+                OnTraceStarted?.Invoke();
+                break;
+
+            default:
+                break;
+        }
 
         CurrentPhase = nextPhase;
 
