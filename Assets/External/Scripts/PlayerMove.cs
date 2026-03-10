@@ -9,12 +9,13 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("이동 속도")][SerializeField] private float moveSpeed = 5f;
     [Tooltip("포인트 간 최소 거리")][SerializeField] private float minDistance = 0.1f;
     [Tooltip("선 굵기")][SerializeField] private float lineWidth = 0.2f;
-    [Tooltip("선 데미지")]
-    [SerializeField] private int lineDamage = 5;
+    [Tooltip("선 데미지")][SerializeField] private int lineDamage = 5;
+    [Tooltip("도형 데미지")][SerializeField] private int shapeDamage = 10;
 
     private LineRenderer lineRenderer;
     private bool isTracing = false;
-    private List<Vector3> tracePoints = new List<Vector3>(); // 포인트 위치 저장
+    private List<Vector3> visualPoints = new List<Vector3>(); // LineRenderer용
+    private List<Vector3> logicPoints = new List<Vector3>();  // 교차 감지용
     private List<GameObject> shapes = new List<GameObject>(); // 도형 리스트 (공격 후 초기화)
 
     private bool isReplaying = false;
@@ -56,7 +57,12 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             if (shapes.Count > 0)
+            {
                 ActivateShapes();
+                logicPoints.Clear();
+                visualPoints.Clear();
+                lineRenderer.positionCount = 0;
+            }
             else
             {
                 isReplaying = true;
@@ -94,24 +100,26 @@ public class PlayerMove : MonoBehaviour
 
         // 시간 정지 미구현
         isTracing = true;
-        tracePoints.Clear();
+        visualPoints.Clear();
+        logicPoints.Clear();
         lineRenderer.positionCount = 0;
-        tracePoints.Add(transform.position);
+        visualPoints.Add(transform.position);
+        logicPoints.Add(transform.position);
     }
 
     // 포인트 기록
     private void RecordPosition()
     {
         Vector3 currentPos = transform.position;
-        Vector3 lastPos = tracePoints[tracePoints.Count - 1];
+        Vector3 lastPos = logicPoints[logicPoints.Count - 1];
         if (Vector3.Distance(currentPos, lastPos) < minDistance) return;
 
         // 인접한 선분은 제외(마지막 2개)하고 교차 확인
-        for (int i = 0; i < tracePoints.Count - 2; i++)
+        for (int i = 0; i < logicPoints.Count - 2; i++)
         {
             Vector2 intersection;
             if (SegmentsIntersect(
-                tracePoints[i], tracePoints[i + 1],
+                logicPoints[i], logicPoints[i + 1],
                 lastPos, currentPos,
                 out intersection))
             {
@@ -121,9 +129,11 @@ public class PlayerMove : MonoBehaviour
             }
         }
         // 교차 없으면 일반 포인트 추가
-        tracePoints.Add(currentPos);
-        lineRenderer.positionCount = tracePoints.Count;
-        lineRenderer.SetPositions(tracePoints.ToArray());
+        logicPoints.Add(currentPos);
+        visualPoints.Add(currentPos);
+
+        lineRenderer.positionCount = visualPoints.Count;
+        lineRenderer.SetPositions(visualPoints.ToArray());
     }
 
     // 선분 제거
@@ -132,20 +142,20 @@ public class PlayerMove : MonoBehaviour
         // 선분 삭제 시 공격 판정 생성 후 뒤에서부터 삭제
         GameObject colliderObj = new GameObject("AttackCollider");
         EdgeCollider2D edgeCol = colliderObj.AddComponent<EdgeCollider2D>();
-        Vector2[] points2D = tracePoints.Select(p => new Vector2(p.x, p.y)).Reverse().ToArray();
+        Vector2[] points2D = logicPoints.Select(p => new Vector2(p.x, p.y)).Reverse().ToArray();
         edgeCol.points = points2D;
         edgeCol.isTrigger = true;
         edgeCol.tag = "Attack";
         AttackData data = edgeCol.AddComponent<AttackData>();
         data.Damage = lineDamage;
 
-        while (tracePoints.Count > 1)
+        while (logicPoints.Count > 1)
         {
             // 가장 오래된 포인트 제거
-            Illusion.transform.position = tracePoints[0];
-            tracePoints.RemoveAt(0);
-            lineRenderer.positionCount = tracePoints.Count;
-            lineRenderer.SetPositions(tracePoints.ToArray());
+            Illusion.transform.position = logicPoints[0];
+            logicPoints.RemoveAt(0);
+            lineRenderer.positionCount = logicPoints.Count;
+            lineRenderer.SetPositions(logicPoints.ToArray());
 
             if (edgeCol != null && edgeCol.pointCount > 2)
             {
@@ -156,7 +166,9 @@ public class PlayerMove : MonoBehaviour
 
             yield return new WaitForSeconds(interval);
         }
+        visualPoints.Clear();
         lineRenderer.positionCount = 0;
+
         eraseCoroutine = null;
         isReplaying = false;
         Destroy(colliderObj);
@@ -168,18 +180,15 @@ public class PlayerMove : MonoBehaviour
         List<Vector3> shapePoints = new List<Vector3>();
         shapePoints.Add(new Vector3(intersection.x, intersection.y, 0f)); // 교차점
 
-        for (int i = loopStartIndex; i < tracePoints.Count; i++)
-            shapePoints.Add(tracePoints[i]);
+        for (int i = loopStartIndex; i < logicPoints.Count; i++)
+            shapePoints.Add(logicPoints[i]);
 
         shapePoints.Add(new Vector3(intersection.x, intersection.y, 0f)); // 닫기
 
         CreateShape(shapePoints);
-
-        Vector3 intersectionV3 = new Vector3(intersection.x, intersection.y, 0f);
-        tracePoints.RemoveRange(loopStartIndex, tracePoints.Count - loopStartIndex);
-        tracePoints.Add(intersectionV3);
-        lineRenderer.positionCount = tracePoints.Count;
-        lineRenderer.SetPositions(tracePoints.ToArray());
+        
+        logicPoints.RemoveRange(loopStartIndex, logicPoints.Count - loopStartIndex);
+        logicPoints.Add(new Vector3(intersection.x, intersection.y, 0f));
     }
 
     // 도형 만들기
@@ -193,6 +202,7 @@ public class PlayerMove : MonoBehaviour
         foreach (var p in points)
             points2D.Add(new Vector2(p.x, p.y));
         col.SetPath(0, points2D);
+        col.isTrigger = true;
 
         // 삼각분할
         Mesh mesh = col.CreateMesh(false, false);
@@ -204,6 +214,9 @@ public class PlayerMove : MonoBehaviour
 
         shapes.Add(shapeObj);
         shapeObj.SetActive(false);
+        AttackData attack = shapeObj.AddComponent<AttackData>();
+        attack.Damage = shapeDamage;
+        shapeObj.tag = "Attack";
     }
 
     private void ActivateShapes()
@@ -211,7 +224,7 @@ public class PlayerMove : MonoBehaviour
         foreach (GameObject shape in shapes)
         {
             shape.SetActive(true);
-            // TODO: 도형 내부 적 감지, 데미지 등 공격 판정
+            Destroy(shape, 2);
         }
         shapes.Clear();
     }
