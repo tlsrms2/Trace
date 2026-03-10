@@ -177,13 +177,7 @@ public class PlayerMove : MonoBehaviour
             lineRenderer.SetPositions(attackTracePoints.ToArray());
             dotLineRenderer.positionCount = tracePoints.Count;
             dotLineRenderer.SetPositions(tracePoints.ToArray());
-
-            if (edgeCol != null && edgeCol.pointCount > 2)
-            {
-                Vector2[] pts = edgeCol.points;
-                System.Array.Resize(ref pts, pts.Length - 1);
-                edgeCol.points = pts;
-            }
+            edgeCol.points = attackTracePoints.Select(p => (Vector2)p).ToArray();
 
             yield return new WaitForSeconds(interval);
         }
