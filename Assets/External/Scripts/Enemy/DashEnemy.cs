@@ -44,7 +44,7 @@ public class DashEnemy : Enemy
         while (elapsedTime < waitCooldown)
         {
             elapsedTime += Time.deltaTime;
-            yield return GameManager.Instance.CurrentPhase != GamePhase.Paused;
+            yield return new WaitWhile(() => GameManager.Instance.CurrentPhase == GamePhase.Paused);
         }
         
         spriteRenderer.color = Color.blue;
@@ -55,7 +55,7 @@ public class DashEnemy : Enemy
         {
             transform.position += (Vector3)dir * dashSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
-            yield return GameManager.Instance.CurrentPhase != GamePhase.Paused;
+            yield return new WaitWhile(() => GameManager.Instance.CurrentPhase == GamePhase.Paused);
         }
     }
 }
