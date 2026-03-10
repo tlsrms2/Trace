@@ -53,6 +53,7 @@ public class Enemy : MonoBehaviour
 
             if (Hp <= 0)
             {
+                WaveManager.Instance.OnEnemyKilled();
                 Destroy(gameObject);
             }
         }

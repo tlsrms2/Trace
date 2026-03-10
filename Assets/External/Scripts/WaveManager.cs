@@ -52,6 +52,7 @@ public class WaveManager : MonoBehaviour
             WaveData currentWave = waves[currentWaveIndex];
 
             enemiesRemainingToSpawn = currentWave.enemyCount;
+            enemiesRemainingAlive = 0;
 
             foreach (var enemy in currentWave.enemies)
             {
@@ -60,7 +61,6 @@ public class WaveManager : MonoBehaviour
 
             while (enemiesRemainingToSpawn > 0 || enemiesRemainingAlive > 0)
             {
-                Debug.Log($"Waiting for wave {currentWaveIndex} to finish. Remaining to spawn: {enemiesRemainingToSpawn}, Remaining alive: {enemiesRemainingAlive}");
                 yield return null;
             }
             

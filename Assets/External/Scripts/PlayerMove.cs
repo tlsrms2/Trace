@@ -47,7 +47,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isReplaying)
+        if (Input.GetKeyDown(KeyCode.Space) && !isReplaying && !isTracing)
         {
             StartTrace();
         }
