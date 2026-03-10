@@ -37,16 +37,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    protected virtual void Attack()
-    {
-        
-    }
-
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Attack();
+            // 플레이어 데미지 처리 로직
         }   
     }
 }
