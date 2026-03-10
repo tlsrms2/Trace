@@ -3,6 +3,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] protected float speed;
+<<<<<<< Updated upstream
     [SerializeField] protected float Hp;
 
     protected Transform target;
@@ -14,6 +15,10 @@ public class Enemy : MonoBehaviour
         col = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
+=======
+
+    protected Transform target;
+>>>>>>> Stashed changes
 
     protected virtual void Start()
     {
@@ -40,11 +45,17 @@ public class Enemy : MonoBehaviour
         }
     }
 
+<<<<<<< Updated upstream
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             // 플레이어 데미지 처리 로직
         }   
+=======
+    protected virtual void Attack()
+    {
+
+>>>>>>> Stashed changes
     }
 }

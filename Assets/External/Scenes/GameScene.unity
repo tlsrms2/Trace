@@ -314,6 +314,7 @@ Transform:
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 --- !u!1 &527979884
 GameObject:
   m_ObjectHideFlags: 0
@@ -535,6 +536,8 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!1 &619394800
@@ -882,6 +885,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -890,8 +896,11 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   - {fileID: 527979887}
 =======
+=======
+>>>>>>> Stashed changes
   - {fileID: 2641420061750837123}
   - {fileID: 1784994863}
 >>>>>>> Stashed changes
