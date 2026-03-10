@@ -3,6 +3,8 @@ using System.Collections;
 
 public class BossEnemy : Enemy
 {
+    [SerializeField] private Transform[] muzzles; // 8개
+    [SerializeField] private float bulletSpeed = 6f;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float dashSpeed;
     [SerializeField] private float introDownDistance = 10f;
@@ -137,12 +139,15 @@ public class BossEnemy : Enemy
 
     #region 패턴 2: 총알 발사
     void Shoot()
+{
+    foreach (Transform muzzle in muzzles)
     {
-        Vector2 dir = (target.position - transform.position).normalized;
+        GameObject bullet = Instantiate(bulletPrefab, muzzle.position, Quaternion.identity);
 
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+        Vector2 dir = muzzle.up; // muzzle 방향으로 발사
 
-        bullet.GetComponent<Rigidbody2D>().linearVelocity = dir * 6f;
+        bullet.GetComponent<Rigidbody2D>().linearVelocity = dir * bulletSpeed;
     }
+}
     #endregion
 }
