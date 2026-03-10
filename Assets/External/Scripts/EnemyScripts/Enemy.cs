@@ -17,7 +17,10 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Start()
     {
-        target = GameObject.FindGameObjectWithTag("Player").transform;
+        // Player 찾기
+        target = GameObject.FindGameObjectWithTag("Player")?.transform;
+        if (target == null)
+            Debug.LogError("Player 태그가 있는 오브젝트를 찾을 수 없습니다!");
     }
 
     protected virtual void Update()
