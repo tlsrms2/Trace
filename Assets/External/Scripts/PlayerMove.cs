@@ -24,8 +24,6 @@ public class PlayerMove : MonoBehaviour
     private Color originalColor;
     private Rigidbody2D playerRigidbody;
 
-    private Coroutine eraseCoroutine;
-
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -42,14 +40,6 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-
-        Vector2 inputDir = new Vector2(x, y).normalized;
-
-        if (!isReplaying)
-            playerRigidbody.linearVelocity = inputDir * moveSpeed;
-
         if (Input.GetKeyDown(KeyCode.Space) && !isReplaying)
         {
             StartTrace();
@@ -78,14 +68,21 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+
+        Vector2 inputDir = new Vector2(x, y).normalized;
+
+        if (!isReplaying)
+            playerRigidbody.linearVelocity = inputDir * moveSpeed;
+        else
+            playerRigidbody.linearVelocity = Vector2.zero;
+    }
+
     private void StartTrace()
     {
-        if (eraseCoroutine != null)
-        {
-            StopCoroutine(eraseCoroutine);
-            eraseCoroutine = null;
-        }
-
         isTracing = true;
         tracePoints.Clear();
         lineRenderer.positionCount = 0;
@@ -115,7 +112,7 @@ public class PlayerMove : MonoBehaviour
             CreateShape(tracePoints);
         }
         isReplaying = true;
-        eraseCoroutine = StartCoroutine(EraseFromStart());
+        StartCoroutine(EraseFromStart());
     }
 
     private IEnumerator EraseFromStart(float interval = 0.01f)
@@ -149,7 +146,6 @@ public class PlayerMove : MonoBehaviour
         tracePoints.Clear();
         lineRenderer.positionCount = 0;
 
-        eraseCoroutine = null;
         isReplaying = false;
         Destroy(colliderObj);
 
