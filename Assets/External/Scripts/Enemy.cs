@@ -3,6 +3,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] protected float speed;
+    [SerializeField] protected float increaseSpeed;
     [SerializeField] protected float Hp;
 
     protected Transform target;
@@ -13,16 +14,18 @@ public class Enemy : MonoBehaviour
     {
         col = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     protected virtual void Start()
     {
-        target = GameObject.FindGameObjectWithTag("Player").transform;
+        increaseSpeed = 0.1f;
     }
 
     protected virtual void Update()
     {
         Move();
+        speed += increaseSpeed * Time.deltaTime;
     }
 
     protected virtual void Move()
