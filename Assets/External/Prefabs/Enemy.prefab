@@ -8,19 +8,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-<<<<<<< Updated upstream
   - component: {fileID: 677549036566333400}
   - component: {fileID: 5815982432225246687}
   - component: {fileID: 2053630676975267176}
   - component: {fileID: 4327700231852001909}
-=======
-  - component: {fileID: 4079437818772549927}
-  - component: {fileID: 6715266534820008436}
-  - component: {fileID: 1735052339243883514}
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -102,8 +93,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 --- !u!61 &2053630676975267176
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -151,12 +140,6 @@ BoxCollider2D:
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &4327700231852001909
-=======
---- !u!114 &1735052339243883514
->>>>>>> Stashed changes
-=======
---- !u!114 &1735052339243883514
->>>>>>> Stashed changes
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -165,22 +148,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 6892968917303159334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
   m_Script: {fileID: 11500000, guid: 8ecf8bc6b153ef740a763ccdc8d3532c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   speed: 4
   Hp: 5
-=======
-  m_Script: {fileID: 11500000, guid: 24c63cf7bcc2ad04aa59eafbdae3389f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalEnemy
-  speed: 0
->>>>>>> Stashed changes
-=======
-  m_Script: {fileID: 11500000, guid: 24c63cf7bcc2ad04aa59eafbdae3389f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalEnemy
-  speed: 0
->>>>>>> Stashed changes

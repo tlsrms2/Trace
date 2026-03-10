@@ -1,8 +1,5 @@
 using UnityEngine;
-<<<<<<< Updated upstream
 using System.Collections;
-=======
->>>>>>> Stashed changes
 
 public class DashEnemy : Enemy
 {
@@ -10,7 +7,6 @@ public class DashEnemy : Enemy
     [SerializeField] private float dashCooldown = 3f;
 
     private float dashTimer;
-<<<<<<< Updated upstream
     protected override void Awake()
     {
         base.Awake();
@@ -21,9 +17,6 @@ public class DashEnemy : Enemy
         base.Start();
         dashTimer = 0f;
     }
-=======
-
->>>>>>> Stashed changes
     protected override void Update()
     {
         base.Update();
@@ -36,7 +29,6 @@ public class DashEnemy : Enemy
             dashTimer = 0;
         }
     }
-<<<<<<< Updated upstream
     private void Dash()
     {
         Vector2 dir = (target.position - transform.position).normalized;
@@ -58,13 +50,5 @@ public class DashEnemy : Enemy
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-=======
-
-    private void Dash()
-    {
-        Vector2 dir = (target.position - transform.position).normalized;
-
-        transform.position += (Vector3)dir * dashSpeed;
->>>>>>> Stashed changes
     }
 }

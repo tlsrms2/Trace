@@ -3,7 +3,6 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] protected float speed;
-<<<<<<< Updated upstream
     [SerializeField] protected float Hp;
 
     protected Transform target;
@@ -15,17 +14,10 @@ public class Enemy : MonoBehaviour
         col = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-=======
-
-    protected Transform target;
->>>>>>> Stashed changes
 
     protected virtual void Start()
     {
-        // Player 찾기
-        target = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (target == null)
-            Debug.LogError("Player 태그가 있는 오브젝트를 찾을 수 없습니다!");
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     protected virtual void Update()
@@ -45,17 +37,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
-<<<<<<< Updated upstream
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             // 플레이어 데미지 처리 로직
         }   
-=======
-    protected virtual void Attack()
-    {
-
->>>>>>> Stashed changes
     }
 }
