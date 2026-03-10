@@ -828,7 +828,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
   waves:
-  - {fileID: 11400000, guid: 0b762ec9dda3d0649906296c163aa325, type: 2}
   - {fileID: 11400000, guid: 2ff37487367f5d649bb63b964ba66107, type: 2}
 --- !u!4 &2050974679
 Transform:

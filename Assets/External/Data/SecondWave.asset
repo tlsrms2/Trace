@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SecondWave
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   enemies:
-  - enemyPrefab: {fileID: 6892968917303159334, guid: 47eb5a92433aeac4da8be89b4670e9ef, type: 3}
-    spawnInterval: 2
-  enemyCount: 0
+  - enemyPrefab: {fileID: 6892968917303159334, guid: 03fd80b75aef24c449282b960b0651dd, type: 3}
+    spawnInterval: 0
+  enemyCount: 1
+  isBossWave: 1

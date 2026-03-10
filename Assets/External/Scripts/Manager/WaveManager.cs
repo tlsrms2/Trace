@@ -51,19 +51,25 @@ public class WaveManager : MonoBehaviour
         {
             WaveData currentWave = waves[currentWaveIndex];
 
-            enemiesRemainingToSpawn = currentWave.enemyCount;
-            enemiesRemainingAlive = 0;
-
-            foreach (var enemy in currentWave.enemies)
+            if (currentWave.isBossWave)
             {
-                StartCoroutine(SpawnEnemy(enemy));
+                Instantiate(currentWave.enemies[0].enemyPrefab, Vector3.zero, Quaternion.identity);
             }
-
-            while (enemiesRemainingToSpawn > 0 || enemiesRemainingAlive > 0)
+            else 
             {
-                yield return null;
+                enemiesRemainingToSpawn = currentWave.enemyCount;
+                enemiesRemainingAlive = 0;
+
+                foreach (var enemy in currentWave.enemies)
+                {
+                    StartCoroutine(SpawnEnemy(enemy));
+                }
+
+                while (enemiesRemainingToSpawn > 0 || enemiesRemainingAlive > 0)
+                {
+                    yield return null;
+                }
             }
-            
             currentWaveIndex++;
         }
     }

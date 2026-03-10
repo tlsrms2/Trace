@@ -13,4 +13,5 @@ public class WaveData : ScriptableObject
 {
     public enemyData[] enemies;
     public int enemyCount;
+    public bool isBossWave;
 }
