@@ -16,6 +16,8 @@ public class BossEnemy : Enemy
         base.Awake();
     }
 
+    protected override void Update() {}
+
     private void OnEnable()
     {
         _originalPosition = transform.position;
@@ -85,7 +87,9 @@ public class BossEnemy : Enemy
             Dash();
             yield return new WaitForSeconds(1f);
             Dash();
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(1f);
+            StartCoroutine(BackToOriginalPosition());
+            yield return new WaitForSeconds(2f);
             Shoot();
         }
     }
@@ -112,6 +116,22 @@ public class BossEnemy : Enemy
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+    }
+
+    IEnumerator BackToOriginalPosition()
+    {
+        float returnDuration = 0.5f; 
+        float elapsedTime = 0f;
+
+        Vector2 startPosition = transform.position;
+
+        while (elapsedTime < returnDuration)
+        {
+            transform.position = Vector2.Lerp(startPosition, _originalPosition, elapsedTime / returnDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = _originalPosition;
     }
     #endregion
 
