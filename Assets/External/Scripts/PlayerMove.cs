@@ -229,7 +229,7 @@ public class PlayerMove : MonoBehaviour
         foreach (GameObject shape in shapes)
         {
             shape.SetActive(true);
-            Destroy(shape, 2f);
+            Destroy(shape, 1f);
         }
         shapes.Clear();
         lineRenderer.positionCount = 0;

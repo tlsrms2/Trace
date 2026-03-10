@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Move()
     {
-        if (Vector2.Distance(transform.position, target.position) > 0.1f)
+        if (GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)
         {
             transform.position = Vector2.MoveTowards(
                 transform.position,
