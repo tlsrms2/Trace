@@ -3,8 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Slider))]
-public class FuelGaugeUI : MonoBehaviour // 파일명에 맞춰 클래스 이름 변경
+public class FuelGaugeController : MonoBehaviour
 {
+    [Header("Fuel Settings")]
+    [SerializeField] private float maxFuel = 100f;
+    [SerializeField] private float currentFuel = 100f;
+    [SerializeField] private float drainPerSecond = 25f;
+    [SerializeField] private float recoverPerSecond = 15f;
+
     [Header("Shader / Material")]
     [SerializeField] private Image fillImage;
     [SerializeField] private Material normalMaterial;
@@ -16,15 +22,20 @@ public class FuelGaugeUI : MonoBehaviour // 파일명에 맞춰 클래스 이름
     private Slider fuelSlider;
     private bool wasPressing;
 
+    public float CurrentFuel => currentFuel;
+    public float MaxFuel => maxFuel;
+    public bool HasFuel => currentFuel > 0f;
+
     private void Awake()
     {
         fuelSlider = GetComponent<Slider>();
 
-        // GameManager에서 Percentage(0.0 ~ 1.0)를 가져올 것이므로 Slider의 범위를 0~1로 설정
+        currentFuel = maxFuel;
+
         fuelSlider.minValue = 0f;
-        fuelSlider.maxValue = 1f;
-        
-        // Image 및 Material 자동 할당 처리
+        fuelSlider.maxValue = maxFuel;
+        fuelSlider.value = currentFuel;
+
         if (fillImage == null && fuelSlider.fillRect != null)
         {
             fillImage = fuelSlider.fillRect.GetComponent<Image>();
@@ -39,37 +50,47 @@ public class FuelGaugeUI : MonoBehaviour // 파일명에 맞춰 클래스 이름
         {
             fillImage.material = normalMaterial;
         }
+
+        UpdateFuelText();
     }
 
     private void Update()
     {
-        // GameManager 인스턴스가 없으면 예외 방지
-        if (GameManager.Instance == null) return;
+        bool isPressing = Input.GetKey(KeyCode.Space);
 
-        // 1. GameManager로부터 현재 게이지 비율 (0.0f ~ 1.0f) 가져오기
-        float currentGaugePercent = GameManager.Instance.GetGaugePercentage();
-        fuelSlider.value = currentGaugePercent;
+        if (isPressing)
+        {
+            currentFuel -= drainPerSecond * Time.deltaTime;
+        }
+        else
+        {
+            currentFuel += recoverPerSecond * Time.deltaTime;
+        }
 
-        // 2. 텍스트 업데이트
-        UpdateFuelText(currentGaugePercent);
+        currentFuel = Mathf.Clamp(currentFuel, 0f, maxFuel);
+        fuelSlider.value = currentFuel;
 
-        // 3. 누르고 있는 상태 확인 (GameManager에서는 Space를 누르면 Paused 상태가 됨)
-        bool isPressing = (GameManager.Instance.CurrentPhase == GamePhase.Paused);
+        UpdateFuelText();
         UpdateShaderState(isPressing);
     }
 
-    private void UpdateFuelText(float percent)
+    private void UpdateFuelText()
     {
-        if (fuelValueText == null) return;
+        if (fuelValueText == null)
+        {
+            return;
+        }
 
-        // 0.0 ~ 1.0 비율을 0 ~ 100 퍼센트로 변환하여 출력
-        int displayValue = Mathf.RoundToInt(percent * 100f);
+        int displayValue = Mathf.RoundToInt(fuelSlider.value);
         fuelValueText.text = $"{displayValue}%";
     }
 
     private void UpdateShaderState(bool isPressing)
     {
-        if (fillImage == null) return;
+        if (fillImage == null)
+        {
+            return;
+        }
 
         if (isPressing != wasPressing)
         {

@@ -70,17 +70,11 @@ public class TimeFreezeBorderUI : MonoBehaviour
 
     private void Update()
     {
-        // GameManager 인스턴스가 없으면 예외 방지
-        if (GameManager.Instance == null) return;
+        bool isPressing = Input.GetKey(KeyCode.Space);
+        float targetThicknessValue = isPressing ? targetThickness : 0f;
+        float targetFlowBlend = isPressing ? 1f : 0f;
+        float targetDimAlpha = isPressing ? dimAlphaWhenPressed : 0f;
 
-        // 사용자의 키 입력 대신 GameManager의 상태를 확인하여 UI 연출 방향 결정
-        bool isTimeFrozen = (GameManager.Instance.CurrentPhase == GamePhase.Paused);
-
-        float targetThicknessValue = isTimeFrozen ? targetThickness : 0f;
-        float targetFlowBlend = isTimeFrozen ? 1f : 0f;
-        float targetDimAlpha = isTimeFrozen ? dimAlphaWhenPressed : 0f;
-
-        // unscaledDeltaTime을 사용하여 TimeScale = 0(일시정지)일 때도 부드럽게 UI가 애니메이션 되도록 처리
         currentThickness = Mathf.MoveTowards(
             currentThickness,
             targetThicknessValue,
