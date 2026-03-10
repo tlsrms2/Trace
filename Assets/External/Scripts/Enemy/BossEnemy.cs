@@ -3,6 +3,7 @@ using System.Collections;
 
 public class BossEnemy : Enemy
 {
+    private bool shootCross = true; // 첫 발사는 상하좌우
     [SerializeField] private Transform[] muzzles; // 8개
     [SerializeField] private float bulletSpeed = 6f;
     [SerializeField] private GameObject bulletPrefab;
@@ -139,15 +140,23 @@ public class BossEnemy : Enemy
 
     #region 패턴 2: 총알 발사
     void Shoot()
-{
-    foreach (Transform muzzle in muzzles)
     {
-        GameObject bullet = Instantiate(bulletPrefab, muzzle.position, Quaternion.identity);
+        for (int i = 0; i < muzzles.Length; i++)
+        {
+            // 상하좌우
+            if (shootCross && i % 2 == 0)
+            {
+                Instantiate(bulletPrefab, muzzles[i].position, muzzles[i].rotation);
+            }
 
-        Vector2 dir = muzzle.up; // muzzle 방향으로 발사
+            if (!shootCross && i % 2 == 1)
+            {
+                Instantiate(bulletPrefab, muzzles[i].position, muzzles[i].rotation);
+            }
+        }
 
-        bullet.GetComponent<Rigidbody2D>().linearVelocity = dir * bulletSpeed;
+        // 다음 Shoot 때 패턴 변경
+        shootCross = !shootCross;
     }
-}
     #endregion
 }
