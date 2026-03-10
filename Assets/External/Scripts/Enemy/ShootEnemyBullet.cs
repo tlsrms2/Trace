@@ -2,38 +2,32 @@ using UnityEngine;
 
 public class ShootEnemyBullet : MonoBehaviour
 {
-    private Rigidbody2D myRigidbody;
-    private Vector2 myVec;
+    [Header("Bullet Stats")]
+    public float speed = 5f;
+    public int damage = 1;
+    public float lifetime = 5f;
 
-    private void Awake()
+    private Vector2 direction;
+    private Rigidbody2D rb;
+
+    public void Initialize(Vector2 dir, float bulletSpeed, int bulletDamage)
     {
-        myRigidbody = GetComponent<Rigidbody2D>();
+        direction = dir.normalized;
+        speed = bulletSpeed;
+        damage = bulletDamage;
+
+        rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = direction * speed; // Unity6 기준
+        }
+
+        Destroy(gameObject, lifetime);
     }
 
     private void Update()
     {
-        if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
-        {
-            myRigidbody.linearVelocity = Vector2.zero;
-        }
-        else
-        {
-            myRigidbody.linearVelocity = myVec;
-            float angle = Mathf.Atan2(myVec.y, myVec.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
-        }
-    }
-
-    public void Shoot(Vector2 vec)
-    {
-        myVec = vec;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            Destroy(gameObject);
-        }
+        if (rb == null)
+            transform.position += (Vector3)(direction * speed * Time.deltaTime);
     }
 }
