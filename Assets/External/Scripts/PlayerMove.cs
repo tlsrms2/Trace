@@ -24,11 +24,11 @@ public class PlayerMove : MonoBehaviour
     private float moveSpeed;
 
     private LineRenderer lineRenderer;
-    private bool isTracing = false;
     private List<Vector3> tracePoints = new List<Vector3>();
     private List<GameObject> shapes = new List<GameObject>();
 
-    private bool isReplaying = false;
+    private bool IsTracing => GameManager.Instance.CurrentPhase == GamePhase.Paused;
+    private bool IsReplaying => GameManager.Instance.CurrentPhase == GamePhase.Replay;
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
@@ -56,20 +56,20 @@ public class PlayerMove : MonoBehaviour
         originalColor = spriteRenderer.color;
     }
 
+    private void Start()
+    {
+        GameManager.Instance.OnTraceStarted += StartTrace;
+        GameManager.Instance.OnTraceEnded += EndTrace;
+    }
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnTraceStarted -= StartTrace;
+        GameManager.Instance.OnTraceEnded -= EndTrace;
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !isReplaying && !isTracing)
-        {
-            StartTrace();
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space) && isTracing)
-        {
-            isTracing = false;
-            EvaluateShape();
-        }
-
-        if (isTracing)
+        if (IsTracing)
         {
             RecordPosition();
             moveSpeed = traceMoveSpeed;
@@ -79,7 +79,7 @@ public class PlayerMove : MonoBehaviour
             moveSpeed = normalMoveSpeed;
         }
 
-        if (isReplaying)
+        if (IsReplaying)
         {
             spriteRenderer.color = new Color(0, 0, 0, 0);
             Illusion.SetActive(true);
@@ -98,7 +98,7 @@ public class PlayerMove : MonoBehaviour
 
         Vector2 inputDir = new Vector2(x, y).normalized;
 
-        if (!isReplaying)
+        if (!IsReplaying)
         {
             playerRigidbody.linearVelocity = inputDir * moveSpeed;
         }
@@ -108,10 +108,14 @@ public class PlayerMove : MonoBehaviour
 
     private void StartTrace()
     {
-        isTracing = true;
         tracePoints.Clear();
         lineRenderer.positionCount = 0;
         tracePoints.Add(transform.position);
+    }
+
+    private void EndTrace()
+    {
+        EvaluateShape();
     }
 
     /// <summary>
@@ -139,7 +143,6 @@ public class PlayerMove : MonoBehaviour
             tracePoints.Add(tracePoints[0]);
             CreateShape(tracePoints);
         }
-        isReplaying = true;
         StartCoroutine(EraseFromStart());
     }
 
@@ -188,10 +191,9 @@ public class PlayerMove : MonoBehaviour
         tracePoints.Clear();
         dotLineRenderer.positionCount = 0;
 
-        isReplaying = false;
         Destroy(colliderObj);
-
         ActivateShapes();
+        GameManager.Instance.ChangePhase(GamePhase.RealTime);
     }
 
     private void CreateShape(List<Vector3> points)
@@ -227,7 +229,7 @@ public class PlayerMove : MonoBehaviour
         foreach (GameObject shape in shapes)
         {
             shape.SetActive(true);
-            Destroy(shape, 2f);
+            Destroy(shape, 1f);
         }
         shapes.Clear();
         lineRenderer.positionCount = 0;
