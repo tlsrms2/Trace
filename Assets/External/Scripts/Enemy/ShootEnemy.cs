@@ -4,6 +4,7 @@ public class ShootEnemy : Enemy
 {
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float shootCooldown = 2f;
+    [SerializeField] private float bulletSpeed = 5f;
 
     private float shootTimer;
 
@@ -11,7 +12,8 @@ public class ShootEnemy : Enemy
     {
         base.Update();
 
-        shootTimer += Time.deltaTime;
+        if (GameManager.Instance.CurrentPhase != GamePhase.Paused)
+            shootTimer += Time.deltaTime;
 
         if (shootTimer >= shootCooldown)
         {
@@ -25,7 +27,6 @@ public class ShootEnemy : Enemy
         Vector2 dir = (target.position - transform.position).normalized;
 
         GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-
-        bullet.GetComponent<Rigidbody2D>().linearVelocity = dir * 5f;
+        bullet.GetComponent<ShootEnemyBullet>().Shoot(dir * bulletSpeed);
     }
 }
