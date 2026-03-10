@@ -23,6 +23,12 @@ public class ShootEnemy : Enemy
     {
         while (true)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
+
             // 1️⃣ 이동
             float timer = 0f;
             while (timer < moveDuration)
@@ -78,7 +84,7 @@ public class ShootEnemy : Enemy
 
     private void MoveTowardsPlayer(float currentSpeed)
     {
-        if (target == null) return;
+        if (target == null || GameManager.Instance.CurrentPhase == GamePhase.Paused) return;
         Vector2 dir = (target.position - transform.position).normalized;
         transform.position += (Vector3)(dir * currentSpeed * Time.deltaTime);
     }
@@ -86,7 +92,7 @@ public class ShootEnemy : Enemy
     // 적과 muzzle가 항상 플레이어 바라보게
     private void LookAtPlayer()
     {
-        if (target == null || muzzle == null) return;
+        if (target == null || muzzle == null || GameManager.Instance.CurrentPhase == GamePhase.Paused) return;
 
         Vector2 dir = (target.position - transform.position).normalized;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -97,7 +103,7 @@ public class ShootEnemy : Enemy
 
     private void Shoot()
     {
-        if (bulletPrefab == null || muzzle == null) return;
+        if (bulletPrefab == null || muzzle == null || GameManager.Instance.CurrentPhase == GamePhase.Paused) return;
 
         Vector2 dir = muzzle.right;
         GameObject bulletObj = Instantiate(bulletPrefab, muzzle.position, muzzle.rotation);
