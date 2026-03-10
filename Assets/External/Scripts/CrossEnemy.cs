@@ -104,7 +104,7 @@ public class CrossEnemy : Enemy
 
     protected override void Update()
     {
-        if (isAlerting)
+        if (isAlerting && GameManager.Instance.CurrentPhase != GamePhase.Paused)
         {
             // --- 경고 페이즈 ---
             timer -= Time.deltaTime;
@@ -128,7 +128,7 @@ public class CrossEnemy : Enemy
                 col.enabled = true; 
             }
         }
-        else
+        else if(isAlerting == false)
         {
             // --- 돌진 페이즈 ---
             base.Update(); // 오버라이드한 Move() 실행
@@ -138,8 +138,11 @@ public class CrossEnemy : Enemy
 
     protected override void Move()
     {
+        if (GameManager.Instance.CurrentPhase != GamePhase.Paused)
+        {
         // 플레이어를 쫓아가지 않고 계산된 일직선 방향으로만 돌진
         transform.position += direction * speed * Time.deltaTime;
+        }
     }
 
     private void CheckOutOfBounds()
@@ -155,6 +158,7 @@ public class CrossEnemy : Enemy
 
         if (distX > camHalfWidth + 3.0f || distY > camHalfHeight + 3.0f)
         {
+            WaveManager.Instance.OnEnemyKilled();
             Destroy(gameObject);
         }
     }
