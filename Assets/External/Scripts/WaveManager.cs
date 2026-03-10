@@ -34,9 +34,10 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-    [Header("Wave Settings")]
     [SerializeField] private WaveData[] waves;
     private int currentWaveIndex = 0;
+    private int enemiesRemainingToSpawn;
+    private int enemiesRemainingAlive;
     private EnemySpawner enemySpawner;
 
     void Start()
@@ -49,31 +50,41 @@ public class WaveManager : MonoBehaviour
         while (currentWaveIndex < waves.Length)
         {
             WaveData currentWave = waves[currentWaveIndex];
-            float waveEndTime = Time.time + currentWave.waveDuration;
+
+            enemiesRemainingToSpawn = currentWave.enemyCount;
 
             foreach (var enemy in currentWave.enemies)
             {
                 StartCoroutine(SpawnEnemy(enemy));
             }
 
-            while (Time.time < waveEndTime)
+            while (enemiesRemainingToSpawn > 0 || enemiesRemainingAlive > 0)
             {
+                Debug.Log($"Waiting for wave {currentWaveIndex} to finish. Remaining to spawn: {enemiesRemainingToSpawn}, Remaining alive: {enemiesRemainingAlive}");
                 yield return null;
             }
-
+            
             currentWaveIndex++;
         }
     }
 
     private IEnumerator SpawnEnemy(enemyData enemy)
     {
-        while (true)
+        while (enemiesRemainingToSpawn > 0)
         {
             if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
             {
                 enemySpawner.SpawnEnemy(enemy.enemyPrefab);
+                enemiesRemainingToSpawn--;
+                enemiesRemainingAlive++;
             }
+
             yield return new WaitForSeconds(enemy.spawnInterval);
         }
+    }
+
+    public void OnEnemyKilled()
+    {
+        enemiesRemainingAlive--;
     }
 }
