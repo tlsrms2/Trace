@@ -6,7 +6,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float yOffset = 10.0f;
     private Transform _playerTransform;
 
-    void Start()
+    void Awake()
     {
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }

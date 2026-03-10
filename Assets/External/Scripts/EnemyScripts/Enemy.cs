@@ -39,6 +39,17 @@ public class Enemy : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.CompareTag("Attack"))
+        {
+            Debug.Log("Enemy hit by attack!");
+            
+            Hp -= collision.gameObject.GetComponent<AttackData>().Damage;
+
+            if (Hp <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
         if (collision.gameObject.CompareTag("Player"))
         {
             // 플레이어 데미지 처리 로직
