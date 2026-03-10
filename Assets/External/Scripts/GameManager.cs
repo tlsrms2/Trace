@@ -100,17 +100,14 @@ public class GameManager : MonoBehaviour
         {
             case GamePhase.Paused:
                 Time.timeScale = 0f; 
-                UIManager.Instance.ShowPause();
                 break;
 
             case GamePhase.Replay:
                 Time.timeScale = 1f;
-                UIManager.Instance.HidePause();
                 break;
 
             case GamePhase.RealTime:
                 Time.timeScale = 1f;
-                UIManager.Instance.HidePause();
                 break;
 
             case GamePhase.GameOver:
