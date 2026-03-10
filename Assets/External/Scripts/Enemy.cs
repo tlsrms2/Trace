@@ -3,8 +3,17 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] protected float speed;
+    [SerializeField] protected float Hp;
 
     protected Transform target;
+    protected Collider2D col;
+    protected SpriteRenderer spriteRenderer;
+
+    protected virtual void Awake()
+    {
+        col = GetComponent<Collider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
     protected virtual void Start()
     {
@@ -30,6 +39,14 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Attack()
     {
+        
+    }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Attack();
+        }   
     }
 }

@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 677549036566333400}
   - component: {fileID: 5815982432225246687}
   - component: {fileID: 2053630676975267176}
-  - component: {fileID: 4327700231852001909}
+  - component: {fileID: -7172225799726236086}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: DashEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -139,7 +139,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4327700231852001909
+--- !u!114 &-7172225799726236086
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,8 +148,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6892968917303159334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ecf8bc6b153ef740a763ccdc8d3532c, type: 3}
+  m_Script: {fileID: 11500000, guid: f20c904048795ef4a9bfb93e226b03dc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  speed: 4
+  m_EditorClassIdentifier: Assembly-CSharp::DashEnemy
+  speed: 3.5
   Hp: 5
+  dashSpeed: 20
+  dashCooldown: 3
