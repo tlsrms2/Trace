@@ -17,4 +17,5 @@ MonoBehaviour:
     spawnInterval: 3
   - enemyPrefab: {fileID: 6892968917303159334, guid: 47eb5a92433aeac4da8be89b4670e9ef, type: 3}
     spawnInterval: 10
-  enemyCount: 5
+  enemyCount: 3
+  isBossWave: 0
