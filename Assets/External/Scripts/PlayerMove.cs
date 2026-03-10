@@ -5,12 +5,20 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    [Header("불변 객체")]
+    [SerializeField] private GameObject Illusion;
+    [SerializeField] private LineRenderer dotLineRenderer;
+
+    [Header("이동 및 드로우")]
     [Tooltip("이동 속도")][SerializeField] private float moveSpeed = 5f;
+    [Tooltip("시간 정지 시 이동 속도")][SerializeField] private float drawMoveSpeed = 3f;
     [Tooltip("포인트 간 최소 거리")][SerializeField] private float minDistance = 0.1f;
     [Tooltip("선 굵기")][SerializeField] private float lineWidth = 0.2f;
+    [Tooltip("도형 완성 거리 보정값")][SerializeField] private float closeThreshold = 1f;
+
+    [Header("데미지")]
     [Tooltip("선 데미지")][SerializeField] private int lineDamage = 5;
     [Tooltip("도형 데미지")][SerializeField] private int shapeDamage = 10;
-    [Tooltip("도형 완성 거리 보정값")][SerializeField] private float closeThreshold = 1f;
 
     private LineRenderer lineRenderer;
     private bool isTracing = false;
@@ -18,7 +26,6 @@ public class PlayerMove : MonoBehaviour
     private List<GameObject> shapes = new List<GameObject>();
 
     private bool isReplaying = false;
-    [SerializeField] private GameObject Illusion;
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
@@ -89,6 +96,9 @@ public class PlayerMove : MonoBehaviour
         tracePoints.Add(transform.position);
     }
 
+    /// <summary>
+    /// dotLineRenderer
+    /// </summary>
     private void RecordPosition()
     {
         Vector3 currentPos = transform.position;
@@ -115,6 +125,11 @@ public class PlayerMove : MonoBehaviour
         StartCoroutine(EraseFromStart());
     }
 
+    /// <summary>
+    /// tracePoints를 따라 lineRenderer를 재생성
+    /// </summary>
+    /// <param name="interval">프레임당 삭제 간격</param>
+    /// <returns></returns>
     private IEnumerator EraseFromStart(float interval = 0.01f)
     {
         GameObject colliderObj = new GameObject("AttackCollider");
@@ -125,6 +140,8 @@ public class PlayerMove : MonoBehaviour
         edgeCol.tag = "Attack";
         AttackData data = colliderObj.AddComponent<AttackData>();
         data.Damage = lineDamage;
+        var rig = colliderObj.AddComponent<Rigidbody2D>();
+        rig.gravityScale = 0;
 
         while (tracePoints.Count > 1)
         {
@@ -173,6 +190,8 @@ public class PlayerMove : MonoBehaviour
         AttackData attack = shapeObj.AddComponent<AttackData>();
         attack.Damage = shapeDamage;
         shapeObj.tag = "Attack";
+        var rig = shapeObj.AddComponent<Rigidbody2D>();
+        rig.gravityScale = 0;
 
         shapes.Add(shapeObj);
         shapeObj.SetActive(false);
