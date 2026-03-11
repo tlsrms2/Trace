@@ -21,6 +21,7 @@ public class WaveManager : MonoBehaviour
         if (null == instance)
         {
             instance = this;
+
             DontDestroyOnLoad(this.gameObject);
         }
         else
@@ -162,6 +163,7 @@ public class WaveManager : MonoBehaviour
                 enemiesRemainingAlive++;
                 leftSpawnCnt--;
             }
+
             yield return new WaitForSeconds(enemy.spawnInterval);
         }
     }
@@ -170,6 +172,7 @@ public class WaveManager : MonoBehaviour
     public void OnEnemyKilled()
     {
         enemiesRemainingAlive--;
+        
 
         // 남은 전체 적 = 아직 스폰 안 된 적 + 현재 맵에 살아있는 적
         int totalRemaining = enemiesRemainingToSpawn + enemiesRemainingAlive;

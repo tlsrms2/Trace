@@ -104,10 +104,10 @@ public class ShootEnemy : Enemy
     private void Shoot()
     {
         if (bulletPrefab == null || muzzle == null || GameManager.Instance.CurrentPhase == GamePhase.Paused) return;
-
+        
         Vector2 dir = muzzle.right;
         GameObject bulletObj = Instantiate(bulletPrefab, muzzle.position, muzzle.rotation);
-
+        AudioManager.Instance.PlayEpicMobShoot();
         ShootEnemyBullet bullet = bulletObj.GetComponent<ShootEnemyBullet>();
         if (bullet != null)
         {

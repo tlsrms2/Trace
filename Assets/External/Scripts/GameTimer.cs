@@ -67,9 +67,9 @@ public class GameTimer : MonoBehaviour
 
     void UpdateTimerDisplay()
     {
-        int minutes = Mathf.FloorToInt(currentTime / 60f);
-        int seconds = Mathf.FloorToInt(currentTime % 60f);
-        int milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
+        this.minutes = Mathf.FloorToInt(currentTime / 60f);
+        this.seconds = Mathf.FloorToInt(currentTime % 60f);
+        this.milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
 
         timerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
     }
@@ -93,6 +93,10 @@ public class GameTimer : MonoBehaviour
         Color textColor = timerText.color;
         textColor.a = currentAlpha;
         timerText.color = textColor;
+    }
+    public string GetFormattedTime()
+    {
+        return string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
     }
 
     // public void ReduceTime(int amount)

@@ -34,6 +34,7 @@ public class DashEnemy : Enemy
     {
         Vector2 dir = (target.position - transform.position).normalized;
         StartCoroutine(DashAttackRoutine(dir));
+        AudioManager.Instance.PlayEpicMobDash();
     }
 
     IEnumerator DashAttackRoutine(Vector2 dir)

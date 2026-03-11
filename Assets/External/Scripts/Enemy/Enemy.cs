@@ -65,11 +65,16 @@ public class Enemy : MonoBehaviour
             if (Hp <= 0)
             {
                 WaveManager.Instance.OnEnemyKilled();
+
+                AudioManager.Instance.PlayEnemyDeath();
+
                 var particle = Instantiate(destroyParticle, transform.position, Quaternion.identity);
                 ParticleSystem ps = particle.GetComponent<ParticleSystem>();
                 var main = ps.main;
                 main.startColor = spriteRenderer.color;
+
                 Destroy(gameObject);
+
                 if (collision.gameObject.name == "FilledShape")
                 {
                     // GameTimer.Instance.ReduceTime(2);

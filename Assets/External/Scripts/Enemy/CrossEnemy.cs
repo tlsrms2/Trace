@@ -57,6 +57,7 @@ public class CrossEnemy : Enemy
         isAlerting = true;
         timer = alertTime;
         
+        AudioManager.Instance.PlayLaserWarning();
         // 1. 다시 숨기기
         spriteRenderer.enabled = false;
         col.enabled = false;
@@ -136,6 +137,8 @@ public class CrossEnemy : Enemy
             if (timer <= 0f)
             {
                 isAlerting = false;
+                AudioManager.Instance.PlayLaserMobDash();
+
                 lineRenderer.enabled = false; 
                 spriteRenderer.enabled = true; 
                 col.enabled = true; 

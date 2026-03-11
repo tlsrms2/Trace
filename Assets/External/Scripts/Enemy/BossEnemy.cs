@@ -72,6 +72,7 @@ public class BossEnemy : Enemy
     #region 보스 인트로 
     private IEnumerator BossIntroSequence()
     {
+        AudioManager.Instance.PlayBossAppear();
         // 시작 위치 위로 순간이동
         Vector2 startPosition = _originalPosition + (Vector2.up * introDownDistance);
         transform.position = startPosition;

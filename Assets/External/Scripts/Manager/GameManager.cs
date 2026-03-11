@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float CurrentGauge;
     [SerializeField] private float ConsumptionRate = 20f;
     [SerializeField] private float RecoveryRate = 10f;
-    [Tooltip("¸®ÇÃ·¹ÀÌ ÈÄ °ÔÀÌÁö ÃæÀü ½ÃÀÛ ½Ã°£")][SerializeField] private float RecoveryStartTime = 1f;
+    [Tooltip("ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½")][SerializeField] private float RecoveryStartTime = 1f;
 
     private Coroutine chargeGaugeCor;
     private bool canCharge;
@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         OnTraceEnded += StartChargeWait;
+    }
+    void Start()
+    {
+        AudioManager.Instance.PlayIngameBgm();
     }
 
     void Update()
@@ -123,38 +127,35 @@ public class GameManager : MonoBehaviour
     }
 
     public void ChangePhase(GamePhase nextPhase)
+{
+    if (CurrentPhase == nextPhase) return;
+
+    switch (CurrentPhase)
     {
-        if (CurrentPhase == nextPhase) return;
+        case GamePhase.Paused:
+            OnTraceEnded?.Invoke();
+            break;
 
-        switch (CurrentPhase)
-        {
-            case GamePhase.Paused:
-                OnTraceEnded?.Invoke();
-                break;
-
-            case GamePhase.RealTime:
-                OnTraceStarted?.Invoke();
-                break;
-
-            default:
-                break;
-        }
-
-        CurrentPhase = nextPhase;
-
-        switch (nextPhase)
-        {
-            case GamePhase.Paused:
-                break;
-
-            case GamePhase.Replay:
-                break;
-
-            case GamePhase.RealTime:
-                break;
-
-            case GamePhase.GameOver:
-                break;
-        }
+        case GamePhase.RealTime:
+            OnTraceStarted?.Invoke();
+            break;
     }
+
+    CurrentPhase = nextPhase;
+
+    switch (nextPhase)
+    {
+        case GamePhase.Paused:
+            AudioManager.Instance.SetSlowBgm();
+            break;
+
+        case GamePhase.Replay:
+            AudioManager.Instance.SetNormalBgm();
+            break;
+
+        case GamePhase.RealTime:
+            AudioManager.Instance.SetNormalBgm();
+            break;
+    }
+}
 }

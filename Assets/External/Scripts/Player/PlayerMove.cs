@@ -25,6 +25,7 @@ public class PlayerMove : MonoBehaviour
     private LineRenderer lineRenderer;
     private List<Vector3> tracePoints = new List<Vector3>();
     private List<GameObject> shapes = new List<GameObject>();
+    
 
     private bool IsTracing => GameManager.Instance.CurrentPhase == GamePhase.Paused;
     private bool IsReplaying => GameManager.Instance.CurrentPhase == GamePhase.Replay;
@@ -176,6 +177,8 @@ public class PlayerMove : MonoBehaviour
             dotLineRenderer.positionCount = tracePoints.Count;
             dotLineRenderer.SetPositions(tracePoints.ToArray());
             edgeCol.points = attackTracePoints.Select(p => (Vector2)p).ToArray();
+            
+            AudioManager.Instance.PlayLaserPlace();
 
             yield return new WaitForSeconds(interval);
         }
