@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [Header("불변 객체")]
-    [SerializeField] private GameObject Illusion;
     [SerializeField] private LineRenderer dotLineRenderer;
     [SerializeField] private Material dotLineMaterial;
 
@@ -22,7 +21,7 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("도형 데미지")][SerializeField] private int shapeDamage = 10;
 
     [Header("도형 색상")]
-    [SerializeField] private Color shapeColor = new Color(1f, 0.5f, 0.5f, 0.4f); // 인스펙터에서 조정 가능
+    [SerializeField] private Color shapeColor = new Color(1f, 0.5f, 0.5f, 0.4f);
     private LineRenderer lineRenderer;
     private List<Vector3> tracePoints = new List<Vector3>();
     private List<GameObject> shapes = new List<GameObject>();
@@ -30,8 +29,6 @@ public class PlayerMove : MonoBehaviour
     private bool IsTracing => GameManager.Instance.CurrentPhase == GamePhase.Paused;
     private bool IsReplaying => GameManager.Instance.CurrentPhase == GamePhase.Replay;
 
-    private SpriteRenderer spriteRenderer;
-    private Color originalColor;
     private Rigidbody2D playerRigidbody;
     private float moveSpeed;
 
@@ -52,9 +49,6 @@ public class PlayerMove : MonoBehaviour
         dotLineRenderer.startWidth = lineWidth;
         dotLineRenderer.endWidth = lineWidth;
         dotLineRenderer.useWorldSpace = true;
-
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        originalColor = spriteRenderer.color;
     }
 
     private void Start()
@@ -78,17 +72,6 @@ public class PlayerMove : MonoBehaviour
         else
         {
             moveSpeed = normalMoveSpeed;
-        }
-
-        if (IsReplaying)
-        {
-            spriteRenderer.color = new Color(0, 0, 0, 0);
-            Illusion.SetActive(true);
-        }
-        else
-        {
-            spriteRenderer.color = originalColor;
-            Illusion.SetActive(false);
         }
     }
 
@@ -144,7 +127,9 @@ public class PlayerMove : MonoBehaviour
             tracePoints.Add(tracePoints[0]);
             CreateShape(tracePoints);
         }
-        StartCoroutine(EraseFromStart());
+
+        if (isActiveAndEnabled)
+            StartCoroutine(EraseFromStart());
     }
 
     /// <summary>
@@ -170,7 +155,7 @@ public class PlayerMove : MonoBehaviour
 
         while (tracePoints.Count > 1)
         {
-            Illusion.transform.position = tracePoints[0];
+            transform.position = tracePoints[0];
             attackTracePoints.Add(tracePoints[0]);
             tracePoints.RemoveAt(0);
 
