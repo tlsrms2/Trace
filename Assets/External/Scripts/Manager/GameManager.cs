@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     [Header("UI Settings")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject gameClearPanel;       // 클리어 시 보여줄 패널
+    [SerializeField] private GameObject firstClearPanel;     // 클리어 시 보여줄 첫 번째 입력 패널
+    [SerializeField] private GameObject secondClearPanel;    // 첫 번째 패널 입력 완료 후 표시할 두 번째 클리어 패널
     [SerializeField] private GameObject pauseMenu;
 
     [Header("UI Keyboard Focus Settings")]
@@ -33,7 +35,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("게임오버 창이 뜰 때 처음 선택될 버튼 (예: Restart Button)")]
     [SerializeField] private GameObject firstGameOverButton;
     [Tooltip("게임 클리어 창이 뜰 때 처음 선택될 버튼 (예: Next Button)")]
-    [SerializeField] private GameObject firstGameClearButton;
+    [SerializeField] private GameObject firstGameClearInputButton;
+    [Tooltip("첫 번째 클리어 패널에서 입력 완료 후 두 번째 패널이 뜰 때 선택될 버튼")]
+    [SerializeField] private GameObject secondClearButton;
 
     [Header("Leaderboard UI")]
     [SerializeField] private TextMeshProUGUI rankText;
@@ -165,9 +169,16 @@ public class GameManager : MonoBehaviour
         if (gameClearPanel != null) 
         {
             gameClearPanel.SetActive(true);
-            SetUIFocus(firstGameClearButton);
+            SetUIFocus(firstGameClearInputButton);
         }
         OnGameClear?.Invoke();
+    }
+
+    public void ClearPanelChange()
+    {
+        firstClearPanel.SetActive(false);
+        secondClearPanel.SetActive(true);
+        SetUIFocus(secondClearButton);
     }
 
     // 💡 UI 포커스를 설정해주는 헬퍼 함수
