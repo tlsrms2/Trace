@@ -154,7 +154,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 7, y: 0, z: 0}
-  m_LocalScale: {x: 1.53412, y: 1.53412, z: 1.53412}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1845057385603241406}
@@ -396,7 +396,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
   speed: 50
   increaseSpeed: 0
-  Hp: 20
+  Hp: 25
+  dashSpeed: 20
+  introDownDistance: 9
+  introDuration: 2
+  bulletDamage: 5
   muzzles:
   - {fileID: 2298197110583238353}
   - {fileID: 6054536751912881850}
@@ -408,9 +412,6 @@ MonoBehaviour:
   - {fileID: 3927576155995885796}
   bulletSpeed: 6
   bulletPrefab: {fileID: 3257211389862254461, guid: 2b1b7e2ff78187d4faf30f633e5b1840, type: 3}
-  dashSpeed: 20
-  introDownDistance: 9
-  introDuration: 2
   alertTime: 2
   pathColor: {r: 1, g: 0, b: 0, a: 0.5}
 --- !u!1 &7571092974899525130

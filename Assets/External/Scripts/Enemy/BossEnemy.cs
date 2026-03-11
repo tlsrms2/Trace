@@ -132,16 +132,20 @@ public class BossEnemy : Enemy
     {
         while (true)
         {
-            // Dash();
-            // yield return StartCoroutine(PausedWait(1f));
-            // Dash();
-            // yield return StartCoroutine(PausedWait(1f));
-            // StartCoroutine(BackToOriginalPosition(transform.position));
-            // yield return StartCoroutine(PausedWait(2f));
+            Dash();
+            yield return StartCoroutine(PausedWait(1f));
+            Dash();
+            yield return StartCoroutine(PausedWait(1f));
+            StartCoroutine(BackToOriginalPosition(transform.position));
+            yield return StartCoroutine(PausedWait(2f));
+            Shoot();
+            yield return StartCoroutine(PausedWait(0.5f));
+            Shoot();
+            yield return StartCoroutine(PausedWait(0.5f));
             Shoot();
             yield return StartCoroutine(PausedWait(2f));
-            // yield return StartCoroutine(SpecialAttack());
-            // yield return StartCoroutine(PausedWait(2f));
+            yield return StartCoroutine(SpecialAttack());
+            yield return StartCoroutine(PausedWait(2f));
         }
     }
 
@@ -177,7 +181,7 @@ public class BossEnemy : Enemy
 
     IEnumerator BackToOriginalPosition(Vector2 startPosition)
     {
-        transform.localScale = Vector3.one;
+        transform.localScale = new Vector3(2f, 2f, 2f);
         transform.position = startPosition;
 
         float returnDuration = 0.5f; 
@@ -282,7 +286,7 @@ public class BossEnemy : Enemy
         Vector2 targetPosition = startPosition + (Vector2.up * introDownDistance);
 
         Vector3 startScale = _originalScale;
-        Vector3 targetScale = startScale * 4f;
+        Vector3 targetScale = startScale * 2f;
 
         float scaleDuration = 1f;
         float scaleTimer = 0f;
@@ -337,14 +341,14 @@ public class BossEnemy : Enemy
 
             warningLines[i] = lr;
             
-            yield return StartCoroutine(PausedWait(0.5f));
+            yield return StartCoroutine(PausedWait(0.25f));
         }
         
         float timer = alertTime;
         
         for (int i = 0; i < 4; i++)
         {
-            float attackAlertTimer = 0.5f;
+            float attackAlertTimer = 0.3f;
             while (attackAlertTimer > 0f)
             {
                 if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
