@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour
             {
                 WaveManager.Instance.OnEnemyKilled();
 
-                AudioManager.Instance.PlayEnemyDeath();
+                AudioManager.Instance.PlayEnemyDeath2();
 
                 var particle = Instantiate(destroyParticle, transform.position, Quaternion.identity);
                 ParticleSystem ps = particle.GetComponent<ParticleSystem>();

@@ -92,21 +92,35 @@ public class GameManager : MonoBehaviour
 
     #region Game Flow & Phase Control
     public void ChangePhase(GamePhase nextPhase)
+{
+    if (CurrentPhase == nextPhase) return;
+
+    switch (CurrentPhase)
     {
-        if (CurrentPhase == nextPhase) return;
+        case GamePhase.Paused:
+            OnTraceEnded?.Invoke();
+            break;
 
-        switch (CurrentPhase)
-        {
-            case GamePhase.Paused:
-                OnTraceEnded?.Invoke();
-                break;
-            case GamePhase.RealTime:
-                OnTraceStarted?.Invoke();
-                break;
-        }
-
-        CurrentPhase = nextPhase;
+        case GamePhase.RealTime:
+            OnTraceStarted?.Invoke();
+            break;
     }
+
+    CurrentPhase = nextPhase;
+
+    // 🔊 BGM Pitch 변경
+    switch (nextPhase)
+    {
+        case GamePhase.Paused:
+            AudioManager.Instance.SetSlowBgm();   // 시간 정지 느낌
+            break;
+
+        case GamePhase.Replay:
+        case GamePhase.RealTime:
+            AudioManager.Instance.SetNormalBgm(); // 원래 속도
+            break;
+    }
+}
 
     public void TogglePause()
     {
@@ -261,4 +275,5 @@ public class GameManager : MonoBehaviour
         Debug.Log("게임 종료");
     }
     #endregion
+    
 }

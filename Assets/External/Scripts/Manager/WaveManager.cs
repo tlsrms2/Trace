@@ -55,6 +55,7 @@ public class WaveManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(SpawnWaves());
+        AudioManager.Instance.PlayIngameBgm();
     }
 
     private IEnumerator SpawnWaves()
