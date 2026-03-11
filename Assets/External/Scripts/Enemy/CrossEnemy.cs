@@ -25,18 +25,7 @@ public class CrossEnemy : Enemy
     protected override void Start()
     {
         base.Start(); // target 초기화
-    }
 
-    private void OnEnable()
-    {
-        isAlerting = true;
-        lineRenderer.enabled = true;
-
-        ReadySpecialAttack();
-    }
-
-    private void ReadySpecialAttack()
-    {
         // 1. 경고 페이즈 동안 모습과 충돌체 숨기기
         spriteRenderer.enabled = false;
         col.enabled = false;
@@ -169,13 +158,8 @@ public class CrossEnemy : Enemy
 
         if (distX > camHalfWidth + 3.0f || distY > camHalfHeight + 3.0f)
         {
-            gameObject.SetActive(false); 
-            Invoke(nameof(objectActivate), 1f); 
+            WaveManager.Instance.OnEnemyKilled();
+            Destroy(gameObject);
         }
-    }
-
-    private void objectActivate()
-    {
-        gameObject.SetActive(true);
     }
 }

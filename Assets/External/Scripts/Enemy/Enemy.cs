@@ -25,20 +25,20 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (target && GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)    
-        {
-            Move();
-            speed += increaseSpeed * Time.deltaTime;
-        }
+        Move();
+        speed += increaseSpeed * Time.deltaTime;
     }
 
     protected virtual void Move()
     {
-        transform.position = Vector2.MoveTowards(
-            transform.position,
-            target.position,
-            speed * Time.deltaTime
-        );
+        if (target && GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)
+        {
+            transform.position = Vector2.MoveTowards(
+                transform.position,
+                target.position,
+                speed * Time.deltaTime
+            );
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
