@@ -19,6 +19,7 @@ public class GameTimer : MonoBehaviour
 
     [Header("UI Reference")]
     public TextMeshProUGUI timerText;
+    public TextMeshProUGUI gameOverText;
 
     [Header("Timer Settings")]
     public float currentTime = 0;
@@ -50,6 +51,19 @@ public class GameTimer : MonoBehaviour
         {
             timerWorldPosition = this.transform;
         }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameOver += StopTimer;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameOver -= StopTimer;
+        }
     }
 
     void Update()
@@ -65,6 +79,15 @@ public class GameTimer : MonoBehaviour
         UpdateTextAlphaByDistance();
     }
 
+    void StopTimer()
+    {
+        isRunning = false;
+        if (gameOverText != null)
+        {
+            UpdateGameOverDisplay();
+        }
+    }
+
     void UpdateTimerDisplay()
     {
         minutes = Mathf.FloorToInt(currentTime / 60f);
@@ -72,6 +95,15 @@ public class GameTimer : MonoBehaviour
         milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
 
         timerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+    }
+
+    void UpdateGameOverDisplay()
+    {
+        minutes = Mathf.FloorToInt(currentTime / 60f);
+        seconds = Mathf.FloorToInt(currentTime % 60f);
+        milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
+        
+        gameOverText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
     }
 
     void UpdateTextAlphaByDistance()

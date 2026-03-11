@@ -5,12 +5,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems; // 키보드 UI 제어를 위해 추가
 using TMPro;
 
-public enum GamePhase { Paused, Replay, RealTime, GameOver }
+public enum GamePhase { Paused, Replay, RealTime }
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public event Action OnGameOver;
     public event Action OnTraceStarted;
     public event Action OnTraceEnded;
 
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     
     [Header("UI Settings")]
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject gameClearPanel;       // 클리어 시 보여줄 패널
     [SerializeField] private GameObject pauseMenu;
 
     [Header("UI Keyboard Focus Settings")]
@@ -29,6 +31,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject firstPauseButton;
     [Tooltip("게임오버 창이 뜰 때 처음 선택될 버튼 (예: Restart Button)")]
     [SerializeField] private GameObject firstGameOverButton;
+    [Tooltip("게임 클리어 창이 뜰 때 처음 선택될 버튼 (예: Next Button)")]
+    [SerializeField] private GameObject firstGameClearButton;
 
     [Header("Leaderboard UI")]
     [SerializeField] private TextMeshProUGUI rankText;
@@ -62,8 +66,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (CurrentPhase == GamePhase.GameOver) return;
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
@@ -144,6 +146,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         StartCoroutine(ShowGameOverPanelRoutine());
+        OnGameOver?.Invoke();
     }
 
     private IEnumerator ShowGameOverPanelRoutine()
@@ -153,6 +156,15 @@ public class GameManager : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
             SetUIFocus(firstGameOverButton); // ⬅️ 추가: 게임오버 창 첫 버튼 자동 선택
+        }
+    }
+
+    public void GameClear()
+    {
+        if (gameClearPanel != null) 
+        {
+            gameClearPanel.SetActive(true);
+            SetUIFocus(firstGameClearButton);
         }
     }
 

@@ -135,7 +135,7 @@ public class WaveManager : MonoBehaviour
 
         // 4. 모든 웨이브 종료 시 게임 클리어 처리
         OnAllWavesCleared?.Invoke(); // UI에 클리어 화면 띄우라고 알림
-        GameManager.Instance.ChangePhase(GamePhase.GameOver); // 게임 상태 변경 (타이머 정지 등)
+        GameManager.Instance.GameClear(); // 게임 상태 변경 (타이머 정지 등)
     }
 
     private IEnumerator SpawnEnemy(enemyData enemy)
