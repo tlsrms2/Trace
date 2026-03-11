@@ -158,6 +158,7 @@ public class BossEnemy : Enemy
     #region 패턴 1: 대쉬 공격
     private void Dash()
     {
+        AudioManager.Instance.PlayEpicMobDash();
         Vector2 dir = (target.position - transform.position).normalized;
         StartCoroutine(DashAttackRoutine(dir));
     }
@@ -217,6 +218,7 @@ public class BossEnemy : Enemy
     #region 패턴 2: 총알 발사
     void Shoot()
     {
+        AudioManager.Instance.PlayEpicMobShoot();
         for (int i = 0; i < muzzles.Length; i++)
         {
             // 상하좌우
@@ -352,6 +354,8 @@ public class BossEnemy : Enemy
 
             warningLines[i] = lr;
             
+            AudioManager.Instance.PlayLaserWarning();
+
             yield return StartCoroutine(PausedWait(0.25f));
         }
         
@@ -396,6 +400,7 @@ public class BossEnemy : Enemy
 
     private IEnumerator SpecialAttackDash(specialAttackInfo info)
     {
+        AudioManager.Instance.PlayEpicMobDash();
         transform.position = info.startPos;
 
         float dashTimer = 0f;

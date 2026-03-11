@@ -66,7 +66,15 @@ public class Enemy : MonoBehaviour
             {
                 WaveManager.Instance.OnEnemyKilled();
 
-                AudioManager.Instance.PlayEnemyDeath2();
+                // 🔹 보스 여부 체크 후 효과음 재생
+                if (TryGetComponent<BossEnemy>(out BossEnemy boss))
+                {
+                    AudioManager.Instance.PlayBossDeath(); // 보스 전용 효과음
+                }
+                else
+                {
+                    AudioManager.Instance.PlayEnemyDeath2(); // 일반 적
+                }
 
                 var particle = Instantiate(destroyParticle, transform.position, Quaternion.identity);
                 ParticleSystem ps = particle.GetComponent<ParticleSystem>();
