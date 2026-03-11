@@ -301,7 +301,6 @@ MonoBehaviour:
   waveText: {fileID: 1184939511}
   enemyCountText: {fileID: 665151523}
   activeVisualEffect: {fileID: 663482457}
-  gameClearPanel: {fileID: 1426654271}
 --- !u!114 &312554648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -991,9 +990,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   CurrentPhase: 2
   gameOverPanel: {fileID: 23670972}
+  gameClearPanel: {fileID: 0}
   pauseMenu: {fileID: 1588441751}
+  firstTitleButton: {fileID: 0}
   firstPauseButton: {fileID: 111536110}
   firstGameOverButton: {fileID: 2025473334}
+  firstGameClearButton: {fileID: 0}
   rankText: {fileID: 0}
   nameText: {fileID: 0}
   timeText: {fileID: 1289906135}
@@ -1688,10 +1690,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6351283835988750297, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: a3f5820c5ffe58d43ac94b2b09cf6ae1, type: 2}
     - target: {fileID: 6149245629701918787, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_SpriteState.m_SelectedSprite
       value: 
@@ -1724,6 +1722,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6351283835988750297, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: a3f5820c5ffe58d43ac94b2b09cf6ae1, type: 2}
     - target: {fileID: 6475092323367906538, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -0.000061035
@@ -1903,6 +1905,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1427851891 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2751829698491156115, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+  m_PrefabInstance: {fileID: 1289906134}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1588441751 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3065743257347535172, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
@@ -2308,6 +2321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimer
   timerText: {fileID: 1289906135}
+  gameOverText: {fileID: 1427851891}
   currentTime: 0
   isRunning: 1
   minutes: 0
