@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Move()
     {
-        if (GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)
+        if (target && GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)
         {
             transform.position = Vector2.MoveTowards(
                 transform.position,
@@ -38,14 +38,6 @@ public class Enemy : MonoBehaviour
                 speed * Time.deltaTime
             );
         }
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            // 플레이어 데미지 처리 로직
-        }   
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

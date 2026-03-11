@@ -21,7 +21,6 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("선 데미지")][SerializeField] private int lineDamage = 5;
     [Tooltip("도형 데미지")][SerializeField] private int shapeDamage = 10;
 
-    private float moveSpeed;
     [Header("도형 색상")]
     [SerializeField] private Color shapeColor = new Color(1f, 0.5f, 0.5f, 0.4f); // 인스펙터에서 조정 가능
     private LineRenderer lineRenderer;
@@ -34,6 +33,7 @@ public class PlayerMove : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
     private Rigidbody2D playerRigidbody;
+    private float moveSpeed;
 
     private void Awake()
     {
