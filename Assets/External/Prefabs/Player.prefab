@@ -89,7 +89,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6903252855027750859
 GameObject:
@@ -203,8 +203,8 @@ MonoBehaviour:
   Illusion: {fileID: 2056369056807433817}
   dotLineRenderer: {fileID: 6827926079817769593}
   dotLineMaterial: {fileID: 2100000, guid: 1c298312a75a4e849af39d1665e72739, type: 2}
-  moveSpeed: 5
-  drawMoveSpeed: 3
+  normalMoveSpeed: 5
+  traceMoveSpeed: 3
   minDistance: 0.1
   lineWidth: 0.05
   closeThreshold: 1
