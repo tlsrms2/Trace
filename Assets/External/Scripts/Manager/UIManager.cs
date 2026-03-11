@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,9 +8,35 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject pauseMenu;
 
+    [Header("Leaderboard UI")]
+    [SerializeField] private TextMeshProUGUI rankText;
+    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI timeText;
+
     void Awake()
     {
         Instance = this;
+    }
+
+    void Start()
+    {
+        UpdateLeaderboardUI();
+    }
+
+    public void UpdateLeaderboardUI()
+    {
+        var leaderboard = LeaderboardManager.Instance.GetLeaderboard();
+
+        rankText.text = "";
+        nameText.text = "";
+        timeText.text = "";
+
+        foreach (var entry in leaderboard)
+        {
+            rankText.text += entry.rank + "\n";
+            nameText.text += entry.playerName + "\n";
+            timeText.text += entry.clearTime.ToString("F2") + "\n";
+        }
     }
 
     public void ShowPause()
@@ -24,33 +51,28 @@ public class UIManager : MonoBehaviour
             pauseMenu.SetActive(false);
     }
 
-    // 돌아가기 버튼
     public void ResumeGame()
     {
         GameManager.Instance.ResumeGame();
     }
 
-    // 재시작 버튼
     public void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // 메인메뉴 버튼
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("TitleScene");
     }
 
-    // 타이틀에서 게임 시작
     public void StartGame()
     {
         SceneManager.LoadScene("GameScene");
     }
 
-    // 게임 종료
     public void QuitGame()
     {
         Application.Quit();

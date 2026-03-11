@@ -1,0 +1,95 @@
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+
+public class LeaderboardManager : MonoBehaviour
+{
+    public static LeaderboardManager Instance;
+
+    private string filePath;
+
+    public LeaderboardData leaderboard = new LeaderboardData();
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        filePath = Path.Combine(Application.dataPath, "leaderboard.json");
+        Load();
+    }
+
+    void Start()
+    {
+        LeaderboardManager.Instance.AddScore("Test", 50f);
+    }
+
+    public void AddScore(string playerName, float clearTime)
+    {
+        LeaderboardEntry entry = new LeaderboardEntry(playerName, clearTime);
+
+        leaderboard.entries.Add(entry);
+
+        SortLeaderboard();
+
+        UpdateRanks();
+
+        LimitEntries(10);
+
+        Save();
+    }
+
+    void SortLeaderboard()
+    {
+        leaderboard.entries.Sort((a, b) => a.clearTime.CompareTo(b.clearTime));
+    }
+
+    void UpdateRanks()
+    {
+        for (int i = 0; i < leaderboard.entries.Count; i++)
+        {
+            leaderboard.entries[i].rank = i + 1;
+        }
+    }
+
+    void LimitEntries(int max)
+    {
+        if (leaderboard.entries.Count > max)
+        {
+            leaderboard.entries.RemoveRange(max, leaderboard.entries.Count - max);
+        }
+    }
+
+    public void Save()
+    {
+        string json = JsonUtility.ToJson(leaderboard, true);
+
+        File.WriteAllText(filePath, json);
+    }
+
+    public void Load()
+    {
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+
+            leaderboard = JsonUtility.FromJson<LeaderboardData>(json);
+        }
+        else
+        {
+            leaderboard = new LeaderboardData();
+        }
+    }
+
+    public List<LeaderboardEntry> GetLeaderboard()
+    {
+        return leaderboard.entries;
+    }
+}
