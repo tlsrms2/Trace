@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -7172225799726236086}
   m_Layer: 0
   m_Name: DashEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashEnemy
   speed: 3.5
-  increaseSpeed: 0.01
+  increaseSpeed: 0
   Hp: 5
   dashSpeed: 20
   dashCooldown: 3

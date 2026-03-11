@@ -21,8 +21,8 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("선 데미지")][SerializeField] private int lineDamage = 5;
     [Tooltip("도형 데미지")][SerializeField] private int shapeDamage = 10;
 
-    private float moveSpeed;
-
+    [Header("도형 색상")]
+    [SerializeField] private Color shapeColor = new Color(1f, 0.5f, 0.5f, 0.4f); // 인스펙터에서 조정 가능
     private LineRenderer lineRenderer;
     private List<Vector3> tracePoints = new List<Vector3>();
     private List<GameObject> shapes = new List<GameObject>();
@@ -33,6 +33,7 @@ public class PlayerMove : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
     private Rigidbody2D playerRigidbody;
+    private float moveSpeed;
 
     private void Awake()
     {
@@ -206,9 +207,10 @@ public class PlayerMove : MonoBehaviour
         MeshFilter mf = shapeObj.AddComponent<MeshFilter>();
         MeshRenderer mr = shapeObj.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
-        mr.material = new Material(Shader.Find("Sprites/Default"));
-        mr.material.color = new Color(1f, 0.5f, 0.5f, 0.4f);
+        mr.material = new Material(Shader.Find("Unlit/Color")); // Unlit Shader 사용
+        mr.material.color = shapeColor;
 
+        mr.material.SetColor("_EmissionColor", shapeColor * 2f); 
         AttackData attack = shapeObj.AddComponent<AttackData>();
         attack.Damage = shapeDamage;
         shapeObj.tag = "Attack";
@@ -225,9 +227,26 @@ public class PlayerMove : MonoBehaviour
         foreach (GameObject shape in shapes)
         {
             shape.SetActive(true);
-            Destroy(shape, 1f);
+            StartCoroutine(FadeAndDestroyShape(shape, 0.4f));
         }
-        shapes.Clear();
+        shapes.Clear(); 
         lineRenderer.positionCount = 0;
+    }
+
+    private IEnumerator FadeAndDestroyShape(GameObject shape, float duration)
+    {
+        MeshRenderer mr = shape.GetComponent<MeshRenderer>();
+        Color originalColor = mr.material.color;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            mr.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, Mathf.Lerp(originalColor.a, 0, t));
+            yield return null;
+        }
+
+        Destroy(shape);
     }
 }
