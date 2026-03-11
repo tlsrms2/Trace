@@ -154,3 +154,4 @@ MonoBehaviour:
   speed: 4
   increaseSpeed: 0.01
   Hp: 5
+  destroyParticle: {fileID: 7710619616481920721, guid: bf041392d8cea644daa384dac726ef64, type: 3}

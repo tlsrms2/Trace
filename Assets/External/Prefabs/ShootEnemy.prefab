@@ -221,6 +221,7 @@ MonoBehaviour:
   speed: 1
   increaseSpeed: 0.01
   Hp: 5
+  destroyParticle: {fileID: 7710619616481920721, guid: bf041392d8cea644daa384dac726ef64, type: 3}
   bulletPrefab: {fileID: 5612879478203917923, guid: da30e7cf941241c44bb168d5c022e4c9, type: 3}
   muzzle: {fileID: 6089207625343218061}
   moveDuration: 1

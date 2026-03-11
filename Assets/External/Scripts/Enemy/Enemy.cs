@@ -5,6 +5,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float speed;
     [SerializeField] protected float increaseSpeed;
     [SerializeField] protected float Hp;
+    [SerializeField] private GameObject destroyParticle;
 
     protected Transform target;
     protected Collider2D col;
@@ -50,6 +51,10 @@ public class Enemy : MonoBehaviour
             if (Hp <= 0)
             {
                 WaveManager.Instance.OnEnemyKilled();
+                var particle = Instantiate(destroyParticle, transform.position, Quaternion.identity);
+                ParticleSystem ps = particle.GetComponent<ParticleSystem>();
+                var main = ps.main;
+                main.startColor = spriteRenderer.color;
                 Destroy(gameObject);
             }
         }

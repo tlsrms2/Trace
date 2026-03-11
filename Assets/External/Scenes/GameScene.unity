@@ -538,8 +538,8 @@ MonoBehaviour:
   CurrentPhase: 2
   MaxGauge: 100
   CurrentGauge: 100
-  ConsumptionRate: 20
-  RecoveryRate: 30
+  ConsumptionRate: 25
+  RecoveryRate: 15
 --- !u!4 &835026620
 Transform:
   m_ObjectHideFlags: 0
