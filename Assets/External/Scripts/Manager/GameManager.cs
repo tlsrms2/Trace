@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
             TogglePause();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.RealTime)
+        if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.RealTime && !IsPaused)
         {
             ChangePhase(GamePhase.Paused);
         }
