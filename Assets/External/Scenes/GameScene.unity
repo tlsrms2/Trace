@@ -722,6 +722,10 @@ PrefabInstance:
       propertyPath: m_RenderMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2439210131976755545, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_Name
+      value: Restart1
+      objectReference: {fileID: 0}
     - target: {fileID: 2870851628726975014, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -819,12 +823,40 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3396349618564822977, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3396349618564822977, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3396349618564822977, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3396349618564822977, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.0005493164
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3937853992766508461, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_Name
+      value: Resume1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4062675468597793121, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315260343027303916, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_Name
       value: IngameUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 4523786705542013807, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: targetGroup
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4818039021109000229, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5127288115771164136, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -834,8 +866,20 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5587761450234629167, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_Name
+      value: Menu1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7225032424487618643, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4730952602164703239, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+    - {fileID: 8144202353099802231, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+    - {fileID: 3854337514895142904, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+    - {fileID: 1809170790451826678, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
