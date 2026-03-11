@@ -55,7 +55,8 @@ public class ShootEnemyBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision) {
         Vector2 knockbackDirection = Vector2.zero;
-        if (collision.gameObject.CompareTag("Attack"))
+        AttackData attack;
+        if (collision.TryGetComponent(out attack) && collision.gameObject.CompareTag("Player"))
         {
             if (shooterTransform != null)
             {

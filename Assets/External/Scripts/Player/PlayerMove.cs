@@ -140,6 +140,7 @@ public class PlayerMove : MonoBehaviour
     private IEnumerator EraseFromStart(float interval = 0.01f)
     {
         GameObject colliderObj = new GameObject("AttackCollider");
+        colliderObj.tag = "Player";
         EdgeCollider2D edgeCol = colliderObj.AddComponent<EdgeCollider2D>();
         Vector2[] points2D = tracePoints.Select(p => new Vector2(p.x, p.y)).Reverse().ToArray();
         edgeCol.points = points2D;
