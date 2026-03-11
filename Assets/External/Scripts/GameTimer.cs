@@ -1,13 +1,27 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class GameTimer : MonoBehaviour
 {
+    public static GameTimer Instance;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     [Header("UI Reference")]
     public TextMeshProUGUI timerText;
 
     [Header("Timer Settings")]
-    public float currentTime = 0f;
+    public int currentTime = 0;
     public bool isRunning = true;
 
     [Header("Distance Fading Settings")]
@@ -19,6 +33,12 @@ public class GameTimer : MonoBehaviour
     
     [Range(0f, 1f)] public float maxAlpha = 1f;   // 멀리 있을 때의 투명도 (1 = 완전 불투명)
     [Range(0f, 1f)] public float minAlpha = 0f; // 가까이 있을 때의 투명도 (0.2 = 많이 투명함)
+
+    [Header("Time Reduce Settings")]
+    public TextMeshPro reduceText;
+    public float accumulatedAmount = 0f;
+    public float effectDuration = 1f;
+    public Coroutine effectCoroutine;
 
     void Start()
     {
@@ -34,7 +54,7 @@ public class GameTimer : MonoBehaviour
         // 1. 타이머 시간 계산
         if (isRunning && GameManager.Instance.CurrentPhase != GamePhase.Paused)
         {
-            currentTime += Time.deltaTime;
+            currentTime += (int)Time.deltaTime;
             UpdateTimerDisplay();
         }
 
@@ -71,4 +91,26 @@ public class GameTimer : MonoBehaviour
         textColor.a = currentAlpha;
         timerText.color = textColor;
     }
+
+    // public void ReduceTime(float amount)
+    // {
+    //     currentTime = Mathf.Max(0f, currentTime - amount);
+
+    //     accumulatedAmount += amount;
+
+    //     if (effectCoroutine != null)
+    //     {
+    //         StopCoroutine(effectCoroutine);
+    //     }
+    //     effectCoroutine = StartCoroutine(ShowReduceEffectRoutine()));
+    // }
+
+    // private IEnumerator showReduceEffectRoutine()
+    // {
+    //     yield return new WaitForEndOfFrame();
+
+    //     reduceText.gameObject.SetActive(true);
+    //     reduceText.text = $"-{accumulatedAmount:F0}s";
+
+    // }
 }

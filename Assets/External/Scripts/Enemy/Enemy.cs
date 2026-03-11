@@ -70,6 +70,10 @@ public class Enemy : MonoBehaviour
                 var main = ps.main;
                 main.startColor = spriteRenderer.color;
                 Destroy(gameObject);
+                if (collision.gameObject.name == "FilledShape")
+                {
+                    // GameTimer.Instance.ReduceTime(2f);
+                }
             }
             else if (beforeHp > Hp)
             {
