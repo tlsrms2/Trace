@@ -191,10 +191,12 @@ public class PlayerMove : MonoBehaviour
 
     private IEnumerator EraseAttackLine(List<Vector3> attackTracePoints, GameObject colliderObj, float interval = 0.01f)
     {
+        EdgeCollider2D edgeCol = colliderObj.GetComponent<EdgeCollider2D>();
         while (attackTracePoints.Count > 0)
         {
             lineRenderer.positionCount = attackTracePoints.Count;
             lineRenderer.SetPositions(attackTracePoints.ToArray());
+            edgeCol.points = attackTracePoints.Select(p => (Vector2)p).ToArray();
             attackTracePoints.RemoveAt(0);
 
             yield return new WaitForSeconds(interval);

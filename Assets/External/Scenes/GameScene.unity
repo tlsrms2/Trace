@@ -980,6 +980,7 @@ MonoBehaviour:
   CurrentGauge: 100
   ConsumptionRate: 30
   RecoveryRate: 10
+  RecoveryStartTime: 0.5
 --- !u!4 &835026620
 Transform:
   m_ObjectHideFlags: 0

@@ -19,10 +19,10 @@ MonoBehaviour:
     spawnStartTime: 0
   - enemyPrefab: {fileID: 6892968917303159334, guid: 82fe0d2b9ccb0a140af85b74ea4de32f, type: 3}
     spawnInterval: 3
-    enemyCount: 6
+    enemyCount: 5
     spawnStartTime: 10
   - enemyPrefab: {fileID: 6892968917303159334, guid: 47eb5a92433aeac4da8be89b4670e9ef, type: 3}
     spawnInterval: 5
-    enemyCount: 8
+    enemyCount: 5
     spawnStartTime: 15
   isBossWave: 0
