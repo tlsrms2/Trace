@@ -23,6 +23,9 @@ public class GameTimer : MonoBehaviour
     [Header("Timer Settings")]
     public int currentTime = 0;
     public bool isRunning = true;
+    public int minutes;
+    public int seconds;
+    public int milliseconds;
 
     [Header("Distance Fading Settings")]
     public Transform player; // 플레이어의 Transform
@@ -92,9 +95,9 @@ public class GameTimer : MonoBehaviour
         timerText.color = textColor;
     }
 
-    // public void ReduceTime(float amount)
+    // public void ReduceTime(int amount)
     // {
-    //     currentTime = Mathf.Max(0f, currentTime - amount);
+    //     currentTime = Mathf.Max(0, currentTime - amount);
 
     //     accumulatedAmount += amount;
 
@@ -102,7 +105,7 @@ public class GameTimer : MonoBehaviour
     //     {
     //         StopCoroutine(effectCoroutine);
     //     }
-    //     effectCoroutine = StartCoroutine(ShowReduceEffectRoutine()));
+    //     effectCoroutine = StartCoroutine(ShowReduceEffectRoutine());
     // }
 
     // private IEnumerator showReduceEffectRoutine()
@@ -112,5 +115,10 @@ public class GameTimer : MonoBehaviour
     //     reduceText.gameObject.SetActive(true);
     //     reduceText.text = $"-{accumulatedAmount:F0}s";
 
+    //     float timer = 0f;
+    //     while (timer < effectDuration)
+    //     {
+    //         timer += 
+    //     }
     // }
 }

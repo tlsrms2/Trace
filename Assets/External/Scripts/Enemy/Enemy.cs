@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
                 Destroy(gameObject);
                 if (collision.gameObject.name == "FilledShape")
                 {
-                    // GameTimer.Instance.ReduceTime(2f);
+                    // GameTimer.Instance.ReduceTime(2);
                 }
             }
             else if (beforeHp > Hp)
