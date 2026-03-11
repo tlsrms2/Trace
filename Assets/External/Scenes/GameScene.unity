@@ -762,7 +762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.11764706}
+  m_Color: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 0.039215688}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -994,6 +994,7 @@ MonoBehaviour:
   firstClearPanel: {fileID: 1289906138}
   secondClearPanel: {fileID: 1289906137}
   pauseMenu: {fileID: 1588441751}
+  nameInputField: {fileID: 1237674377}
   firstTitleButton: {fileID: 0}
   firstPauseButton: {fileID: 111536110}
   firstGameOverButton: {fileID: 2025473334}
@@ -1494,6 +1495,17 @@ RectTransform:
   m_AnchoredPosition: {x: 500, y: 405}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1237674377 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6524649994293580083, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+  m_PrefabInstance: {fileID: 1289906134}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453943440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_InputField
 --- !u!1001 &1289906134
 PrefabInstance:
   m_ObjectHideFlags: 0

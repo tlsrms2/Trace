@@ -22,13 +22,8 @@ public class LeaderboardManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        filePath = Path.Combine(Application.dataPath, "leaderboard.json");
+        filePath = Path.Combine(Application.persistentDataPath, "leaderboard.json");
         Load();
-    }
-
-    void Start()
-    {
-        LeaderboardManager.Instance.AddScore("Test", 50f);
     }
 
     public void AddScore(string playerName, float clearTime)

@@ -19,13 +19,14 @@ public class GameManager : MonoBehaviour
     public bool IsPaused { get; private set; }
     public GamePhase CurrentPhase = GamePhase.RealTime;
     public bool isPaused => CurrentPhase == GamePhase.Paused;
-    
+    private string playerName;
     [Header("UI Settings")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject gameClearPanel;       // 클리어 시 보여줄 패널
     [SerializeField] private GameObject firstClearPanel;     // 클리어 시 보여줄 첫 번째 입력 패널
     [SerializeField] private GameObject secondClearPanel;    // 첫 번째 패널 입력 완료 후 표시할 두 번째 클리어 패널
     [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private TMP_InputField nameInputField;
 
     [Header("UI Keyboard Focus Settings")]
     [Tooltip("타이틀 창이 뜰 때 처음 선택될 버튼 (예: Start Button)")]
@@ -190,8 +191,18 @@ public class GameManager : MonoBehaviour
 
     public void ClearPanelChange()
     {
+        // TMP_InputField 텍스트 가져오기
+        playerName = nameInputField.text;
+
+        // 입력 안했으면 기본 이름
+        if (string.IsNullOrEmpty(playerName))
+            playerName = "Unnamed";
+
+        LeaderboardManager.Instance.AddScore(playerName, GameTimer.Instance.currentTime);
+
         firstClearPanel.SetActive(false);
         secondClearPanel.SetActive(true);
+
         SetUIFocus(secondClearButton);
     }
 
