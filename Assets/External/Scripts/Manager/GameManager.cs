@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public enum GamePhase { Paused, Replay, RealTime, GameOver }
@@ -17,12 +18,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float CurrentGauge;
     [SerializeField] private float ConsumptionRate = 20f;
     [SerializeField] private float RecoveryRate = 10f;
+    [Tooltip("리플레이 후 게이지 충전 시작 시간")][SerializeField] private float RecoveryStartTime = 1f;
+
+    private Coroutine chargeGaugeCor;
+    private bool canCharge;
 
     public bool isPaused => CurrentPhase == GamePhase.Paused;
 
     void Awake()
     {
         Instance = this;
+        OnTraceEnded += StartChargeWait;
     }
 
     void Update()
@@ -83,6 +89,7 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentPhase == GamePhase.Paused)
         {
+            canCharge = false;
             CurrentGauge -= ConsumptionRate * Time.unscaledDeltaTime;
             if (CurrentGauge <= 0)
             {
@@ -90,10 +97,29 @@ public class GameManager : MonoBehaviour
                 ChangePhase(GamePhase.Replay);
             }
         }
-        else if (CurrentPhase == GamePhase.RealTime)
+
+        if (canCharge)
         {
             CurrentGauge = Mathf.Min(MaxGauge, CurrentGauge + RecoveryRate * Time.deltaTime);
         }
+    }
+
+    private void StartChargeWait()
+    {
+        if (chargeGaugeCor != null)
+            StopCoroutine(chargeGaugeCor);
+        chargeGaugeCor = StartCoroutine(WaitChargeGauge());
+    }
+
+    private IEnumerator WaitChargeGauge()
+    {
+        yield return new WaitForSeconds(RecoveryStartTime);
+        StartCharge();
+    }
+
+    private void StartCharge()
+    {
+        canCharge = true;
     }
 
     public void ChangePhase(GamePhase nextPhase)
