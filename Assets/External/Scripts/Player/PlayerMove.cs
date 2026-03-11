@@ -165,7 +165,7 @@ public class PlayerMove : MonoBehaviour
         // 공격 선 드로우 시 사용하는 포인트 위치
         List<Vector3> attackTracePoints = new List<Vector3>();
 
-        while (tracePoints.Count > 1)
+        while (tracePoints.Count > 0)
         {
             transform.position = tracePoints[0];
             attackTracePoints.Add(tracePoints[0]);
@@ -182,10 +182,26 @@ public class PlayerMove : MonoBehaviour
 
         tracePoints.Clear();
         dotLineRenderer.positionCount = 0;
-
-        Destroy(colliderObj);
+        
         ActivateShapes();
+        StartCoroutine(EraseAttackLine(attackTracePoints, colliderObj));
+        
         GameManager.Instance.ChangePhase(GamePhase.RealTime);
+    }
+
+    private IEnumerator EraseAttackLine(List<Vector3> attackTracePoints, GameObject colliderObj, float interval = 0.01f)
+    {
+        EdgeCollider2D edgeCol = colliderObj.GetComponent<EdgeCollider2D>();
+        while (attackTracePoints.Count > 0)
+        {
+            lineRenderer.positionCount = attackTracePoints.Count;
+            lineRenderer.SetPositions(attackTracePoints.ToArray());
+            edgeCol.points = attackTracePoints.Select(p => (Vector2)p).ToArray();
+            attackTracePoints.RemoveAt(0);
+
+            yield return new WaitForSeconds(interval);
+        }
+        Destroy(colliderObj);
     }
 
     private void CreateShape(List<Vector3> points)
@@ -203,7 +219,7 @@ public class PlayerMove : MonoBehaviour
         MeshFilter mf = shapeObj.AddComponent<MeshFilter>();
         MeshRenderer mr = shapeObj.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
-        mr.material = new Material(Shader.Find("Unlit/Color")); // Unlit Shader 사용
+        mr.material = new Material(Shader.Find("Unlit/Color"));
         mr.material.color = shapeColor;
 
         mr.material.SetColor("_EmissionColor", shapeColor * 2f); 
