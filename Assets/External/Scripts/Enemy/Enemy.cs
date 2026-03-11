@@ -1,4 +1,5 @@
 using UnityEngine;
+using System; // Action 사용을 위해 추가
 
 public class Enemy : MonoBehaviour
 {
@@ -6,6 +7,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float increaseSpeed;
     [SerializeField] protected float Hp;
     [SerializeField] private GameObject destroyParticle;
+    
+    // --- 추가된 부분 ---
+    public float MaxHp { get; private set; } 
+    public event Action<float, float> OnHpChanged; // <현재 체력, 최대 체력>
+    // -------------------
 
     protected Transform target;
     protected Collider2D col;
@@ -16,6 +22,9 @@ public class Enemy : MonoBehaviour
         col = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         target = GameObject.FindGameObjectWithTag("Player").transform;
+        
+        // 스폰될 때 초기 체력을 최대 체력으로 기억
+        MaxHp = Hp; 
     }
 
     protected virtual void Start()
@@ -48,6 +57,10 @@ public class Enemy : MonoBehaviour
         if (collision.TryGetComponent(out attack))
         {
             Hp -= attack.Damage;
+
+            // --- 추가된 부분: 체력이 깎일 때마다 이벤트 발생 ---
+            OnHpChanged?.Invoke(Hp, MaxHp);
+            // ---------------------------------------------------
 
             if (Hp <= 0)
             {
