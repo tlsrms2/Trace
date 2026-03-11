@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6371367ae451ee34a829474827678007
+guid: f8c4e927ba5a1874db1ebe1c4cc383fe
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6605879404610720367
-    second: RESUME1_0
+      213: -1059829331948178670
+    second: NEW GAME2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,12 +100,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RESUME1_0
+      name: NEW GAME2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 376
+        width: 420
         height: 141
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 19deb135ea33354a0800000000000000
-      internalID: -6605879404610720367
+      spriteID: 21370ba76daba41f0800000000000000
+      internalID: -1059829331948178670
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      RESUME1_0: -6605879404610720367
+      NEW GAME2_0: -1059829331948178670
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
