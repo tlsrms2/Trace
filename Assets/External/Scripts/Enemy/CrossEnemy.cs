@@ -14,7 +14,7 @@ public class CrossEnemy : Enemy
     private bool isAlerting = true;
     private bool isActivating = true;
     
-    private Vector3 direction; // 돌진 방향
+    private Vector3 direction; 
     private Camera mainCam;
 
     protected override void Awake()
@@ -41,62 +41,75 @@ public class CrossEnemy : Enemy
         timer = alertTime;
         isActivating = true;
         lineRenderer.enabled = true;
+        base.Start(); // target 초기화
+        
+        // LineRenderer의 초기 너비만 한 번 저장해 둡니다.
+        initialWidth = transform.localScale.x;
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
 
-        // --- 2. 동적 화면 크기 계산 및 내 위치 재조정 (95% 룰 적용) ---
+        // 첫 번째 공격 개시
+        ResetAttack(); 
+    }
+
+    // ★ 핵심: 공격 상태를 초기화하고 새로운 위치를 잡는 함수
+    private void ResetAttack()
+    {
+        isAlerting = true;
+        timer = alertTime;
+        
+        // 1. 다시 숨기기
+        spriteRenderer.enabled = false;
+        col.enabled = false;
+        lineRenderer.enabled = true; // 꺼졌던 선 다시 켜기
+
+        // 2. 동적 화면 크기 계산 및 내 위치 재조정 (95% 룰 적용)
         if (mainCam != null)
         {
             float camHalfHeight = mainCam.orthographicSize;
             float camHalfWidth = camHalfHeight * mainCam.aspect;
             Vector3 camPos = mainCam.transform.position;
 
-            // 화면의 95% 안전 구역 설정
             float safeY = camHalfHeight * 0.95f;
             float safeX = camHalfWidth * 0.95f;
 
-            // 스포너가 대충 던져준 위치(transform.position)를 바탕으로 어느 쪽 벽에 가까운지 판단
-            float distX = transform.position.x - camPos.x;
-            float distY = transform.position.y - camPos.y;
+            // 이미 스폰되어 있는 상태이므로, 카메라 중심으로 임의의 방향을 결정하도록 로직을 살짝 수정
+            int randomSide = Random.Range(0, 4); 
 
-            // 화면 밖 등장/퇴장 기준선 (카메라 크기 + 여유값 2f)
             float outX = camHalfWidth + 2f;
             float outY = camHalfHeight + 2f;
 
             Vector3 startPos = Vector3.zero;
 
-            int randomWall = Random.Range(0, 4);
-
-            switch (randomWall)
+            switch (randomSide)
             {
-                case 0: // 우측
-                    startPos = new Vector3(camPos.x + outX, camPos.y + Random.Range(-safeY, safeY), 0);
-                    direction = Vector3.left;
-                    break;
-                case 1: // 좌측
-                    startPos = new Vector3(camPos.x - outX, camPos.y + Random.Range(-safeY, safeY), 0);
+                case 0: // 좌측 벽에서 우측으로
+                    startPos = new Vector3(camPos.x - outX, Random.Range(camPos.y - safeY, camPos.y + safeY), 0);
                     direction = Vector3.right;
                     break;
-                case 2: // 상단
-                    startPos = new Vector3(camPos.x + Random.Range(-safeX, safeX), camPos.y + outY, 0);
-                    direction = Vector3.down;
+                case 1: // 우측 벽에서 좌측으로
+                    startPos = new Vector3(camPos.x + outX, Random.Range(camPos.y - safeY, camPos.y + safeY), 0);
+                    direction = Vector3.left;
                     break;
-                case 3: // 하단
-                    startPos = new Vector3(camPos.x + Random.Range(-safeX, safeX), camPos.y - outY, 0);
+                case 2: // 하단 벽에서 상단으로
+                    startPos = new Vector3(Random.Range(camPos.x - safeX, camPos.x + safeX), camPos.y - outY, 0);
                     direction = Vector3.up;
+                    break;
+                case 3: // 상단 벽에서 하단으로
+                    startPos = new Vector3(Random.Range(camPos.x - safeX, camPos.x + safeX), camPos.y + outY, 0);
+                    direction = Vector3.down;
                     break;
             }
 
-            // 스포너가 정해준 위치를 무시하고, 계산된 완벽한 95% 위치로 내 위치 덮어쓰기!
+            // 계산된 새로운 위치로 순간이동
             transform.position = startPos;
 
-            // 도착 지점 계산 (내 위치에서 반대편 화면 밖까지)
+            // 도착 지점 계산
             Vector3 endPos = startPos + direction * (Mathf.Abs(direction.x) > 0 ? outX * 2 : outY * 2);
 
-            // 3. LineRenderer (경로 표시) 설정
+            // 3. LineRenderer (경로 표시) 재설정
             lineRenderer.positionCount = 2;
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
-
-            initialWidth = transform.localScale.x;
             lineRenderer.startWidth = initialWidth;
             lineRenderer.endWidth = initialWidth;
         }
@@ -128,10 +141,10 @@ public class CrossEnemy : Enemy
                 col.enabled = true; 
             }
         }
-        else if(isAlerting == false)
+        else if (isAlerting == false)
         {
             // --- 돌진 페이즈 ---
-            base.Update(); // 오버라이드한 Move() 실행
+            base.Update(); 
             CheckOutOfBounds(); 
         }
     }
@@ -140,8 +153,7 @@ public class CrossEnemy : Enemy
     {
         if (GameManager.Instance.CurrentPhase != GamePhase.Paused)
         {
-        // 플레이어를 쫓아가지 않고 계산된 일직선 방향으로만 돌진
-        transform.position += direction * speed * Time.deltaTime;
+            transform.position += direction * speed * Time.deltaTime;
         }
     }
 
@@ -156,9 +168,11 @@ public class CrossEnemy : Enemy
         float distX = Mathf.Abs(transform.position.x - camPos.x);
         float distY = Mathf.Abs(transform.position.y - camPos.y);
 
+        // 화면 밖으로 완전히 벗어났을 때
         if (distX > camHalfWidth + 3.0f || distY > camHalfHeight + 3.0f)
         {
-            StartCoroutine(RespawnAfterDelay(0.8f)); 
+            // 파괴(Destroy)하지 않고, 다시 공격을 준비하도록 만듭니다!!
+            ResetAttack();
         }
     }
 
