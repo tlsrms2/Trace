@@ -139,6 +139,17 @@ public class PlayerMove : MonoBehaviour
     /// <returns></returns>
     private IEnumerator EraseFromStart(float interval = 0.01f)
     {
+        // 가만히 있었을 경우 바로 탈출
+        if (tracePoints.Count < 2)
+        {
+            tracePoints.Clear();
+            dotLineRenderer.positionCount = 0;
+            // 바로 ChangePhase를 사용하면 GameManager의 ChangePhase가 나중에 실행되어 Replay 상태가 됨
+            yield return null;
+            GameManager.Instance.ChangePhase(GamePhase.RealTime);
+            yield break;
+        }
+
         GameObject colliderObj = new GameObject("AttackCollider");
         colliderObj.tag = "Player";
         EdgeCollider2D edgeCol = colliderObj.AddComponent<EdgeCollider2D>();
