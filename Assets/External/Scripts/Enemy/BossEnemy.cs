@@ -68,7 +68,7 @@ public class BossEnemy : Enemy
         }
     }
 
-    
+
     #region 보스 인트로 
     private IEnumerator BossIntroSequence()
     {

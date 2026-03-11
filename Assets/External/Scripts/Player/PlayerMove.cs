@@ -144,7 +144,6 @@ public class PlayerMove : MonoBehaviour
         Vector2[] points2D = tracePoints.Select(p => new Vector2(p.x, p.y)).Reverse().ToArray();
         edgeCol.points = points2D;
         edgeCol.isTrigger = true;
-        edgeCol.tag = "Attack";
         AttackData data = colliderObj.AddComponent<AttackData>();
         data.Damage = lineDamage;
         var rig = colliderObj.AddComponent<Rigidbody2D>();
@@ -198,7 +197,6 @@ public class PlayerMove : MonoBehaviour
         mr.material.SetColor("_EmissionColor", shapeColor * 2f); 
         AttackData attack = shapeObj.AddComponent<AttackData>();
         attack.Damage = shapeDamage;
-        shapeObj.tag = "Attack";
         var rig = shapeObj.AddComponent<Rigidbody2D>();
         rig.gravityScale = 0;
         rig.bodyType = RigidbodyType2D.Kinematic;

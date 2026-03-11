@@ -86,7 +86,8 @@ public class BossBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision) {
         Vector2 knockbackDirection = Vector2.zero;
-        if (collision.gameObject.CompareTag("Attack"))
+        AttackData attack;
+        if (collision.TryGetComponent(out attack))
         {
             if (shooterTransform != null)
             {

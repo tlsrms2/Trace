@@ -7,7 +7,7 @@ public class PlayerHit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!isInvincibility && collision.gameObject.CompareTag("Enemy"))
+        if (!isInvincibility && GameManager.Instance.CurrentPhase != GamePhase.Replay && collision.gameObject.CompareTag("Enemy"))
         {
             Instantiate(destroyParticle, transform.position, Quaternion.identity);
             gameObject.SetActive(false);

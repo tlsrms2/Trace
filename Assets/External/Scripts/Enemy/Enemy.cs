@@ -42,9 +42,10 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Attack"))
+        AttackData attack;
+        if (collision.TryGetComponent(out attack))
         {
-            Hp -= collision.gameObject.GetComponent<AttackData>().Damage;
+            Hp -= attack.Damage;
 
             if (Hp <= 0)
             {
