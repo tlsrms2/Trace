@@ -1279,9 +1279,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   CurrentPhase: 2
   gameOverPanel: {fileID: 0}
+  clearText: {fileID: 0}
+  timerText: {fileID: 0}
   gameClearPanel: {fileID: 0}
   firstClearPanel: {fileID: 0}
   secondClearPanel: {fileID: 0}
+  thirdClearPanel: {fileID: 0}
   pauseMenu: {fileID: 0}
   nameInputField: {fileID: 0}
   firstTitleButton: {fileID: 520953176}
@@ -1289,6 +1292,7 @@ MonoBehaviour:
   firstGameOverButton: {fileID: 0}
   firstGameClearInputButton: {fileID: 0}
   secondClearButton: {fileID: 0}
+  thirdSelectButton: {fileID: 0}
   rankText: {fileID: 0}
   nameText: {fileID: 0}
   timeText: {fileID: 0}
@@ -2156,6 +2160,7 @@ GameObject:
   - component: {fileID: 1958396847}
   - component: {fileID: 1958396846}
   - component: {fileID: 1958396845}
+  - component: {fileID: 1958396848}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -2170,7 +2175,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1958396844}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
@@ -2224,6 +2229,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1958396848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958396844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d51f90f2730cf4d840999eee9cd9cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KeyboardOnlyInputModule
+  m_SendPointerHoverToParent: 1
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
 --- !u!1 &2103000010
 GameObject:
   m_ObjectHideFlags: 0

@@ -67,6 +67,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         OnTraceEnded += StartChargeWait;
     }
 
@@ -311,7 +313,6 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        Debug.Log("AA");
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
