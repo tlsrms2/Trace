@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -11,6 +12,7 @@ public class CrossEnemy : Enemy
     private float timer;
     private float initialWidth;
     private bool isAlerting = true;
+    private bool isActivating = true;
     
     private Vector3 direction; // 돌진 방향
     private Camera mainCam;
@@ -20,6 +22,7 @@ public class CrossEnemy : Enemy
         base.Awake(); 
         lineRenderer = GetComponent<LineRenderer>();
         mainCam = Camera.main;
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
     }
 
     private void OnEnable()
@@ -32,11 +35,12 @@ public class CrossEnemy : Enemy
 
     private void ReadySpecialAttack()
     {
-
         // 1. 경고 페이즈 동안 모습과 충돌체 숨기기
         spriteRenderer.enabled = false;
         col.enabled = false;
         timer = alertTime;
+        isActivating = true;
+        lineRenderer.enabled = true;
 
         // --- 2. 동적 화면 크기 계산 및 내 위치 재조정 (95% 룰 적용) ---
         if (mainCam != null)
@@ -59,36 +63,26 @@ public class CrossEnemy : Enemy
 
             Vector3 startPos = Vector3.zero;
 
-            // 가로축 거리가 더 멀면 좌/우 벽에서 스폰, 세로축이 더 멀면 상/하 벽에서 스폰
-            if (Mathf.Abs(distX) > Mathf.Abs(distY))
+            int randomWall = Random.Range(0, 4);
+
+            switch (randomWall)
             {
-                // Y축을 95% 안전 구역 내에서 랜덤 재설정
-                float randomY = Random.Range(camPos.y - safeY, camPos.y + safeY);
-                if (distX > 0) // 우측
-                {
-                    startPos = new Vector3(camPos.x + outX, randomY, 0);
+                case 0: // 우측
+                    startPos = new Vector3(camPos.x + outX, camPos.y + Random.Range(-safeY, safeY), 0);
                     direction = Vector3.left;
-                }
-                else // 좌측
-                {
-                    startPos = new Vector3(camPos.x - outX, randomY, 0);
+                    break;
+                case 1: // 좌측
+                    startPos = new Vector3(camPos.x - outX, camPos.y + Random.Range(-safeY, safeY), 0);
                     direction = Vector3.right;
-                }
-            }
-            else
-            {
-                // X축을 95% 안전 구역 내에서 랜덤 재설정
-                float randomX = Random.Range(camPos.x - safeX, camPos.x + safeX);
-                if (distY > 0) // 상단
-                {
-                    startPos = new Vector3(randomX, camPos.y + outY, 0);
+                    break;
+                case 2: // 상단
+                    startPos = new Vector3(camPos.x + Random.Range(-safeX, safeX), camPos.y + outY, 0);
                     direction = Vector3.down;
-                }
-                else // 하단
-                {
-                    startPos = new Vector3(randomX, camPos.y - outY, 0);
+                    break;
+                case 3: // 하단
+                    startPos = new Vector3(camPos.x + Random.Range(-safeX, safeX), camPos.y - outY, 0);
                     direction = Vector3.up;
-                }
+                    break;
             }
 
             // 스포너가 정해준 위치를 무시하고, 계산된 완벽한 95% 위치로 내 위치 덮어쓰기!
@@ -105,13 +99,12 @@ public class CrossEnemy : Enemy
             initialWidth = transform.localScale.x;
             lineRenderer.startWidth = initialWidth;
             lineRenderer.endWidth = initialWidth;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         }
     }
 
     protected override void Update()
     {
-        if (isAlerting && GameManager.Instance.CurrentPhase != GamePhase.Paused)
+        if (isAlerting &&  isActivating && GameManager.Instance.CurrentPhase != GamePhase.Paused)
         {
             // --- 경고 페이즈 ---
             timer -= Time.deltaTime;
@@ -165,13 +158,19 @@ public class CrossEnemy : Enemy
 
         if (distX > camHalfWidth + 3.0f || distY > camHalfHeight + 3.0f)
         {
-            gameObject.SetActive(false); 
-            Invoke(nameof(objectActivate), 1f); 
+            StartCoroutine(RespawnAfterDelay(0.8f)); 
         }
     }
 
-    private void objectActivate()
+    private IEnumerator RespawnAfterDelay(float delay)
     {
-        gameObject.SetActive(true);
+        isAlerting = true;
+        spriteRenderer.enabled = false;
+        col.enabled = false;
+        isActivating = false;
+
+        yield return new WaitForSeconds(delay);
+
+        ReadySpecialAttack();
     }
 }

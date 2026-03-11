@@ -6,6 +6,7 @@ public struct enemyData
 {
     public GameObject enemyPrefab;
     public float spawnInterval;
+    public int enemyCount;
     public float spawnStartTime;
 }
 
@@ -13,6 +14,5 @@ public struct enemyData
 public class WaveData : ScriptableObject
 {
     public enemyData[] enemies;
-    public int enemyCount;
     public bool isBossWave;
 }

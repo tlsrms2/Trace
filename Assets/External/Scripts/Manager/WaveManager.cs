@@ -51,9 +51,9 @@ public class WaveManager : MonoBehaviour
     // --- 변수 ---
     [SerializeField] private WaveData[] waves; // 인스펙터에서 ScriptableObject 데이터 할당
     private int currentWaveIndex = 0;
-    private int enemiesRemainingToSpawn;
-    private int enemiesRemainingAlive;
-    private int totalEnemiesInCurrentWave; // 현재 웨이브 총 적 수 기록용
+    private int enemiesRemainingToSpawn = 0;
+    private int enemiesRemainingAlive = 0;
+    private int totalEnemiesInCurrentWave = 0; // 현재 웨이브 총 적 수 기록용
     private EnemySpawner enemySpawner;
 
     void Start()
@@ -97,10 +97,14 @@ public class WaveManager : MonoBehaviour
             }
             else 
             {
-                totalEnemiesInCurrentWave = currentWave.enemyCount;
-                enemiesRemainingToSpawn = currentWave.enemyCount;
+                totalEnemiesInCurrentWave = 0;
+                foreach (var enemy in currentWave.enemies)
+                {
+                    totalEnemiesInCurrentWave += enemy.enemyCount;
+                }
+                enemiesRemainingToSpawn = totalEnemiesInCurrentWave;
                 enemiesRemainingAlive = 0;
-
+                
                 // 웨이브 시작 시 가득 찬 게이지 갱신
                 OnEnemyProgressUpdated?.Invoke(totalEnemiesInCurrentWave, totalEnemiesInCurrentWave);
 
@@ -147,7 +151,8 @@ public class WaveManager : MonoBehaviour
             yield return null;
         }
         
-        while (enemiesRemainingToSpawn > 0)
+        int leftSpawnCnt = enemy.enemyCount;
+        while (leftSpawnCnt > 0)
         {
 
             if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
@@ -155,6 +160,7 @@ public class WaveManager : MonoBehaviour
                 enemySpawner.SpawnEnemy(enemy.enemyPrefab);
                 enemiesRemainingToSpawn--;
                 enemiesRemainingAlive++;
+                leftSpawnCnt--;
             }
             yield return new WaitForSeconds(enemy.spawnInterval);
         }
