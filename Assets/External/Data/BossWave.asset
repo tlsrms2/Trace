@@ -10,12 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fac186f766b1d4e4ab5494a6d3707f1c, type: 3}
-  m_Name: FirstWave
+  m_Name: BossWave
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   enemies:
-  - enemyPrefab: {fileID: 6892968917303159334, guid: 82fe0d2b9ccb0a140af85b74ea4de32f, type: 3}
-    spawnInterval: 3
-  - enemyPrefab: {fileID: 6892968917303159334, guid: 47eb5a92433aeac4da8be89b4670e9ef, type: 3}
-    spawnInterval: 10
-  enemyCount: 3
-  isBossWave: 0
+  - enemyPrefab: {fileID: 6892968917303159334, guid: 03fd80b75aef24c449282b960b0651dd, type: 3}
+    spawnInterval: 0
+  enemyCount: 1
+  isBossWave: 1

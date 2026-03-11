@@ -5,6 +5,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float speed;
     [SerializeField] protected float increaseSpeed;
     [SerializeField] protected float Hp;
+    [SerializeField] private GameObject destroyParticle;
 
     protected Transform target;
     protected Collider2D col;
@@ -30,7 +31,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Move()
     {
-        if (GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)
+        if (target && GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)
         {
             transform.position = Vector2.MoveTowards(
                 transform.position,
@@ -40,24 +41,27 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            // 플레이어 데미지 처리 로직
-        }   
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Attack"))
+        AttackData attack;
+        float beforeHp = Hp;
+        if (collision.TryGetComponent(out attack))
         {
-            Hp -= collision.gameObject.GetComponent<AttackData>().Damage;
+            Hp -= attack.Damage;
 
             if (Hp <= 0)
             {
                 WaveManager.Instance.OnEnemyKilled();
+                var particle = Instantiate(destroyParticle, transform.position, Quaternion.identity);
+                ParticleSystem ps = particle.GetComponent<ParticleSystem>();
+                var main = ps.main;
+                main.startColor = spriteRenderer.color;
                 Destroy(gameObject);
+            }
+            else if (beforeHp > Hp)
+            {
+                ParticleSystem hitEffect = Instantiate(destroyParticle, transform.position, Quaternion.identity).GetComponent<ParticleSystem>();
+                hitEffect.Play();
             }
         }
     }

@@ -76,8 +76,19 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator SpawnEnemy(enemyData enemy)
     {
+        float timer = 0f;
+        while(timer < enemy.spawnStartTime)
+        {
+            if (GameManager.Instance.CurrentPhase != GamePhase.Paused)
+            {
+                timer += Time.deltaTime;
+            }
+            yield return null;
+        }
+        
         while (enemiesRemainingToSpawn > 0)
         {
+
             if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
             {
                 enemySpawner.SpawnEnemy(enemy.enemyPrefab);

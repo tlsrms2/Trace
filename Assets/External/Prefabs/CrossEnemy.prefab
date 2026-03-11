@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -7500297389767899423}
   m_Layer: 0
   m_Name: CrossEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -263,6 +263,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrossEnemy
   speed: 30
+  increaseSpeed: 0
   Hp: 1
+  destroyParticle: {fileID: 7710619616481920721, guid: bf041392d8cea644daa384dac726ef64, type: 3}
   alertTime: 2
   pathColor: {r: 1, g: 0, b: 0, a: 0.5}

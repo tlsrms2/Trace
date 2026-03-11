@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [Header("불변 객체")]
-    [SerializeField] private GameObject Illusion;
     [SerializeField] private LineRenderer dotLineRenderer;
     [SerializeField] private Material dotLineMaterial;
 
@@ -21,8 +20,8 @@ public class PlayerMove : MonoBehaviour
     [Tooltip("선 데미지")][SerializeField] private int lineDamage = 5;
     [Tooltip("도형 데미지")][SerializeField] private int shapeDamage = 10;
 
-    private float moveSpeed;
-
+    [Header("도형 색상")]
+    [SerializeField] private Color shapeColor = new Color(1f, 0.5f, 0.5f, 0.4f);
     private LineRenderer lineRenderer;
     private List<Vector3> tracePoints = new List<Vector3>();
     private List<GameObject> shapes = new List<GameObject>();
@@ -30,9 +29,8 @@ public class PlayerMove : MonoBehaviour
     private bool IsTracing => GameManager.Instance.CurrentPhase == GamePhase.Paused;
     private bool IsReplaying => GameManager.Instance.CurrentPhase == GamePhase.Replay;
 
-    private SpriteRenderer spriteRenderer;
-    private Color originalColor;
     private Rigidbody2D playerRigidbody;
+    private float moveSpeed;
 
     private void Awake()
     {
@@ -51,9 +49,6 @@ public class PlayerMove : MonoBehaviour
         dotLineRenderer.startWidth = lineWidth;
         dotLineRenderer.endWidth = lineWidth;
         dotLineRenderer.useWorldSpace = true;
-
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        originalColor = spriteRenderer.color;
     }
 
     private void Start()
@@ -77,17 +72,6 @@ public class PlayerMove : MonoBehaviour
         else
         {
             moveSpeed = normalMoveSpeed;
-        }
-
-        if (IsReplaying)
-        {
-            spriteRenderer.color = new Color(0, 0, 0, 0);
-            Illusion.SetActive(true);
-        }
-        else
-        {
-            spriteRenderer.color = originalColor;
-            Illusion.SetActive(false);
         }
     }
 
@@ -143,7 +127,9 @@ public class PlayerMove : MonoBehaviour
             tracePoints.Add(tracePoints[0]);
             CreateShape(tracePoints);
         }
-        StartCoroutine(EraseFromStart());
+
+        if (isActiveAndEnabled)
+            StartCoroutine(EraseFromStart());
     }
 
     /// <summary>
@@ -153,23 +139,35 @@ public class PlayerMove : MonoBehaviour
     /// <returns></returns>
     private IEnumerator EraseFromStart(float interval = 0.01f)
     {
+        // 가만히 있었을 경우 바로 탈출
+        if (tracePoints.Count < 2)
+        {
+            tracePoints.Clear();
+            dotLineRenderer.positionCount = 0;
+            // 바로 ChangePhase를 사용하면 GameManager의 ChangePhase가 나중에 실행되어 Replay 상태가 됨
+            yield return null;
+            GameManager.Instance.ChangePhase(GamePhase.RealTime);
+            yield break;
+        }
+
         GameObject colliderObj = new GameObject("AttackCollider");
+        colliderObj.tag = "Player";
         EdgeCollider2D edgeCol = colliderObj.AddComponent<EdgeCollider2D>();
         Vector2[] points2D = tracePoints.Select(p => new Vector2(p.x, p.y)).Reverse().ToArray();
         edgeCol.points = points2D;
         edgeCol.isTrigger = true;
-        edgeCol.tag = "Attack";
         AttackData data = colliderObj.AddComponent<AttackData>();
         data.Damage = lineDamage;
         var rig = colliderObj.AddComponent<Rigidbody2D>();
         rig.gravityScale = 0;
+        rig.bodyType = RigidbodyType2D.Kinematic;
 
         // 공격 선 드로우 시 사용하는 포인트 위치
         List<Vector3> attackTracePoints = new List<Vector3>();
 
         while (tracePoints.Count > 1)
         {
-            Illusion.transform.position = tracePoints[0];
+            transform.position = tracePoints[0];
             attackTracePoints.Add(tracePoints[0]);
             tracePoints.RemoveAt(0);
 
@@ -177,13 +175,7 @@ public class PlayerMove : MonoBehaviour
             lineRenderer.SetPositions(attackTracePoints.ToArray());
             dotLineRenderer.positionCount = tracePoints.Count;
             dotLineRenderer.SetPositions(tracePoints.ToArray());
-
-            if (edgeCol != null && edgeCol.pointCount > 2)
-            {
-                Vector2[] pts = edgeCol.points;
-                System.Array.Resize(ref pts, pts.Length - 1);
-                edgeCol.points = pts;
-            }
+            edgeCol.points = attackTracePoints.Select(p => (Vector2)p).ToArray();
 
             yield return new WaitForSeconds(interval);
         }
@@ -211,14 +203,15 @@ public class PlayerMove : MonoBehaviour
         MeshFilter mf = shapeObj.AddComponent<MeshFilter>();
         MeshRenderer mr = shapeObj.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
-        mr.material = new Material(Shader.Find("Sprites/Default"));
-        mr.material.color = new Color(1f, 0.5f, 0.5f, 0.4f);
+        mr.material = new Material(Shader.Find("Unlit/Color")); // Unlit Shader 사용
+        mr.material.color = shapeColor;
 
+        mr.material.SetColor("_EmissionColor", shapeColor * 2f); 
         AttackData attack = shapeObj.AddComponent<AttackData>();
         attack.Damage = shapeDamage;
-        shapeObj.tag = "Attack";
         var rig = shapeObj.AddComponent<Rigidbody2D>();
         rig.gravityScale = 0;
+        rig.bodyType = RigidbodyType2D.Kinematic;
 
         shapes.Add(shapeObj);
         shapeObj.SetActive(false);
@@ -229,9 +222,26 @@ public class PlayerMove : MonoBehaviour
         foreach (GameObject shape in shapes)
         {
             shape.SetActive(true);
-            Destroy(shape, 1f);
+            StartCoroutine(FadeAndDestroyShape(shape, 0.4f));
         }
-        shapes.Clear();
+        shapes.Clear(); 
         lineRenderer.positionCount = 0;
+    }
+
+    private IEnumerator FadeAndDestroyShape(GameObject shape, float duration)
+    {
+        MeshRenderer mr = shape.GetComponent<MeshRenderer>();
+        Color originalColor = mr.material.color;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            mr.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, Mathf.Lerp(originalColor.a, 0, t));
+            yield return null;
+        }
+
+        Destroy(shape);
     }
 }
