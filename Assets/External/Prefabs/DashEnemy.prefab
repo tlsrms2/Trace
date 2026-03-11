@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashEnemy
   speed: 3.5
-  increaseSpeed: 0
+  increaseSpeed: 0.01
   Hp: 5
   dashSpeed: 20
   dashCooldown: 3

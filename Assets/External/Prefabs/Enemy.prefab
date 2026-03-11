@@ -152,5 +152,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   speed: 4
-  increaseSpeed: 0
+  increaseSpeed: 0.01
   Hp: 5
