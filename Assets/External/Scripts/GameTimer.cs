@@ -21,7 +21,7 @@ public class GameTimer : MonoBehaviour
     public TextMeshProUGUI timerText;
 
     [Header("Timer Settings")]
-    public int currentTime = 0;
+    public float currentTime = 0;
     public bool isRunning = true;
     public int minutes;
     public int seconds;
@@ -38,7 +38,7 @@ public class GameTimer : MonoBehaviour
     [Range(0f, 1f)] public float minAlpha = 0f; // 가까이 있을 때의 투명도 (0.2 = 많이 투명함)
 
     [Header("Time Reduce Settings")]
-    public TextMeshPro reduceText;
+    public TextMeshProUGUI reduceText;
     public float accumulatedAmount = 0f;
     public float effectDuration = 1f;
     public Coroutine effectCoroutine;
@@ -57,7 +57,7 @@ public class GameTimer : MonoBehaviour
         // 1. 타이머 시간 계산
         if (isRunning && GameManager.Instance.CurrentPhase != GamePhase.Paused)
         {
-            currentTime += (int)Time.deltaTime;
+            currentTime += Time.deltaTime;
             UpdateTimerDisplay();
         }
 
@@ -67,9 +67,9 @@ public class GameTimer : MonoBehaviour
 
     void UpdateTimerDisplay()
     {
-        int minutes = Mathf.FloorToInt(currentTime / 60f);
-        int seconds = Mathf.FloorToInt(currentTime % 60f);
-        int milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
+        minutes = Mathf.FloorToInt(currentTime / 60f);
+        seconds = Mathf.FloorToInt(currentTime % 60f);
+        milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
 
         timerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
     }
@@ -95,30 +95,41 @@ public class GameTimer : MonoBehaviour
         timerText.color = textColor;
     }
 
-    // public void ReduceTime(int amount)
-    // {
-    //     currentTime = Mathf.Max(0, currentTime - amount);
+    public void ReduceTime(int amount)
+    {
+        currentTime = Mathf.Max(0, currentTime - amount);
 
-    //     accumulatedAmount += amount;
+        accumulatedAmount += amount;
 
-    //     if (effectCoroutine != null)
-    //     {
-    //         StopCoroutine(effectCoroutine);
-    //     }
-    //     effectCoroutine = StartCoroutine(ShowReduceEffectRoutine());
-    // }
+        if (effectCoroutine != null)
+        {
+            StopCoroutine(effectCoroutine);
+        }
+        effectCoroutine = StartCoroutine(ShowReduceEffectRoutine());
+    }
 
-    // private IEnumerator showReduceEffectRoutine()
-    // {
-    //     yield return new WaitForEndOfFrame();
+    private IEnumerator ShowReduceEffectRoutine()
+    {
+        yield return new WaitForEndOfFrame();
 
-    //     reduceText.gameObject.SetActive(true);
-    //     reduceText.text = $"-{accumulatedAmount:F0}s";
+        reduceText.gameObject.SetActive(true);
+        reduceText.text = $"- {accumulatedAmount:F0}:00";
 
-    //     float timer = 0f;
-    //     while (timer < effectDuration)
-    //     {
-    //         timer += 
-    //     }
-    // }
+        float timer = 0f;
+        Color c = reduceText.color;
+        while (timer < effectDuration)
+        {
+            timer += Time.deltaTime;
+            float ratio = timer / effectDuration;
+
+            c.a = Mathf.Lerp(1f, 0f, ratio);
+            reduceText.color = c;
+
+            yield return null;
+        }
+        
+        reduceText.gameObject.SetActive(false);
+        accumulatedAmount = 0f;
+        effectCoroutine = null;
+    }
 }
