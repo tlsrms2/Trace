@@ -61,6 +61,11 @@ public class PlayerMove : MonoBehaviour
     {
         GameManager.Instance.OnTraceStarted -= StartTrace;
         GameManager.Instance.OnTraceEnded -= EndTrace;
+
+        foreach (GameObject shape in shapes)
+        {
+            Destroy(shape);
+        }
     }
 
     private void Update()
@@ -257,7 +262,7 @@ public class PlayerMove : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            mr.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, Mathf.Lerp(originalColor.a, 0, t));
+            mr.material.color = new Color(originalColor.r, originalColor.g, originalColor.b, Mathf.Lerp(originalColor. a, 0, t));
             yield return null;
         }
 

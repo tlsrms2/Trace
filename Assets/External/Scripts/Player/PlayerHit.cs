@@ -1,3 +1,5 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerHit : MonoBehaviour
@@ -11,6 +13,7 @@ public class PlayerHit : MonoBehaviour
         {
             AudioManager.Instance.PlayPlayerDeath();
             Instantiate(destroyParticle, transform.position, Quaternion.identity);
+            GameManager.Instance.GameOver();
             gameObject.SetActive(false);
         }
     }
