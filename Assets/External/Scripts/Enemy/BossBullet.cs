@@ -37,8 +37,7 @@ public class BossBullet : MonoBehaviour
         {
             savedVelocity = rb.linearVelocity; 
             rb.linearVelocity = Vector2.zero; 
-            rb.angularVelocity = 0f; 
-            
+            rb.angularVelocity = 0f;
             isPaused = true;
         }
         else if (!currentlyPaused && isPaused)
@@ -64,8 +63,7 @@ public class BossBullet : MonoBehaviour
         StartCoroutine(DestroyAfterTime());
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
+    private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.gameObject.CompareTag("Wall"))
         {
             bounceCount++;
@@ -77,17 +75,20 @@ public class BossBullet : MonoBehaviour
             }
 
             Vector2 inDirection = rb.linearVelocity.normalized;
-            Vector2 normal = collision.contacts[0].normal;
+            Vector2 prevPosition = (Vector2)transform.position - (rb.linearVelocity * Time.fixedDeltaTime);
+            Vector2 closestPoint = collision.ClosestPoint(prevPosition);
+            Vector2 normal = (closestPoint - prevPosition).normalized;
+
             moveDir = Vector2.Reflect(inDirection, normal).normalized;
 
             rb.linearVelocity = moveDir * speed;
+            
+            return;
         }
-    }
 
-    private void OnTriggerEnter2D(Collider2D collision) {
         Vector2 knockbackDirection = Vector2.zero;
         AttackData attack;
-        if (collision.TryGetComponent(out attack))
+        if (collision.TryGetComponent(out attack) && collision.gameObject.CompareTag("Player"))
         {
             if (shooterTransform != null)
             {
@@ -106,6 +107,8 @@ public class BossBullet : MonoBehaviour
 
             AttackData attackData = gameObject.GetComponent<AttackData>();
             attackData.Damage = 5;
+
+            return;
         }   
     }
 
