@@ -61,11 +61,12 @@ public class PlayerMove : MonoBehaviour
     {
         GameManager.Instance.OnTraceStarted -= StartTrace;
         GameManager.Instance.OnTraceEnded -= EndTrace;
+    }
 
-        foreach (GameObject shape in shapes)
-        {
+    private void OnDisable()
+    {
+        foreach(var shape in shapes)
             Destroy(shape);
-        }
     }
 
     private void Update()
@@ -248,8 +249,6 @@ public class PlayerMove : MonoBehaviour
             shape.SetActive(true);
             StartCoroutine(FadeAndDestroyShape(shape, 0.4f));
         }
-        shapes.Clear(); 
-        lineRenderer.positionCount = 0;
     }
 
     private IEnumerator FadeAndDestroyShape(GameObject shape, float duration)
@@ -267,5 +266,6 @@ public class PlayerMove : MonoBehaviour
         }
 
         Destroy(shape);
+        shapes.Clear();
     }
 }
