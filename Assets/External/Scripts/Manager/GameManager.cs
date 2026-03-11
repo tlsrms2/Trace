@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems; // 키보드 UI 제어를 위해 추가
+using TMPro;
 
 public enum GamePhase { Paused, Replay, RealTime, GameOver }
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -12,26 +16,48 @@ public class GameManager : MonoBehaviour
 
     public bool IsPaused { get; private set; }
     public GamePhase CurrentPhase = GamePhase.RealTime;
+    public bool isPaused => CurrentPhase == GamePhase.Paused;
     
-    [Header("Game Settings")]
+    [Header("UI Settings")]
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject pauseMenu;
+
+    [Header("UI Keyboard Focus Settings")]
+    [Tooltip("타이틀 창이 뜰 때 처음 선택될 버튼 (예: Start Button)")]
+    [SerializeField] private GameObject firstTitleButton;
+    [Tooltip("일시정지 창이 뜰 때 처음 선택될 버튼 (예: Resume Button)")]
+    [SerializeField] private GameObject firstPauseButton;
+    [Tooltip("게임오버 창이 뜰 때 처음 선택될 버튼 (예: Restart Button)")]
+    [SerializeField] private GameObject firstGameOverButton;
+
+    [Header("Leaderboard UI")]
+    [SerializeField] private TextMeshProUGUI rankText;
+    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI timeText;
 
     [Header("Gauge Settings")]
     [SerializeField] private float MaxGauge = 100f;
     [SerializeField] private float CurrentGauge;
     [SerializeField] private float ConsumptionRate = 20f;
     [SerializeField] private float RecoveryRate = 10f;
-    [Tooltip("���÷��� �� ������ ���� ���� �ð�")][SerializeField] private float RecoveryStartTime = 1f;
+    [Tooltip("게이지 회복 시작 대기 시간")]
+    [SerializeField] private float RecoveryStartTime = 1f;
 
     private Coroutine chargeGaugeCor;
     private bool canCharge;
 
-    public bool isPaused => CurrentPhase == GamePhase.Paused;
-
     void Awake()
     {
-        Instance = this;
+        if (Instance == null) { Instance = this; }
+        else { Destroy(gameObject); return; }
+
         OnTraceEnded += StartChargeWait;
+    }
+
+    void Start()
+    {
+        TitleUIFocus();
+        UpdateLeaderboardUI();
     }
 
     void Update()
@@ -53,51 +79,98 @@ public class GameManager : MonoBehaviour
             ChangePhase(GamePhase.Replay);
         }
 
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RestartGame();
+        }
+
         HandleGauge();
+    }
+
+    #region Game Flow & Phase Control
+    public void ChangePhase(GamePhase nextPhase)
+    {
+        if (CurrentPhase == nextPhase) return;
+
+        switch (CurrentPhase)
+        {
+            case GamePhase.Paused:
+                OnTraceEnded?.Invoke();
+                break;
+            case GamePhase.RealTime:
+                OnTraceStarted?.Invoke();
+                break;
+        }
+
+        CurrentPhase = nextPhase;
     }
 
     public void TogglePause()
     {
-        if (IsPaused)
-            ResumeGame();
-        else
-            PauseGame();
+        if (IsPaused) ResumeGame();
+        else PauseGame();
     }
 
-    private IEnumerator GameOverPanel()
+    public void TitleUIFocus()
     {
-        yield return new WaitForSeconds(2.0f);
-        gameOverPanel.SetActive(true);
-    }
-
-    public void GameOver()
-    {
-        StartCoroutine(GameOverPanel());
+        if (firstTitleButton != null) 
+        {
+            SetUIFocus(firstTitleButton); // 타이틀 창이 뜰 때 첫 버튼 자동 선택
+        }
     }
 
     public void PauseGame()
     {
         IsPaused = true;
         Time.timeScale = 0f;
-        UIManager.Instance.ShowPause();
+        if (pauseMenu != null) 
+        {
+            pauseMenu.SetActive(true);
+            SetUIFocus(firstPauseButton); // ⬅️ 추가: 창이 열릴 때 첫 버튼 자동 선택
+        }
     }
 
     public void ResumeGame()
     {
         IsPaused = false;
         Time.timeScale = 1f;
-        UIManager.Instance.HidePause();
+        if (pauseMenu != null) 
+        {
+            pauseMenu.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(null); // ⬅️ 추가: 포커스 해제
+        }
     }
 
-    public float GetCurrentGauge()
+    public void GameOver()
     {
-        return CurrentGauge;
+        StartCoroutine(ShowGameOverPanelRoutine());
     }
-    
-    public float GetGaugePercentage()
+
+    private IEnumerator ShowGameOverPanelRoutine()
     {
-        return CurrentGauge / MaxGauge;
+        yield return new WaitForSeconds(1.0f);
+        if (gameOverPanel != null) 
+        {
+            gameOverPanel.SetActive(true);
+            SetUIFocus(firstGameOverButton); // ⬅️ 추가: 게임오버 창 첫 버튼 자동 선택
+        }
     }
+
+    // 💡 UI 포커스를 설정해주는 헬퍼 함수
+    private void SetUIFocus(GameObject firstSelected)
+    {
+        if (firstSelected != null && EventSystem.current != null)
+        {
+            // 기존 포커스를 지우고 새로 설정해야 확실하게 적용됩니다.
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(firstSelected);
+        }
+    }
+    #endregion
+
+    #region Gauge Logic
+    public float GetCurrentGauge() { return CurrentGauge; }
+    public float GetGaugePercentage() { return CurrentGauge / MaxGauge; }
 
     private void HandleGauge()
     {
@@ -120,8 +193,7 @@ public class GameManager : MonoBehaviour
 
     private void StartChargeWait()
     {
-        if (chargeGaugeCor != null)
-            StopCoroutine(chargeGaugeCor);
+        if (chargeGaugeCor != null) StopCoroutine(chargeGaugeCor);
         chargeGaugeCor = StartCoroutine(WaitChargeGauge());
     }
 
@@ -131,44 +203,48 @@ public class GameManager : MonoBehaviour
         StartCharge();
     }
 
-    private void StartCharge()
+    private void StartCharge() { canCharge = true; }
+    #endregion
+
+    #region Scene & UI Interaction
+    public void UpdateLeaderboardUI()
     {
-        canCharge = true;
-    }
+        if (LeaderboardManager.Instance == null || rankText == null) return;
 
-    public void ChangePhase(GamePhase nextPhase)
-    {
-        if (CurrentPhase == nextPhase) return;
+        var leaderboard = LeaderboardManager.Instance.GetLeaderboard();
 
-        switch (CurrentPhase)
+        rankText.text = ""; nameText.text = ""; timeText.text = "";
+
+        foreach (var entry in leaderboard)
         {
-            case GamePhase.Paused:
-                OnTraceEnded?.Invoke();
-                break;
-
-            case GamePhase.RealTime:
-                OnTraceStarted?.Invoke();
-                break;
-
-            default:
-                break;
-        }
-
-        CurrentPhase = nextPhase;
-
-        switch (nextPhase)
-        {
-            case GamePhase.Paused:
-                break;
-
-            case GamePhase.Replay:
-                break;
-
-            case GamePhase.RealTime:
-                break;
-
-            case GamePhase.GameOver:
-                break;
+            rankText.text += entry.rank + "\n";
+            nameText.text += entry.playerName + "\n";
+            timeText.text += entry.clearTime.ToString("F2") + "\n";
         }
     }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("TitleScene");
+    }
+
+    public void StartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("GameScene");
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+        Debug.Log("게임 종료");
+    }
+    #endregion
 }
