@@ -10,14 +10,18 @@ public class ShootEnemyBullet : MonoBehaviour
     public float lifetime = 5f;
 
     private Vector2 savedVelocity;
+    private Transform shooterTransform;
     private Vector2 direction;
     private Rigidbody2D rb;
+    private PolygonCollider2D col;
+    private bool isPaused = false;
 
-    public void Initialize(Vector2 dir, float bulletSpeed, int bulletDamage)
+    public void Initialize(Vector2 dir, float bulletSpeed, int bulletDamage, Transform shooter)
     {
         direction = dir.normalized;
         speed = bulletSpeed;
         damage = bulletDamage;
+        shooterTransform = shooter;
 
         rb = GetComponent<Rigidbody2D>();
         if (rb != null)
@@ -32,32 +36,46 @@ public class ShootEnemyBullet : MonoBehaviour
     {
         if (rb == null) return;
         
-        if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+        bool currentlyPaused = (GameManager.Instance.CurrentPhase == GamePhase.Paused);
+
+        if (currentlyPaused && !isPaused)
         {
-            if (rb.linearVelocity != Vector2.zero)
-            {
-                savedVelocity = rb.linearVelocity;
-                rb.linearVelocity = Vector2.zero;
-            }
+            savedVelocity = rb.linearVelocity; 
+            rb.linearVelocity = Vector2.zero; 
+            rb.angularVelocity = 0f; 
+            
+            isPaused = true;
         }
-        else
+        else if (!currentlyPaused && isPaused)
         {
-            if (rb.linearVelocity == Vector2.zero)
-            {
-                rb.linearVelocity = savedVelocity;
-            }
+            rb.linearVelocity = savedVelocity; 
+            isPaused = false;
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
+    private void OnTriggerEnter2D(Collider2D collision) {
+        Vector2 knockbackDirection = Vector2.zero;
         if (collision.gameObject.CompareTag("Attack"))
         {
-            rb.linearVelocity = -rb.linearVelocity * 1.5f;
-            direction = rb.linearVelocity.normalized;
+            if (shooterTransform != null)
+            {
+                knockbackDirection = (shooterTransform.position - transform.position).normalized;
+            }
+            else
+            {
+                knockbackDirection = -rb.linearVelocity.normalized;
+            }
+
+            rb.linearVelocity = knockbackDirection * speed * 1.5f;
+            col = GetComponent<PolygonCollider2D>();
+            col.isTrigger = true;
+
+            float angle = Mathf.Atan2(knockbackDirection.y, knockbackDirection.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
             AttackData attackData = gameObject.GetComponent<AttackData>();
             attackData.Damage = 5;
-        }
+        }   
     }
 
     private IEnumerator DestroyAfterTime()

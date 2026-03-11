@@ -186,6 +186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossBullet
   speed: 8
   maxBounce: 2
+  damage: 5
+  lifetime: 5
 --- !u!114 &3410747630572094513
 MonoBehaviour:
   m_ObjectHideFlags: 0
