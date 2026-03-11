@@ -80,6 +80,11 @@ public class BossEnemy : Enemy
         float timer = 0f;
         while (timer < introDuration)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
             timer += Time.deltaTime;
             float t = timer / introDuration;
             
@@ -173,6 +178,11 @@ public class BossEnemy : Enemy
 
         while (elapsedTime < dashDuration)
         {
+            if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+            {
+                yield return null;
+                continue;
+            }
             transform.position += (Vector3)dir * dashSpeed * Time.deltaTime;
             elapsedTime += Time.deltaTime;
             yield return null;

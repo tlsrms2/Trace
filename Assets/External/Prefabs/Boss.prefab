@@ -397,7 +397,7 @@ MonoBehaviour:
   speed: 50
   increaseSpeed: 0
   Hp: 25
-  destroyParticle: {fileID: 7710619616481920721, guid: bf041392d8cea644daa384dac726ef64, type: 3}
+  destroyParticle: {fileID: 7710619616481920721, guid: 3c0bd7c7aeb700f47b7af6d70d4c39e7, type: 3}
   dashSpeed: 20
   introDownDistance: 9
   introDuration: 2

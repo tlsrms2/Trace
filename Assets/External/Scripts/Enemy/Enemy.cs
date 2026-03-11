@@ -44,6 +44,7 @@ public class Enemy : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         AttackData attack;
+        float beforeHp = Hp;
         if (collision.TryGetComponent(out attack))
         {
             Hp -= attack.Damage;
@@ -56,6 +57,11 @@ public class Enemy : MonoBehaviour
                 var main = ps.main;
                 main.startColor = spriteRenderer.color;
                 Destroy(gameObject);
+            }
+            else if (beforeHp > Hp)
+            {
+                ParticleSystem hitEffect = Instantiate(destroyParticle, transform.position, Quaternion.identity).GetComponent<ParticleSystem>();
+                hitEffect.Play();
             }
         }
     }
