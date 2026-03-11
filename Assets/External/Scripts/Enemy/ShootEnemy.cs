@@ -111,7 +111,7 @@ public class ShootEnemy : Enemy
         ShootEnemyBullet bullet = bulletObj.GetComponent<ShootEnemyBullet>();
         if (bullet != null)
         {
-            bullet.Initialize(dir, bullet.speed, bullet.damage);
+            bullet.Initialize(dir, bullet.speed, bullet.damage, transform);
         }
     }
 }

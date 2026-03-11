@@ -149,6 +149,7 @@ public class PlayerMove : MonoBehaviour
         data.Damage = lineDamage;
         var rig = colliderObj.AddComponent<Rigidbody2D>();
         rig.gravityScale = 0;
+        rig.bodyType = RigidbodyType2D.Kinematic;
 
         // 공격 선 드로우 시 사용하는 포인트 위치
         List<Vector3> attackTracePoints = new List<Vector3>();
@@ -200,6 +201,7 @@ public class PlayerMove : MonoBehaviour
         shapeObj.tag = "Attack";
         var rig = shapeObj.AddComponent<Rigidbody2D>();
         rig.gravityScale = 0;
+        rig.bodyType = RigidbodyType2D.Kinematic;
 
         shapes.Add(shapeObj);
         shapeObj.SetActive(false);

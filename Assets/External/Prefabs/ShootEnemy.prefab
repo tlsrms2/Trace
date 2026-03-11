@@ -218,14 +218,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08a3a78c51e33d458656b9c11027e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShootEnemy
-  speed: 2
-  increaseSpeed: 0
+  speed: 1
+  increaseSpeed: 0.01
   Hp: 5
   bulletPrefab: {fileID: 5612879478203917923, guid: da30e7cf941241c44bb168d5c022e4c9, type: 3}
   muzzle: {fileID: 6089207625343218061}
   moveDuration: 1
   stopDuration: 0.5
-  dashSpeed: 8
+  dashSpeed: 0
   dashDuration: 1
 --- !u!4 &9190151724736770172 stripped
 Transform:

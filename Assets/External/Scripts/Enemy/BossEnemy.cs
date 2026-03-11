@@ -10,15 +10,18 @@ public struct specialAttackInfo
 
 public class BossEnemy : Enemy
 {
-    private bool shootCross = true; // 첫 발사는 상하좌우
-    [SerializeField] private Transform[] muzzles; // 8개
-    [SerializeField] private float bulletSpeed = 6f;
-    [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float dashSpeed;
 
     [Header("인트로 설정")]
     [SerializeField] private float introDownDistance = 10f;
     [SerializeField] private float introDuration = 2f;
+
+    [Header("패턴2")]
+    [SerializeField] private int bulletDamage = 5;
+    private bool shootCross = true; // 첫 발사는 상하좌우
+    [SerializeField] private Transform[] muzzles; // 8개
+    [SerializeField] private float bulletSpeed = 6f;
+    [SerializeField] private GameObject bulletPrefab;
 
     [Header("패턴3")]
     [SerializeField] private float alertTime = 2f;
@@ -129,16 +132,16 @@ public class BossEnemy : Enemy
     {
         while (true)
         {
-            Dash();
-            yield return StartCoroutine(PausedWait(1f));
-            Dash();
-            yield return StartCoroutine(PausedWait(1f));
-            StartCoroutine(BackToOriginalPosition(transform.position));
-            yield return StartCoroutine(PausedWait(2f));
+            // Dash();
+            // yield return StartCoroutine(PausedWait(1f));
+            // Dash();
+            // yield return StartCoroutine(PausedWait(1f));
+            // StartCoroutine(BackToOriginalPosition(transform.position));
+            // yield return StartCoroutine(PausedWait(2f));
             Shoot();
             yield return StartCoroutine(PausedWait(2f));
-            yield return StartCoroutine(SpecialAttack());
-            yield return StartCoroutine(PausedWait(2f));
+            // yield return StartCoroutine(SpecialAttack());
+            // yield return StartCoroutine(PausedWait(2f));
         }
     }
 
@@ -204,12 +207,14 @@ public class BossEnemy : Enemy
             // 상하좌우
             if (shootCross && i % 2 == 0)
             {
-                Instantiate(bulletPrefab, muzzles[i].position, muzzles[i].rotation);
+                GameObject bulletObj = Instantiate(bulletPrefab, muzzles[i].position, muzzles[i].rotation);
+                bulletObj.GetComponent<BossBullet>().Initialize(muzzles[i].right, bulletSpeed, bulletDamage, transform);
             }
 
             if (!shootCross && i % 2 == 1)
             {
-                Instantiate(bulletPrefab, muzzles[i].position, muzzles[i].rotation);
+                GameObject bulletObj = Instantiate(bulletPrefab, muzzles[i].position, muzzles[i].rotation);
+                bulletObj.GetComponent<BossBullet>().Initialize(muzzles[i].right, bulletSpeed, bulletDamage, transform);
             }
         }
 
