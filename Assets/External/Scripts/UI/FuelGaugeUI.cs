@@ -7,6 +7,9 @@ public class FuelGaugeUI : MonoBehaviour // 파일명에 맞춰 클래스 이름
 {
     [Header("Shader / Material")]
     [SerializeField] private Image fillImage;
+    [SerializeField] private GameObject fuelIcon;
+    [SerializeField] private GameObject fuelValue;
+
     [SerializeField] private Material normalMaterial;
     [SerializeField] private Material pressedGlowMaterial;
 
