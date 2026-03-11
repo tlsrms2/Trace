@@ -87,8 +87,10 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space) && CurrentPhase == GamePhase.Paused)
             ChangePhase(GamePhase.Replay);
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && !firstClearPanel.activeSelf)
+        {
             RestartGame();
+        }
 
         HandleGauge();
 
@@ -185,6 +187,7 @@ public class GameManager : MonoBehaviour
         if (gameClearPanel != null)
         {
             gameClearPanel.SetActive(true);
+            firstClearPanel.SetActive(true);
             SetUIFocus(firstGameClearInputButton);
         }
         OnGameClear?.Invoke();
@@ -308,6 +311,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        Debug.Log("AA");
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
