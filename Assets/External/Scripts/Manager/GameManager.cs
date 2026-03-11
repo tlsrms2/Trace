@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems; // 키보드 UI 제어를 위해 추가
+using UnityEngine.EventSystems;
 using TMPro;
 
 public enum GamePhase { Paused, Replay, RealTime }
@@ -19,26 +19,28 @@ public class GameManager : MonoBehaviour
     public bool IsPaused { get; private set; }
     public GamePhase CurrentPhase = GamePhase.RealTime;
     public bool isPaused => CurrentPhase == GamePhase.Paused;
+
     private string playerName;
+    private bool secondPanelReady = false; // 두 번째 패널 엔터 체크용
+
     [Header("UI Settings")]
     [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private GameObject gameClearPanel;       // 클리어 시 보여줄 패널
-    [SerializeField] private GameObject firstClearPanel;     // 클리어 시 보여줄 첫 번째 입력 패널
-    [SerializeField] private GameObject secondClearPanel;    // 첫 번째 패널 입력 완료 후 표시할 두 번째 클리어 패널
+    [SerializeField] private GameObject clearText;
+    [SerializeField] private GameObject timerText;
+    [SerializeField] private GameObject gameClearPanel;
+    [SerializeField] private GameObject firstClearPanel;
+    [SerializeField] private GameObject secondClearPanel;
+    [SerializeField] private GameObject thirdClearPanel;
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private TMP_InputField nameInputField;
 
     [Header("UI Keyboard Focus Settings")]
-    [Tooltip("타이틀 창이 뜰 때 처음 선택될 버튼 (예: Start Button)")]
     [SerializeField] private GameObject firstTitleButton;
-    [Tooltip("일시정지 창이 뜰 때 처음 선택될 버튼 (예: Resume Button)")]
     [SerializeField] private GameObject firstPauseButton;
-    [Tooltip("게임오버 창이 뜰 때 처음 선택될 버튼 (예: Restart Button)")]
     [SerializeField] private GameObject firstGameOverButton;
-    [Tooltip("게임 클리어 창이 뜰 때 처음 선택될 버튼 (예: Next Button)")]
     [SerializeField] private GameObject firstGameClearInputButton;
-    [Tooltip("첫 번째 클리어 패널에서 입력 완료 후 두 번째 패널이 뜰 때 선택될 버튼")]
     [SerializeField] private GameObject secondClearButton;
+    [SerializeField] private GameObject thirdSelectButton;
 
     [Header("Leaderboard UI")]
     [SerializeField] private TextMeshProUGUI rankText;
@@ -50,82 +52,83 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float CurrentGauge;
     [SerializeField] private float ConsumptionRate = 20f;
     [SerializeField] private float RecoveryRate = 10f;
-    [Tooltip("게이지 회복 시작 대기 시간")]
     [SerializeField] private float RecoveryStartTime = 1f;
 
     private Coroutine chargeGaugeCor;
     private bool canCharge;
 
-    void Awake()
+    private void Awake()
     {
-        if (Instance == null) { Instance = this; }
-        else { Destroy(gameObject); return; }
+        if (Instance == null)
+            Instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         OnTraceEnded += StartChargeWait;
     }
 
-    void Start()
+    private void Start()
     {
         TitleUIFocus();
         UpdateLeaderboardUI();
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
             TogglePause();
-        }
 
         if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.RealTime && !IsPaused)
-        {
             ChangePhase(GamePhase.Paused);
-        }
 
         if (Input.GetKeyUp(KeyCode.Space) && CurrentPhase == GamePhase.Paused)
-        {
             ChangePhase(GamePhase.Replay);
-        }
 
         if (Input.GetKeyDown(KeyCode.R))
-        {
             RestartGame();
-        }
 
         HandleGauge();
+
+        // 두 번째 패널 엔터 입력
+        // Update() 안 두 번째 패널 엔터 입력 처리
+        if (secondPanelReady && secondClearPanel != null && secondClearPanel.activeSelf && Input.GetKeyDown(KeyCode.Return))
+        {
+            secondClearPanel.SetActive(false);
+            thirdClearPanel.SetActive(true);
+
+            clearText?.SetActive(true);
+            timerText?.SetActive(true);
+
+            // ✅ 세 번째 패널에서 Restart 버튼 포커스 설정
+            SetUIFocus(thirdSelectButton); // 혹은 thirdPanel에서 사용할 버튼 지정
+
+            secondPanelReady = false; // 다시 초기화
+        }
     }
 
     #region Game Flow & Phase Control
     public void ChangePhase(GamePhase nextPhase)
-{
-    if (CurrentPhase == nextPhase) return;
-
-    switch (CurrentPhase)
     {
-        case GamePhase.Paused:
-            OnTraceEnded?.Invoke();
-            break;
+        if (CurrentPhase == nextPhase) return;
 
-        case GamePhase.RealTime:
-            OnTraceStarted?.Invoke();
-            break;
+        switch (CurrentPhase)
+        {
+            case GamePhase.Paused: OnTraceEnded?.Invoke(); break;
+            case GamePhase.RealTime: OnTraceStarted?.Invoke(); break;
+        }
+
+        CurrentPhase = nextPhase;
+
+        switch (nextPhase)
+        {
+            case GamePhase.Paused: AudioManager.Instance.SetSlowBgm(); break;
+            case GamePhase.Replay:
+            case GamePhase.RealTime: AudioManager.Instance.SetNormalBgm(); break;
+        }
     }
-
-    CurrentPhase = nextPhase;
-
-    // 🔊 BGM Pitch 변경
-    switch (nextPhase)
-    {
-        case GamePhase.Paused:
-            AudioManager.Instance.SetSlowBgm();   // 시간 정지 느낌
-            break;
-
-        case GamePhase.Replay:
-        case GamePhase.RealTime:
-            AudioManager.Instance.SetNormalBgm(); // 원래 속도
-            break;
-    }
-}
 
     public void TogglePause()
     {
@@ -135,20 +138,18 @@ public class GameManager : MonoBehaviour
 
     public void TitleUIFocus()
     {
-        if (firstTitleButton != null) 
-        {
-            SetUIFocus(firstTitleButton); // 타이틀 창이 뜰 때 첫 버튼 자동 선택
-        }
+        if (firstTitleButton != null)
+            SetUIFocus(firstTitleButton);
     }
 
     public void PauseGame()
     {
         IsPaused = true;
         Time.timeScale = 0f;
-        if (pauseMenu != null) 
+        if (pauseMenu != null)
         {
             pauseMenu.SetActive(true);
-            SetUIFocus(firstPauseButton); // ⬅️ 추가: 창이 열릴 때 첫 버튼 자동 선택
+            SetUIFocus(firstPauseButton);
         }
     }
 
@@ -156,10 +157,10 @@ public class GameManager : MonoBehaviour
     {
         IsPaused = false;
         Time.timeScale = 1f;
-        if (pauseMenu != null) 
+        if (pauseMenu != null)
         {
             pauseMenu.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(null); // ⬅️ 추가: 포커스 해제
+            EventSystem.current.SetSelectedGameObject(null);
         }
     }
 
@@ -171,17 +172,17 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ShowGameOverPanelRoutine()
     {
-        yield return new WaitForSeconds(1.0f);
-        if (gameOverPanel != null) 
+        yield return new WaitForSeconds(1f);
+        if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
-            SetUIFocus(firstGameOverButton); // ⬅️ 추가: 게임오버 창 첫 버튼 자동 선택
+            SetUIFocus(firstGameOverButton);
         }
     }
 
     public void GameClear()
     {
-        if (gameClearPanel != null) 
+        if (gameClearPanel != null)
         {
             gameClearPanel.SetActive(true);
             SetUIFocus(firstGameClearInputButton);
@@ -189,12 +190,10 @@ public class GameManager : MonoBehaviour
         OnGameClear?.Invoke();
     }
 
-    public void ClearPanelChange()
+    // 첫 번째 패널 제출
+    public void OnFirstPanelSubmit()
     {
-        // TMP_InputField 텍스트 가져오기
         playerName = nameInputField.text;
-
-        // 입력 안했으면 기본 이름
         if (string.IsNullOrEmpty(playerName))
             playerName = "Unnamed";
 
@@ -203,15 +202,47 @@ public class GameManager : MonoBehaviour
         firstClearPanel.SetActive(false);
         secondClearPanel.SetActive(true);
 
-        SetUIFocus(secondClearButton);
+        clearText.SetActive(false);
+        timerText.SetActive(false);
+
+        UpdateSecondPanelLeaderboard();
+
+        EventSystem.current.SetSelectedGameObject(null);
+
+        // 한 프레임 딜레이 후 두 번째 패널 엔터 가능
+        StartCoroutine(EnableSecondPanelInputNextFrame());
     }
 
-    // 💡 UI 포커스를 설정해주는 헬퍼 함수
+    private IEnumerator EnableSecondPanelInputNextFrame()
+    {
+        yield return null;
+        secondPanelReady = true;
+    }
+
+    private void UpdateSecondPanelLeaderboard()
+    {
+        if (LeaderboardManager.Instance == null) return;
+
+        var leaderboard = LeaderboardManager.Instance.GetLeaderboard();
+        int count = Mathf.Min(leaderboard.Count, 10); // 최대 10개까지만 표시
+
+        rankText.text = "";
+        nameText.text = "";
+        timeText.text = "";
+
+        for (int i = 0; i < count; i++)
+        {
+            var entry = leaderboard[i];
+            rankText.text += entry.rank + "\n";
+            nameText.text += entry.playerName + "\n";
+            timeText.text += entry.clearTime.ToString("F2") + "\n";
+        }
+    }
+
     private void SetUIFocus(GameObject firstSelected)
     {
         if (firstSelected != null && EventSystem.current != null)
         {
-            // 기존 포커스를 지우고 새로 설정해야 확실하게 적용됩니다.
             EventSystem.current.SetSelectedGameObject(null);
             EventSystem.current.SetSelectedGameObject(firstSelected);
         }
@@ -219,8 +250,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Gauge Logic
-    public float GetCurrentGauge() { return CurrentGauge; }
-    public float GetGaugePercentage() { return CurrentGauge / MaxGauge; }
+    public float GetCurrentGauge() => CurrentGauge;
+    public float GetGaugePercentage() => CurrentGauge / MaxGauge;
 
     private void HandleGauge()
     {
@@ -253,7 +284,7 @@ public class GameManager : MonoBehaviour
         StartCharge();
     }
 
-    private void StartCharge() { canCharge = true; }
+    private void StartCharge() => canCharge = true;
     #endregion
 
     #region Scene & UI Interaction
@@ -263,7 +294,9 @@ public class GameManager : MonoBehaviour
 
         var leaderboard = LeaderboardManager.Instance.GetLeaderboard();
 
-        rankText.text = ""; nameText.text = ""; timeText.text = "";
+        rankText.text = "";
+        nameText.text = "";
+        timeText.text = "";
 
         foreach (var entry in leaderboard)
         {
@@ -297,5 +330,4 @@ public class GameManager : MonoBehaviour
         Debug.Log("게임 종료");
     }
     #endregion
-    
 }

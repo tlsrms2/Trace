@@ -36,7 +36,7 @@ public class LeaderboardManager : MonoBehaviour
 
         UpdateRanks();
 
-        LimitEntries(10);
+        // LimitEntries(10);
 
         Save();
     }
@@ -76,10 +76,26 @@ public class LeaderboardManager : MonoBehaviour
             string json = File.ReadAllText(filePath);
 
             leaderboard = JsonUtility.FromJson<LeaderboardData>(json);
+
+            // ★ 로드된 데이터 디버그
+            Debug.Log("Loaded Leaderboard:");
+            if (leaderboard.entries.Count == 0)
+            {
+                Debug.Log("Empty leaderboard");
+            }
+            else
+            {
+                for (int i = 0; i < leaderboard.entries.Count; i++)
+                {
+                    var entry = leaderboard.entries[i];
+                    Debug.Log($"{i + 1}. Name: {entry.playerName}, Time: {entry.clearTime}, Rank: {entry.rank}");
+                }
+            }
         }
         else
         {
             leaderboard = new LeaderboardData();
+            Debug.Log("Leaderboard file not found, initialized empty.");
         }
     }
 
