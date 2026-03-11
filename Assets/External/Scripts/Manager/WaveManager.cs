@@ -76,9 +76,12 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator SpawnEnemy(enemyData enemy)
     {
+        float timer = 0f;
         while (enemiesRemainingToSpawn > 0)
         {
-            if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
+            timer += Time.deltaTime;
+
+            if (GameManager.Instance.CurrentPhase == GamePhase.RealTime && timer >= enemy.spawnStartTime)
             {
                 enemySpawner.SpawnEnemy(enemy.enemyPrefab);
                 enemiesRemainingToSpawn--;

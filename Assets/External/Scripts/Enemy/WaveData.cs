@@ -6,6 +6,7 @@ public struct enemyData
 {
     public GameObject enemyPrefab;
     public float spawnInterval;
+    public float spawnStartTime;
 }
 
 [CreateAssetMenu(fileName = "New Wave Data", menuName = "ScriptableObjects/WaveData", order = 1)]
