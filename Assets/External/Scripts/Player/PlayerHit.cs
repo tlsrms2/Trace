@@ -1,3 +1,5 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerHit : MonoBehaviour
@@ -10,6 +12,7 @@ public class PlayerHit : MonoBehaviour
         if (!isInvincibility && GameManager.Instance.CurrentPhase != GamePhase.Replay && collision.gameObject.CompareTag("Enemy"))
         {
             Instantiate(destroyParticle, transform.position, Quaternion.identity);
+            GameManager.Instance.GameOver();
             gameObject.SetActive(false);
         }
     }

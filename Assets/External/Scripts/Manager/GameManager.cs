@@ -13,12 +13,15 @@ public class GameManager : MonoBehaviour
     public bool IsPaused { get; private set; }
     public GamePhase CurrentPhase = GamePhase.RealTime;
     
+    [Header("Game Settings")]
+    [SerializeField] private GameObject gameOverPanel;
+
     [Header("Gauge Settings")]
     [SerializeField] private float MaxGauge = 100f;
     [SerializeField] private float CurrentGauge;
     [SerializeField] private float ConsumptionRate = 20f;
     [SerializeField] private float RecoveryRate = 10f;
-    [Tooltip("¸®ÇÃ·¹ÀÌ ÈÄ °ÔÀÌÁö ÃæÀü ½ÃÀÛ ½Ã°£")][SerializeField] private float RecoveryStartTime = 1f;
+    [Tooltip("ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½")][SerializeField] private float RecoveryStartTime = 1f;
 
     private Coroutine chargeGaugeCor;
     private bool canCharge;
@@ -59,6 +62,17 @@ public class GameManager : MonoBehaviour
             ResumeGame();
         else
             PauseGame();
+    }
+
+    private IEnumerator GameOverPanel()
+    {
+        yield return new WaitForSeconds(2.0f);
+        gameOverPanel.SetActive(true);
+    }
+
+    public void GameOver()
+    {
+        StartCoroutine(GameOverPanel());
     }
 
     public void PauseGame()
