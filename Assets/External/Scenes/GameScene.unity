@@ -748,7 +748,7 @@ MonoBehaviour:
   oscillationSpeed: 0
   oscillationMagnitude: 0
   targetImageRect: {fileID: 663482456}
-  fillDirection: 2
+  fillDirection: 0
 --- !u!114 &663482458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -990,15 +990,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   CurrentPhase: 2
   gameOverPanel: {fileID: 23670972}
-  gameClearPanel: {fileID: 0}
+  gameClearPanel: {fileID: 999349123}
   pauseMenu: {fileID: 1588441751}
   firstTitleButton: {fileID: 0}
   firstPauseButton: {fileID: 111536110}
   firstGameOverButton: {fileID: 2025473334}
-  firstGameClearButton: {fileID: 0}
+  firstGameClearButton: {fileID: 1453943440}
   rankText: {fileID: 0}
   nameText: {fileID: 0}
-  timeText: {fileID: 1289906135}
+  timeText: {fileID: 0}
   MaxGauge: 100
   CurrentGauge: 100
   ConsumptionRate: 30
@@ -1271,6 +1271,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &999349123 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3105409308699876724, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+  m_PrefabInstance: {fileID: 1289906134}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1137437779
 GameObject:
   m_ObjectHideFlags: 0
@@ -1514,6 +1519,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1224445562509728663, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224445562509728663, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224445562509728663, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1239129480133193234, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -1641,6 +1658,34 @@ PrefabInstance:
     - target: {fileID: 3105409308699876724, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3371981451250543213, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3371981451250543213, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3371981451250543213, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3371981451250543213, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3371981451250543213, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 3371981451250543213, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 3371981451250543213, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3396349618564822977, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1778,6 +1823,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 943.35065
       objectReference: {fileID: 0}
+    - target: {fileID: 8506856883403098031, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8667635366987947119, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8671789707907019271, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       propertyPath: m_SpriteState.m_SelectedSprite
       value: 
@@ -1817,11 +1870,25 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7852445706681819791, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
       insertIndex: -1
       addedObject: {fileID: 895857804}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6280825395180048170, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1453943441}
   m_SourcePrefab: {fileID: 100100000, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
 --- !u!114 &1289906135 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6351283835988750297, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+  m_PrefabInstance: {fileID: 1289906134}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &1289906136 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6191854186155467650, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
   m_PrefabInstance: {fileID: 1289906134}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
@@ -1916,6 +1983,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &1453943440 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6280825395180048170, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
+  m_PrefabInstance: {fileID: 1289906134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1453943441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453943440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0.07450981, g: 0.882353, b: 0.9960785, a: 0.5}
+  m_EffectDistance: {x: 10, y: 10}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1588441751 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3065743257347535172, guid: aa5711bfd4371624998b8406437f1d04, type: 3}
@@ -2274,8 +2361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
   waves:
-  - {fileID: 11400000, guid: 0b762ec9dda3d0649906296c163aa325, type: 2}
-  - {fileID: 11400000, guid: 2ff37487367f5d649bb63b964ba66107, type: 2}
+  - {fileID: 11400000, guid: 2f61d6e59148e7d4291d4c6c2bef3fc3, type: 2}
 --- !u!4 &2084464468
 Transform:
   m_ObjectHideFlags: 0
@@ -2321,7 +2407,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimer
   timerText: {fileID: 1289906135}
-  gameOverText: {fileID: 1427851891}
+  gameOverTimerText: {fileID: 1427851891}
+  gameClearTimerText: {fileID: 1289906136}
   currentTime: 0
   isRunning: 1
   minutes: 0

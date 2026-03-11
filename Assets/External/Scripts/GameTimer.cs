@@ -19,7 +19,8 @@ public class GameTimer : MonoBehaviour
 
     [Header("UI Reference")]
     public TextMeshProUGUI timerText;
-    public TextMeshProUGUI gameOverText;
+    public TextMeshProUGUI gameOverTimerText;
+    public TextMeshProUGUI gameClearTimerText;
 
     [Header("Timer Settings")]
     public float currentTime = 0;
@@ -54,7 +55,8 @@ public class GameTimer : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnGameOver += StopTimer;
+            GameManager.Instance.OnGameOver += StopGameOverTimer;
+            GameManager.Instance.OnGameClear += StopGameClearTimer;
         }
     }
 
@@ -62,7 +64,8 @@ public class GameTimer : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnGameOver -= StopTimer;
+            GameManager.Instance.OnGameOver -= StopGameOverTimer;
+            GameManager.Instance.OnGameClear -= StopGameClearTimer;
         }
     }
 
@@ -79,12 +82,21 @@ public class GameTimer : MonoBehaviour
         UpdateTextAlphaByDistance();
     }
 
-    void StopTimer()
+    void StopGameOverTimer()
     {
         isRunning = false;
-        if (gameOverText != null)
+        if (gameOverTimerText != null)
         {
             UpdateGameOverDisplay();
+        }
+    }
+
+    void StopGameClearTimer()
+    {
+        isRunning = false;
+        if (gameClearTimerText != null)
+        {
+            UpdateGameClearDisplay();
         }
     }
 
@@ -103,7 +115,16 @@ public class GameTimer : MonoBehaviour
         seconds = Mathf.FloorToInt(currentTime % 60f);
         milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
         
-        gameOverText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        gameOverTimerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+    }
+
+    void UpdateGameClearDisplay()
+    {
+        minutes = Mathf.FloorToInt(currentTime / 60f);
+        seconds = Mathf.FloorToInt(currentTime % 60f);
+        milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
+        
+        gameClearTimerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
     }
 
     void UpdateTextAlphaByDistance()

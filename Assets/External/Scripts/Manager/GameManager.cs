@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public event Action OnGameOver;
+    public event Action OnGameClear;
     public event Action OnTraceStarted;
     public event Action OnTraceEnded;
 
@@ -166,6 +167,7 @@ public class GameManager : MonoBehaviour
             gameClearPanel.SetActive(true);
             SetUIFocus(firstGameClearButton);
         }
+        OnGameClear?.Invoke();
     }
 
     // 💡 UI 포커스를 설정해주는 헬퍼 함수

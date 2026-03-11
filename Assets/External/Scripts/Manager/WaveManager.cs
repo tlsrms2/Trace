@@ -21,8 +21,6 @@ public class WaveManager : MonoBehaviour
         if (null == instance)
         {
             instance = this;
-
-            DontDestroyOnLoad(this.gameObject);
         }
         else
         {
@@ -38,9 +36,6 @@ public class WaveManager : MonoBehaviour
     
     // (남은 적 개수, 현재 웨이브의 총 적 개수)
     public event Action<int, int> OnEnemyProgressUpdated; 
-    
-    // 게임 클리어 이벤트
-    public event Action OnAllWavesCleared; 
 
     // --- 보스용 이벤트 추가 ---
     public event Action<bool> OnWaveModeChanged;       // true면 보스 모드, false면 일반 모드
@@ -136,7 +131,6 @@ public class WaveManager : MonoBehaviour
         }
 
         // 4. 모든 웨이브 종료 시 게임 클리어 처리
-        OnAllWavesCleared?.Invoke(); // UI에 클리어 화면 띄우라고 알림
         GameManager.Instance.GameClear(); // 게임 상태 변경 (타이머 정지 등)
     }
 
