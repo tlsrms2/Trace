@@ -7,6 +7,14 @@ public class CameraController : MonoBehaviour
     [Tooltip("추적할 함선의 Transform")]
     [SerializeField] private Transform playerTarget;
 
+    [Header("Map Bounds Settings")]
+    [Tooltip("맵의 경계를 정의하는 Box Collider")]
+    [SerializeField] private BoxCollider2D mapBounds;
+    private Vector3 minBound;
+    private Vector3 maxBound;
+    private float halfWidth;
+    private float halfHeight;
+
     [Header("Zoom Settings")]
     [Tooltip("계획 페이즈(해도 그리기) 시의 카메라 크기 (Zoom-Out)")]
     [SerializeField] private float planningOrthoSize = 15f;
@@ -39,6 +47,13 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // 맵 경계 계산 (Box Collider의 중심과 크기를 기반으로)
+        minBound = mapBounds.bounds.min;
+        maxBound = mapBounds.bounds.max;
+    }
+
     private void LateUpdate()
     {
         if (playerTarget == null || GameManager.Instance == null) return;
@@ -56,13 +71,24 @@ public class CameraController : MonoBehaviour
         );
 
         // 3. 위치(Position) 부드러운 추적
-        // 프로토타입에서는 계획 페이즈 때 맵 중앙을 비췄으나, 
-        // 유니티 씬의 고정된 크기(MAP_WIDTH)가 아직 규정되지 않았으므로 
-        // 플레이어 중심으로 줌아웃 되도록 1차 구현합니다.
-        Vector3 targetPosition = playerTarget.position + offset;
+        // 카메라가 맵 밖으로 나가지 않도록 보정 
+        // 플레이어 중심으로 줌아웃 되지만 월드맵 경계를 벗어나지 않도록 구현합니다.
+        Vector3 targetPos = playerTarget.position + offset;
+
+        // 카메라 뷰포트 크기에 따른 보정값 계산
+        halfHeight = cam.orthographicSize;
+        halfWidth = halfHeight * Screen.width / Screen.height; // 가로 절반 크기
+
+        // 항해 모드라면 카메라 위치를 맵 경계 내로 제한
+        if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
+        {
+            targetPos.x = Mathf.Clamp(targetPos.x, minBound.x + halfWidth, maxBound.x - halfWidth);
+            targetPos.y = Mathf.Clamp(targetPos.y, minBound.y + halfHeight, maxBound.y - halfHeight);
+        }
+
         transform.position = Vector3.SmoothDamp(
             transform.position, 
-            targetPosition, 
+            targetPos, 
             ref moveVelocity, 
             moveSmoothTime
         );
