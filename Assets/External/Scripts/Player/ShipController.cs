@@ -1,28 +1,34 @@
 using System.Collections.Generic;
-using UnityEditor.EditorTools;
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(LineRenderer))]
 public class ShipController : MonoBehaviour
 {
-    [Header("항해 및 조작 속도 (프로토타입 수치 기반)")]
-    [SerializeField] private float playerAccel = 15f;      // 가속도
-    [SerializeField] private float autoAccelMult = 0.8f;   // 자동 항해 시 가속도 배율
-    [SerializeField] private float turnSpeed = 5f;         // 선회 속도
-    [SerializeField] private float waterFriction = 1.5f;   // 물의 저항 (마찰력)
+    [Header("항해 및 조작 속도")]
+    [SerializeField] private float playerAccel = 15f;      
+    [SerializeField] private float autoAccelMult = 0.8f;   
+    [SerializeField] private float turnSpeed = 5f;         
+    [SerializeField] private float waterFriction = 1.5f;   
 
-    [Header("경로 탐색 설정")]
-    [SerializeField] private float minDrawDistance = 1f;   // 점을 찍는 최소 간격
-    [SerializeField] private float waypointPassDist = 1.5f;// 웨이포인트 통과 기본 거리
-    [SerializeField] private float waypointMissDist = 4.5f;// 지나쳤다고 판단할 최대 반경
+    [Header("운명 동기화(Sync) 설정")]
+    [SerializeField] private float detachThreshold = 3.0f; 
+    [SerializeField] private float attachThreshold = 1.0f;
+    public float maxFateDistance = 15f; 
+    [SerializeField] private float syncPullForce = 20f;
+
+    [Header("슬립스트림(궤적 추적) 설정")]
+    [Tooltip("궤적 위에 있을 때의 가속 배율")]
+    [SerializeField] private float slipstreamMultiplier = 2.0f;
+    [Tooltip("슬립스트림 반경")]
+    [SerializeField] private float slipstreamRadius = 2.5f;
+    [Tooltip("코너 이탈 방지용: 궤적 중심으로 당겨주는 자력(그립력)")]
+    [SerializeField] private float slipstreamGripForce = 10f;
 
     [Header("사격 컴포넌트")]
-    [Tooltip("함포 사격을 담당하는 컴포넌트")]
     [SerializeField] private CharacterShoot cannonShooter;
-
-    [Header("함포 설정")]
-    [SerializeField] private float maxCannonDeviation = 40f; // 포신 최대 회전 각도 (도)
-    [SerializeField] private GameObject cannonSprite;        // 회전할 포신 오브젝트
+    [SerializeField] private float maxCannonDeviation = 40f; 
+    [SerializeField] private GameObject cannonSprite;        
 
     [Header("시각 효과")]
     [SerializeField] private Material routeMaterial;
@@ -33,25 +39,27 @@ public class ShipController : MonoBehaviour
     
     private List<Vector3> tracePoints = new List<Vector3>();
     private int routeIndex = 0;
-    
     private bool isDrawing = false;
-    private bool isReturning = false;
-    private bool wasManual = false;
+    
+    private Vector2 ghostShipPos;
+    
+    // 상태 관리
+    public bool IsSynchronized { get; private set; } = true;
+    public bool IsLost { get; private set; } = false; 
+    public float CurrentFateDeviation { get; private set; }
+
+    public event Action<bool> OnSyncStateChanged; 
+    public event Action<bool> OnLostStateChanged; 
 
     private float currentAngle = -90f; 
     public float CannonAngle { get; private set; }
-
-    // 연산 최적화를 위한 거리 제곱값 캐싱
-    private float sqrWaypointPassDist;
-    private float sqrWaypointMissDist;
-    private float sqrMinDrawDistance;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.gravityScale = 0f;
-        rb.linearDamping = 0f; 
+        rb.linearDamping = waterFriction; 
         rb.constraints = RigidbodyConstraints2D.FreezeRotation; 
 
         lineRenderer = GetComponent<LineRenderer>();
@@ -60,45 +68,16 @@ public class ShipController : MonoBehaviour
         lineRenderer.material = routeMaterial ? routeMaterial : new Material(Shader.Find("Sprites/Default"));
         lineRenderer.useWorldSpace = true;
 
-        // 최적화: 기준 거리들의 제곱값을 미리 계산
-        sqrWaypointPassDist = waypointPassDist * waypointPassDist;
-        sqrWaypointMissDist = waypointMissDist * waypointMissDist;
-        sqrMinDrawDistance = minDrawDistance * minDrawDistance;
-
-        // 인스펙터에서 누락된 경우 자동 탐색
-        if (cannonShooter == null)
-        {
-            cannonShooter = GetComponentInChildren<CharacterShoot>();
-        }
-    }
-
-    private void Start()
-    {
-        GameManager.Instance.OnSteeringExhausted += ReturnToOptimalPath;
-    }
-
-    private void OnDestroy()
-    {
-        if (GameManager.Instance != null)
-            GameManager.Instance.OnSteeringExhausted -= ReturnToOptimalPath;
+        if (cannonShooter == null) cannonShooter = GetComponentInChildren<CharacterShoot>();
     }
 
     private void Update()
     {
-        if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
-        {
-            HandlePlanningPhase();
-        }
+        if (GameManager.Instance.CurrentPhase == GamePhase.Paused) HandlePlanningPhase();
         else if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
         {
-            // 1. 포신 각도 계산
             UpdateCannonAngle();
-
-            // 2. 마우스 좌클릭 시 사격 시도 (쿨타임 체크는 CharacterShoot에서 처리)
-            if (Input.GetMouseButtonDown(0) && cannonShooter != null)
-            {
-                cannonShooter.TryShoot(CannonAngle);
-            }
+            if (Input.GetMouseButtonDown(0) && cannonShooter != null) cannonShooter.TryShoot(CannonAngle);
         }
     }
 
@@ -112,32 +91,16 @@ public class ShipController : MonoBehaviour
 
         float dt = Time.fixedDeltaTime;
 
-        // 물의 저항 적용
-        Vector2 velocity = rb.linearVelocity;
-        velocity -= velocity * waterFriction * dt;
-        rb.linearVelocity = velocity;
+        UpdateGhostShipPosition(dt);
+        UpdateSyncState();
 
-        bool isManual = GameManager.Instance.IsSteeringMode;
-
-        if (!isManual && isReturning == false && wasManual == true)
-        {
-            ReturnToOptimalPath();
-        }
-
-        if (isManual)
-        {
-            ExecuteManualMovement(dt);
-        }
-        else
-        {
-            ExecuteAutoNavigation(dt);
-        }
+        if (IsSynchronized) ExecuteSynchronizedMovement(dt);
+        else if (GameManager.Instance.IsSteeringMode) ExecuteManualMovement(dt);
 
         transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
-        wasManual = isManual;
     }
 
-    #region Phase 1: Planning (계획)
+    #region Planning Phase
     private void HandlePlanningPhase()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -145,36 +108,88 @@ public class ShipController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            // 제곱 거리 비교 적용
-            float sqrDistToPlayer = (mousePos - transform.position).sqrMagnitude;
-            if (sqrDistToPlayer < 9f || tracePoints.Count == 0) // 3f * 3f
+            if (Vector3.Distance(mousePos, transform.position) < 3f || tracePoints.Count == 0) 
             {
                 isDrawing = true;
                 tracePoints.Clear();
                 tracePoints.Add(transform.position);
+                ghostShipPos = transform.position; 
+                routeIndex = 0;
+                SetSyncState(true);
+                SetLostState(false);
             }
         }
         else if (Input.GetMouseButton(0) && isDrawing)
         {
-            if (tracePoints.Count > 0)
+            if (tracePoints.Count > 0 && Vector3.Distance(tracePoints[tracePoints.Count - 1], mousePos) > 1f)
             {
-                // 제곱 거리 비교 적용
-                float sqrDist = (tracePoints[tracePoints.Count - 1] - mousePos).sqrMagnitude;
-                if (sqrDist > sqrMinDrawDistance)
-                {
-                    tracePoints.Add(mousePos);
-                    UpdateLineRenderer();
-                }
+                tracePoints.Add(mousePos);
+                UpdateLineRenderer();
             }
         }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            isDrawing = false;
-        }
+        else if (Input.GetMouseButtonUp(0)) isDrawing = false;
     }
     #endregion
 
-    #region Phase 2: Execution (항해 로직)
+    #region Execution Phase
+    private void UpdateGhostShipPosition(float dt)
+    {
+        if (routeIndex >= tracePoints.Count) return;
+
+        Vector2 target = tracePoints[routeIndex];
+        float dist = Vector2.Distance(ghostShipPos, target);
+
+        if (dist < 1.0f)
+        {
+            routeIndex++;
+            if (routeIndex >= tracePoints.Count) return; 
+            target = tracePoints[routeIndex];
+        }
+
+        Vector2 dir = (target - ghostShipPos).normalized;
+        // 단절 상태 시 유령선 속도 50% 감속 (추격의 여지 제공)
+        float currentSpeed = (playerAccel * autoAccelMult) * (IsLost ? 0.5f : 1.0f);
+        ghostShipPos += dir * currentSpeed * dt;
+    }
+
+    private void UpdateSyncState()
+    {
+        CurrentFateDeviation = Vector2.Distance(transform.position, ghostShipPos);
+
+        if (IsSynchronized && CurrentFateDeviation > detachThreshold) SetSyncState(false);
+        else if (!IsSynchronized && CurrentFateDeviation <= attachThreshold) SetSyncState(true);
+
+        if (!IsLost && CurrentFateDeviation >= maxFateDistance) SetLostState(true);
+        else if (IsLost && CurrentFateDeviation < maxFateDistance * 0.8f) SetLostState(false);
+    }
+
+    private void SetSyncState(bool state)
+    {
+        if (IsSynchronized == state) return;
+        IsSynchronized = state;
+        OnSyncStateChanged?.Invoke(IsSynchronized);
+    }
+
+    private void SetLostState(bool state)
+    {
+        if (IsLost == state) return;
+        IsLost = state;
+        OnLostStateChanged?.Invoke(IsLost); 
+    }
+
+    private void ExecuteSynchronizedMovement(float dt)
+    {
+        Vector2 dirToGhost = (ghostShipPos - (Vector2)transform.position).normalized;
+        float targetAngle = Mathf.Atan2(dirToGhost.y, dirToGhost.x) * Mathf.Rad2Deg;
+        currentAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, turnSpeed * 100f * dt);
+
+        Vector2 followVelocity = dirToGhost * (playerAccel * autoAccelMult);
+        Vector2 pullForce = dirToGhost * (CurrentFateDeviation * syncPullForce);
+
+        rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, followVelocity, dt * 10f);
+        rb.AddForce(pullForce, ForceMode2D.Force); 
+    }
+
     private void ExecuteManualMovement(float dt)
     {
         float ax = Input.GetAxisRaw("Horizontal");
@@ -188,127 +203,66 @@ public class ShipController : MonoBehaviour
             float angleRad = currentAngle * Mathf.Deg2Rad;
             Vector2 forwardVec = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
             
-            rb.linearVelocity += forwardVec * playerAccel * dt;
+            float currentAccel = playerAccel * 2.5f;
+            Vector2 gripForce = Vector2.zero;
+
+            // 슬립스트림 자력 레일(Magnetic Rail) 연산
+            if (TryGetSlipstreamData(out Vector2 nearestPoint))
+            {
+                currentAccel *= slipstreamMultiplier; 
+                
+                // 함선을 궤적의 중심(nearestPoint)으로 끌어당기는 구심력 계산
+                Vector2 dirToRail = (nearestPoint - (Vector2)transform.position).normalized;
+                float distToRail = Vector2.Distance(transform.position, nearestPoint);
+                gripForce = dirToRail * (distToRail * slipstreamGripForce);
+            }
+            
+            rb.AddForce((forwardVec * currentAccel) + gripForce, ForceMode2D.Force); 
         }
     }
 
-    private void ExecuteAutoNavigation(float dt)
+    // 슬립스트림 판정 및 궤적 위 가장 가까운 좌표 반환
+    private bool TryGetSlipstreamData(out Vector2 nearestPoint)
     {
-        bool advanced = false;
+        nearestPoint = Vector2.zero;
+        if (tracePoints.Count < 2) return false;
+        
+        Vector2 currentPos = transform.position;
+        float minDistSqr = float.MaxValue;
+        bool found = false;
 
-        while (routeIndex < tracePoints.Count)
+        for (int i = 0; i < tracePoints.Count - 1; i++)
         {
-            Vector3 target = tracePoints[routeIndex];
-            float dx = target.x - transform.position.x;
-            float dy = target.y - transform.position.y;
+            Vector2 a = tracePoints[i];
+            Vector2 b = tracePoints[i + 1];
             
-            // 제곱 거리 산출
-            float sqrDist = (dx * dx) + (dy * dy);
-
-            float angleRad = currentAngle * Mathf.Deg2Rad;
-            float dot = dx * Mathf.Cos(angleRad) + dy * Mathf.Sin(angleRad);
-
-            // 거리 제곱값 및 내적 비교 (루트 연산 제거)
-            if (sqrDist < sqrWaypointPassDist || (sqrDist < sqrWaypointMissDist && dot < 0))
-            {
-                routeIndex++;
-                advanced = true;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        if (advanced && isReturning)
-        {
-            isReturning = false;
-        }
-
-        if (routeIndex < tracePoints.Count)
-        {
-            Vector3 target = tracePoints[routeIndex];
-            float dx = target.x - transform.position.x;
-            float dy = target.y - transform.position.y;
-
-            float targetAngle = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg;
-            currentAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, turnSpeed * 100f * dt);
-
-            float currentRad = currentAngle * Mathf.Deg2Rad;
-            Vector2 forwardVec = new Vector2(Mathf.Cos(currentRad), Mathf.Sin(currentRad));
+            Vector2 ab = b - a;
+            float t = Vector2.Dot(currentPos - a, ab) / ab.sqrMagnitude;
+            t = Mathf.Clamp01(t);
+            Vector2 projection = a + t * ab;
             
-            rb.linearVelocity += forwardVec * (playerAccel * autoAccelMult) * dt;
-        }
-        else
-        {
-            // TODO: 웨이브 클리어 조건
-        }
-    }
-
-    private void ReturnToOptimalPath()
-    {
-        isReturning = true;
-        float minSqrDist = float.MaxValue;
-        int bestIdx = routeIndex;
-
-        for (int i = routeIndex; i < tracePoints.Count; i++)
-        {
-            // 최단 거리 탐색에도 제곱 거리 활용
-            float sqrDist = (tracePoints[i] - transform.position).sqrMagnitude;
-            if (sqrDist < minSqrDist)
+            float distSqr = (currentPos - projection).sqrMagnitude;
+            if (distSqr < slipstreamRadius * slipstreamRadius && distSqr < minDistSqr)
             {
-                minSqrDist = sqrDist;
-                bestIdx = i;
+                minDistSqr = distSqr;
+                nearestPoint = projection;
+                found = true;
             }
         }
-        routeIndex = bestIdx;
+        return found;
     }
     #endregion
 
-    #region 함포 조준 로직
     private void UpdateCannonAngle()
     {
+        if (cannonSprite == null) return;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0f;
 
         float mouseAngle = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x) * Mathf.Rad2Deg;
-        
-        // 진행 방향(currentAngle) 기준, 함선 좌/우측 기준 각도
-        float leftSide = currentAngle + 90f;
-        float rightSide = currentAngle - 90f;
-
-        // 마우스 각도가 좌/우측 중 어디에 가까운지 판단하여 최대 회전 범위 내에서 포신 각도 결정
-        float diffLeft = Mathf.Abs(Mathf.DeltaAngle(leftSide, mouseAngle));
-        float diffRight = Mathf.Abs(Mathf.DeltaAngle(rightSide, mouseAngle));
-
-        float targetCannonAngle = mouseAngle;
-
-        // 더 가까운 측면을 선택하고, 최대 허용 각도를 초과하는 경우 Clamp
-        if (diffLeft < diffRight)
-        {
-            if (diffLeft > maxCannonDeviation)
-            {
-                float sign = Mathf.Sign(Mathf.DeltaAngle(leftSide, mouseAngle));
-                targetCannonAngle = leftSide + (sign * maxCannonDeviation);
-            }
-        }
-        else
-        {
-            if (diffRight > maxCannonDeviation)
-            {
-                float sign = Mathf.Sign(Mathf.DeltaAngle(rightSide, mouseAngle));
-                targetCannonAngle = rightSide + (sign * maxCannonDeviation);
-            }
-        }
-
-        CannonAngle = targetCannonAngle;
-
-        if (cannonSprite != null)
-        {
-            cannonSprite.transform.rotation = Quaternion.Euler(0f, 0f, CannonAngle);
-        }
+        CannonAngle = Mathf.Clamp(mouseAngle, currentAngle - maxCannonDeviation, currentAngle + maxCannonDeviation);
+        cannonSprite.transform.rotation = Quaternion.Euler(0f, 0f, CannonAngle);
     }
-    #endregion
 
     private void UpdateLineRenderer()
     {
