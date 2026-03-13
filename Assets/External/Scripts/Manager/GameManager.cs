@@ -15,13 +15,18 @@ public class GameManager : MonoBehaviour
     public event Action OnGameClear;
     public event Action OnTraceStarted;
     public event Action OnTraceEnded;
+    
+    // 조타수 개입(Shift) 유지 실패 시 발생하는 이벤트
+    public event Action OnSteeringExhausted; 
 
     public bool IsPaused { get; private set; }
-    public GamePhase CurrentPhase = GamePhase.RealTime;
+    
+    // 시작 시 계획 페이즈(Paused)로 돌입하도록 변경
+    public GamePhase CurrentPhase = GamePhase.Paused; 
     public bool isPaused => CurrentPhase == GamePhase.Paused;
 
     private string playerName;
-    private bool secondPanelReady = false; // 두 번째 패널 엔터 체크용
+    private bool secondPanelReady = false; 
 
     [Header("UI Settings")]
     [SerializeField] private GameObject gameOverPanel;
@@ -47,15 +52,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI timeText;
 
-    [Header("Gauge Settings")]
+    [Header("Gauge(Focus) Settings")]
     [SerializeField] private float MaxGauge = 100f;
-    [SerializeField] private float CurrentGauge;
+    [SerializeField] private float CurrentGauge = 100f;
     [SerializeField] private float ConsumptionRate = 20f;
     [SerializeField] private float RecoveryRate = 10f;
     [SerializeField] private float RecoveryStartTime = 1f;
 
     private Coroutine chargeGaugeCor;
     private bool canCharge;
+    
+    // 외부(ShipController)에서 참조할 조타수 모드 상태
+    public bool IsSteeringMode { get; private set; } = false;
 
     private void Awake()
     {
@@ -67,8 +75,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = true; // 계획 페이즈를 위해 마우스 커서 활성화
+        Cursor.lockState = CursorLockMode.None;
         OnTraceEnded += StartChargeWait;
     }
 
@@ -76,6 +84,9 @@ public class GameManager : MonoBehaviour
     {
         TitleUIFocus();
         UpdateLeaderboardUI();
+        
+        // 게임 시작 시 무조건 계획 페이즈(시간 정지) 돌입
+        ChangePhase(GamePhase.Paused);
     }
 
     private void Update()
@@ -83,33 +94,27 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
 
-        if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.RealTime && !IsPaused)
-            ChangePhase(GamePhase.Paused);
-
-        if (Input.GetKeyUp(KeyCode.Space) && CurrentPhase == GamePhase.Paused)
-            ChangePhase(GamePhase.Replay);
+        // [Space] 키 : 계획 페이즈(해도를 다 그림) -> 실행 페이즈(출항) 전환
+        if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.Paused && !IsPaused)
+        {
+            ChangePhase(GamePhase.RealTime);
+        }
 
         if (Input.GetKeyDown(KeyCode.R) && !firstClearPanel.activeSelf)
         {
             RestartGame();
         }
 
-        HandleGauge();
+        HandleSteeringGauge();
 
-        // 두 번째 패널 엔터 입력
-        // Update() 안 두 번째 패널 엔터 입력 처리
         if (secondPanelReady && secondClearPanel != null && secondClearPanel.activeSelf && Input.GetKeyDown(KeyCode.Return))
         {
             secondClearPanel.SetActive(false);
             thirdClearPanel.SetActive(true);
-
             clearText?.SetActive(true);
             timerText?.SetActive(true);
-
-            // ✅ 세 번째 패널에서 Restart 버튼 포커스 설정
-            SetUIFocus(thirdSelectButton); // 혹은 thirdPanel에서 사용할 버튼 지정
-
-            secondPanelReady = false; // 다시 초기화
+            SetUIFocus(thirdSelectButton); 
+            secondPanelReady = false; 
         }
     }
 
@@ -195,7 +200,6 @@ public class GameManager : MonoBehaviour
         OnGameClear?.Invoke();
     }
 
-    // 첫 번째 패널 제출
     public void OnFirstPanelSubmit()
     {
         playerName = nameInputField.text;
@@ -213,8 +217,6 @@ public class GameManager : MonoBehaviour
         UpdateSecondPanelLeaderboard();
 
         EventSystem.current.SetSelectedGameObject(null);
-
-        // 한 프레임 딜레이 후 두 번째 패널 엔터 가능
         StartCoroutine(EnableSecondPanelInputNextFrame());
     }
 
@@ -227,14 +229,9 @@ public class GameManager : MonoBehaviour
     private void UpdateSecondPanelLeaderboard()
     {
         if (LeaderboardManager.Instance == null) return;
-
         var leaderboard = LeaderboardManager.Instance.GetLeaderboard();
-        int count = Mathf.Min(leaderboard.Count, 10); // 최대 10개까지만 표시
-
-        rankText.text = "";
-        nameText.text = "";
-        timeText.text = "";
-
+        int count = Mathf.Min(leaderboard.Count, 10); 
+        rankText.text = ""; nameText.text = ""; timeText.text = "";
         for (int i = 0; i < count; i++)
         {
             var entry = leaderboard[i];
@@ -254,27 +251,72 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region Gauge Logic
+    #region Gauge(Focus) Logic
     public float GetCurrentGauge() => CurrentGauge;
     public float GetGaugePercentage() => CurrentGauge / MaxGauge;
 
-    private void HandleGauge()
+    // 기존의 HandleFocusGauge를 토글 방식의 HandleSteeringGauge로 변경
+    private void HandleSteeringGauge()
     {
-        if (CurrentPhase == GamePhase.Paused)
+        // 1. 실행(항해) 페이즈일 때만 게이지 소모/회복 처리
+        if (CurrentPhase == GamePhase.RealTime)
         {
-            canCharge = false;
-            CurrentGauge -= ConsumptionRate * Time.unscaledDeltaTime;
-            if (CurrentGauge <= 0)
+            // Shift 키 토글 감지 (GetKeyDown 적용)
+            if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
             {
-                CurrentGauge = 0;
-                ChangePhase(GamePhase.Replay);
+                if (IsSteeringMode)
+                {
+                    // 이미 켜져 있다면 수동으로 끄기
+                    DisableSteeringMode();
+                }
+                else if (CurrentGauge > 0)
+                {
+                    // 꺼져 있고 게이지가 남아있다면 켜기
+                    IsSteeringMode = true;
+                    CurrentGauge = Mathf.Max(0, CurrentGauge - (MaxGauge * 0.05f)); // 착수금 5% 차감
+                    canCharge = false;
+                    
+                    // 혹시 대기 중이던 충전 코루틴이 있다면 취소하여 중복 방지
+                    if (chargeGaugeCor != null) 
+                        StopCoroutine(chargeGaugeCor); 
+                }
             }
+
+            // 게이지 소모 진행
+            if (IsSteeringMode)
+            {
+                canCharge = false;
+                CurrentGauge -= ConsumptionRate * Time.deltaTime;
+
+                // 게이지 고갈 시 강제 해제 이벤트 발송
+                if (CurrentGauge <= 0)
+                {
+                    CurrentGauge = 0;
+                    DisableSteeringMode();
+                    OnSteeringExhausted?.Invoke();
+                }
+            }
+        }
+        else // 계획 페이즈 (Paused)
+        {
+            if (IsSteeringMode)
+            {
+                IsSteeringMode = false;
+            }
+            canCharge = false; // 계획 중에는 게이지 변동 없음
         }
 
         if (canCharge)
         {
             CurrentGauge = Mathf.Min(MaxGauge, CurrentGauge + RecoveryRate * Time.deltaTime);
         }
+    }
+
+    // 모드 해제 시 공통으로 처리해야 할 로직(회복 유예 코루틴 시작 등)을 묶음
+    private void DisableSteeringMode()
+    {
+        IsSteeringMode = false;
+        StartChargeWait();
     }
 
     private void StartChargeWait()
@@ -286,23 +328,16 @@ public class GameManager : MonoBehaviour
     private IEnumerator WaitChargeGauge()
     {
         yield return new WaitForSeconds(RecoveryStartTime);
-        StartCharge();
+        canCharge = true;
     }
-
-    private void StartCharge() => canCharge = true;
     #endregion
 
     #region Scene & UI Interaction
     public void UpdateLeaderboardUI()
     {
         if (LeaderboardManager.Instance == null || rankText == null) return;
-
         var leaderboard = LeaderboardManager.Instance.GetLeaderboard();
-
-        rankText.text = "";
-        nameText.text = "";
-        timeText.text = "";
-
+        rankText.text = ""; nameText.text = ""; timeText.text = "";
         foreach (var entry in leaderboard)
         {
             rankText.text += entry.rank + "\n";
@@ -310,29 +345,9 @@ public class GameManager : MonoBehaviour
             timeText.text += entry.clearTime.ToString("F2") + "\n";
         }
     }
-
-    public void RestartGame()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void GoToMainMenu()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("TitleScene");
-    }
-
-    public void StartGame()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("GameScene");
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
-        Debug.Log("게임 종료");
-    }
+    public void RestartGame() { Time.timeScale = 1f; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void GoToMainMenu() { Time.timeScale = 1f; SceneManager.LoadScene("TitleScene"); }
+    public void StartGame() { Time.timeScale = 1f; SceneManager.LoadScene("GameScene"); }
+    public void QuitGame() { Application.Quit(); }
     #endregion
 }

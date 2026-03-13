@@ -145,7 +145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &176894028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,6 +464,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -533,7 +534,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0, g: 0.1764706, b: 0.4509804, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -589,6 +590,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a6cb151f5e550d40af645c9ff115f47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  playerTarget: {fileID: 651857578}
+  planningOrthoSize: 20
+  executionOrthoSize: 3
+  zoomSmoothTime: 0.3
+  offset: {x: 0, y: 0, z: -10}
+  moveSmoothTime: 0.2
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +704,22 @@ PrefabInstance:
       propertyPath: gameOverPanel
       value: 
       objectReference: {fileID: 23670972}
+    - target: {fileID: 1499807212445285276, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1499807212445285276, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1499807212445285276, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1499807212445285276, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4268527422705572947, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -692,6 +727,38 @@ PrefabInstance:
     - target: {fileID: 4268527422705572947, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4997190373680605742, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4997190373680605742, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_Parameters.alignment
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4997190373680605742, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_Parameters.textureMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4997190373680605742, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_Parameters.textureScale.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4997190373680605742, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_Parameters.textureScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5436671860749060595, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5485194617333420689, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5879673273813815623, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5992537981668252337, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
       propertyPath: m_LocalPosition.x
@@ -741,16 +808,79 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7150634954861249109, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6903252855027750859, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 651857580}
+    - targetCorrespondingSourceObject: {fileID: 6903252855027750859, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 651857587}
   m_SourcePrefab: {fileID: 100100000, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
 --- !u!4 &651857578 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5992537981668252337, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
   m_PrefabInstance: {fileID: 651857577}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &651857579 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6903252855027750859, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+  m_PrefabInstance: {fileID: 651857577}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &651857580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651857579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 046527087f8e73144a5c2f1891c2735c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShipController
+  playerAccel: 2
+  autoAccelMult: 0.8
+  turnSpeed: 2
+  waterFriction: 1.5
+  minDrawDistance: 1
+  waypointPassDist: 1.5
+  waypointMissDist: 4.5
+  cannonShooter: {fileID: 651857587}
+  maxCannonDeviation: 40
+  cannonSprite: {fileID: 651857581}
+  routeMaterial: {fileID: 2100000, guid: d8dcf86f4d4dda14daba61037e1cf0d0, type: 2}
+  lineWidth: 0.3
+--- !u!1 &651857581 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 149517120407976975, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+  m_PrefabInstance: {fileID: 651857577}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &651857587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651857579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c6f1b58278a5d44ab3d8075102f2c75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterShoot
+  bulletPrefab: {fileID: 5612879478203917923, guid: da30e7cf941241c44bb168d5c022e4c9, type: 3}
+  firePoints:
+  - {fileID: 702206597}
+  fireCooldown: 2
+  bulletSpeed: 15
+  damage: 10
+  isPlayer: 1
 --- !u!1 &654904011
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,6 +1186,11 @@ RectTransform:
   m_AnchoredPosition: {x: 500, y: 355}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!4 &702206597 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5436671860749060595, guid: 50d3c782e60082f4b8908ef5909ed456, type: 3}
+  m_PrefabInstance: {fileID: 651857577}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &770580033
 GameObject:
   m_ObjectHideFlags: 0
@@ -1071,7 +1206,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &770580034
 Transform:
   m_ObjectHideFlags: 0
@@ -3412,8 +3547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveManager
   waves:
-  - {fileID: 11400000, guid: 3f3adab38a148784c9fda74a7b40a262, type: 2}
-  - {fileID: 11400000, guid: 20cb178bc731a7146be6fce2953abf01, type: 2}
+  - {fileID: 11400000, guid: 2f61d6e59148e7d4291d4c6c2bef3fc3, type: 2}
 --- !u!4 &2084464468
 Transform:
   m_ObjectHideFlags: 0
