@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     protected Transform target;
     protected Collider2D col;
     protected SpriteRenderer spriteRenderer;
+    private bool isDead = false;
 
     protected virtual void Awake()
     {
@@ -52,6 +53,8 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isDead) return; // 이미 죽은 적은 데미지 처리하지 않음
+
         AttackData attack;
         float beforeHp = Hp;
         if (collision.TryGetComponent(out attack))
@@ -64,6 +67,8 @@ public class Enemy : MonoBehaviour
 
             if (Hp <= 0)
             {
+                isDead = true; // 중복 사망 처리 방지
+                col.enabled = false; // 추가 충돌 즉시 차단
                 WaveManager.Instance.OnEnemyKilled();
 
                 // 🔹 보스 여부 체크 후 효과음 재생
