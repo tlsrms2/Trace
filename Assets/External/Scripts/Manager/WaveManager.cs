@@ -168,6 +168,12 @@ public class WaveManager : MonoBehaviour
     {
         enemiesRemainingAlive--;
         
+        // 안전 장치: 음수 방지 (중복 호출 대비)
+        if (enemiesRemainingAlive < 0)
+        {
+            Debug.LogWarning("[WaveManager] enemiesRemainingAlive went negative! Clamping to 0.");
+            enemiesRemainingAlive = 0;
+        }
 
         // 남은 전체 적 = 아직 스폰 안 된 적 + 현재 맵에 살아있는 적
         int totalRemaining = enemiesRemainingToSpawn + enemiesRemainingAlive;
