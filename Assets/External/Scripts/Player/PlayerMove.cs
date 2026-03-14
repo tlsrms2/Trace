@@ -54,13 +54,13 @@ public class PlayerMove : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnTraceStarted += StartTrace;
-        GameManager.Instance.OnTraceEnded += EndTrace;
+        GameManager.Instance.OnPlanningStarted += StartTrace;
+        GameManager.Instance.OnPlanningEnded += EndTrace;
     }
     private void OnDestroy()
     {
-        GameManager.Instance.OnTraceStarted -= StartTrace;
-        GameManager.Instance.OnTraceEnded -= EndTrace;
+        GameManager.Instance.OnPlanningStarted -= StartTrace;
+        GameManager.Instance.OnPlanningEnded -= EndTrace;
     }
 
     private void OnDisable()

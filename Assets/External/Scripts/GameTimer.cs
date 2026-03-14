@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEditor.Rendering;
 
 public class GameTimer : MonoBehaviour
 {
@@ -19,15 +20,26 @@ public class GameTimer : MonoBehaviour
 
     [Header("UI Reference")]
     public TextMeshProUGUI timerText;
+    public TextMeshProUGUI timerToDayText;
+    public TextMeshProUGUI timerToWeekText;
+    public TextMeshProUGUI timerToMonthText;
     public TextMeshProUGUI gameOverTimerText;
     public TextMeshProUGUI gameClearTimerText;
 
     [Header("Timer Settings")]
     public float currentTime = 0;
     public bool isRunning = true;
+    public int months = 1;
+    public int weeks = 1;
+    public int days = 1;
+    public int hours;
     public int minutes;
     public int seconds;
     public int milliseconds;
+
+    private int previousTotalDays = -1;
+    private int currentYear = 1;
+    private readonly int[] daysInMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
     [Header("Distance Fading Settings")]
     public Transform player; // 플레이어의 Transform
@@ -76,10 +88,15 @@ public class GameTimer : MonoBehaviour
         {
             currentTime += Time.deltaTime;
             UpdateTimerDisplay();
-        }
 
-        // 2. 거리에 따른 투명도 업데이트 로직
-        UpdateTextAlphaByDistance();
+            // 총 며칠(24초당 1일)이 지났는지 계산
+            int currentTotalDays = Mathf.FloorToInt(currentTime / 24f);
+            if (currentTotalDays != previousTotalDays)
+            {
+                UpdateCalendar(currentTotalDays);
+                previousTotalDays = currentTotalDays;
+            }
+        }
     }
 
     void StopGameOverTimer()
@@ -102,50 +119,99 @@ public class GameTimer : MonoBehaviour
 
     void UpdateTimerDisplay()
     {
-        minutes = Mathf.FloorToInt(currentTime / 60f);
+        hours = Mathf.FloorToInt(currentTime / 3600f);
+        minutes = Mathf.FloorToInt((currentTime % 3600f) / 60f);
         seconds = Mathf.FloorToInt(currentTime % 60f);
-        milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
 
-        timerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        timerText.text = string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
+    }
+
+    void UpdateCalendar(int totalDays)
+    {
+        // 월(Month) 및 일(Day) 계산
+        int tempDays = totalDays;
+        int tempMonth = 1;
+        int tempYear = 1;
+
+        while (true)
+        {
+            int maxDays = daysInMonth[tempMonth - 1];
+            
+            // 윤년 계산 (4년에 한 번 2월은 29일)
+            if (tempMonth == 2 && (tempYear % 4 == 0 && (tempYear % 100 != 0 || tempYear % 400 == 0)))
+            {
+                maxDays = 29;
+            }
+
+            // 남은 일수가 이번 달의 최대 일수보다 크거나 같다면 다음 달로 넘어감
+            if (tempDays >= maxDays)
+            {
+                tempDays -= maxDays;
+                tempMonth++;
+                if (tempMonth > 12)
+                {
+                    tempMonth = 1;
+                    tempYear++;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        months = tempMonth;
+        days = 1 + tempDays;
+        currentYear = tempYear;
+
+        // 주(Week) 계산: 현재 달의 몇 주차인지 계산 (1~5주차)
+        weeks = Mathf.FloorToInt((days - 1) / 7f) + 1;
+
+        UpdateDayTimerDisplay();
+        UpdateWeekTimerDisplay();
+        UpdateMonthTimerDisplay();
+    }
+
+    void UpdateDayTimerDisplay()
+    {
+        if (timerToDayText != null)
+            timerToDayText.text = string.Format("{0:0}", days);
+    }
+
+    void UpdateWeekTimerDisplay()
+    {
+        if (timerToWeekText != null && weeks == 1)
+            timerToWeekText.text = string.Format("{0:0}st Week", weeks);
+        else if (timerToWeekText != null && weeks == 2)
+            timerToWeekText.text = string.Format("{0:0}nd Week", weeks);
+        else if (timerToWeekText != null && weeks == 3)
+            timerToWeekText.text = string.Format("{0:0}rd Week", weeks);
+        else if (timerToWeekText != null && weeks > 3)
+            timerToWeekText.text = string.Format("{0:0}th Week", weeks);
+    }
+
+    void UpdateMonthTimerDisplay()
+    {
+        if (timerToMonthText != null)
+            timerToMonthText.text = string.Format("{0:0}", months);
     }
 
     void UpdateGameOverDisplay()
     {
-        minutes = Mathf.FloorToInt(currentTime / 60f);
+        hours = Mathf.FloorToInt(currentTime / 3600f);
+        minutes = Mathf.FloorToInt((currentTime % 3600f) / 60f);
         seconds = Mathf.FloorToInt(currentTime % 60f);
-        milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
         
-        gameOverTimerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        gameOverTimerText.text = string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
     }
 
     void UpdateGameClearDisplay()
     {
-        minutes = Mathf.FloorToInt(currentTime / 60f);
+        hours = Mathf.FloorToInt(currentTime / 3600f);
+        minutes = Mathf.FloorToInt((currentTime % 3600f) / 60f);
         seconds = Mathf.FloorToInt(currentTime % 60f);
-        milliseconds = Mathf.FloorToInt((currentTime * 100f) % 100f);
         
-        gameClearTimerText.text = string.Format("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
-    }
-
-    void UpdateTextAlphaByDistance()
-    {
-        // 플레이어나 텍스트가 연결되어 있지 않으면 작동하지 않음
-        if (player == null || timerText == null) return;
-
-        // 플레이어와 타이머 위치 사이의 거리 계산
-        float distance = Vector3.Distance(player.position, timerWorldPosition.position);
-
-        // 거리를 0~1 사이의 비율로 변환 (InverseLerp)
-        // distance가 fadeEndDistance 이하면 0, fadeStartDistance 이상이면 1 반환
-        float distanceRatio = Mathf.InverseLerp(fadeEndDistance, fadeStartDistance, distance);
-
-        // 비율에 따라 최소 투명도와 최대 투명도 사이의 값을 부드럽게 계산 (Lerp)
-        float currentAlpha = Mathf.Lerp(minAlpha, maxAlpha, distanceRatio);
-
-        // 텍스트의 Color 값을 가져와서 Alpha 값만 수정한 뒤 다시 적용
-        Color textColor = timerText.color;
-        textColor.a = currentAlpha;
-        timerText.color = textColor;
+        gameClearTimerText.text = string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
     }
 
     public void ReduceTime(int amount)

@@ -13,8 +13,8 @@ public class GameManager : MonoBehaviour
 
     public event Action OnGameOver;
     public event Action OnGameClear;
-    public event Action OnTraceStarted;
-    public event Action OnTraceEnded;
+    public event Action OnPlanningStarted;
+    public event Action OnPlanningEnded;
     
     // 조타수 개입(Shift) 유지 실패 시 발생하는 이벤트
     public event Action OnSteeringExhausted; 
@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI timeText;
 
-    [Header("Gauge(Focus) Settings")]
+    [Header("Gauge(Steering) Settings")]
     [SerializeField] private float MaxGauge = 100f;
     [SerializeField] private float CurrentGauge = 100f;
     [SerializeField] private float ConsumptionRate = 20f;
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
 
         Cursor.visible = true; // 계획 페이즈를 위해 마우스 커서 활성화
         Cursor.lockState = CursorLockMode.None;
-        OnTraceEnded += StartChargeWait;
+        OnPlanningEnded += StartChargeWait;
 
         //초기 설정
         CurrentMaxSyncRate = absoluteMaxSyncRate;
@@ -109,8 +109,7 @@ public class GameManager : MonoBehaviour
         TitleUIFocus();
         UpdateLeaderboardUI();
         
-        // 게임 시작 시 무조건 계획 페이즈(시간 정지) 돌입
-        ChangePhase(GamePhase.Paused);
+        ChangePhase(GamePhase.Paused); // 시작 시 계획 페이즈로 진입
     }
 
     private void OnDestroy()
@@ -125,18 +124,12 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
-
         // [Space] 키 : 계획 페이즈(해도를 다 그림) -> 실행 페이즈(출항) 전환
         if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.Paused && !IsPaused)
-        {
             ChangePhase(GamePhase.RealTime);
-        }
-
         if (Input.GetKeyDown(KeyCode.R) && !firstClearPanel.activeSelf)
-        {
             RestartGame();
-        }
-
+        
         HandleSteeringGauge();
         HandleFateSyncRate();
 
@@ -196,8 +189,8 @@ public class GameManager : MonoBehaviour
 
         switch (CurrentPhase)
         {
-            case GamePhase.Paused: OnTraceEnded?.Invoke(); break;
-            case GamePhase.RealTime: OnTraceStarted?.Invoke(); break;
+            case GamePhase.Paused: OnPlanningEnded?.Invoke(); break;
+            case GamePhase.RealTime: OnPlanningStarted?.Invoke(); break;
         }
 
         CurrentPhase = nextPhase;
@@ -346,12 +339,11 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        bool isShipDetached = shipController != null && !shipController.IsSynchronized;
-        // Shift 키가 눌려있는지 여부 체크
+        // '자발적 분리'를 위해 Shift 키 입력만 있으면 무조건 SteeringMode를 활성화
         bool isHoldingShift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        // 조타수 모드 진입 조건: Shift 키를 누르고 있고, 현재 단절 상태이며, 게이지가 남아있어야 함
-        if (isShipDetached && isHoldingShift && CurrentGauge > 0)
+        // 조타수 모드 진입 조건: Shift 키를 누르고 있고, 게이지가 남아있어야 함
+        if (isHoldingShift && CurrentGauge > 0)
         {
             IsSteeringMode = true;
             canCharge = false;

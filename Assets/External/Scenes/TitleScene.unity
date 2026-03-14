@@ -1278,6 +1278,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   CurrentPhase: 2
+  absoluteMaxSyncRate: 100
+  syncDepletionRate: 10
+  maxSyncPenaltyRate: 1
+  syncRecoveryRate: 5
   gameOverPanel: {fileID: 0}
   clearText: {fileID: 0}
   timerText: {fileID: 0}
@@ -2092,6 +2096,10 @@ PrefabInstance:
     - target: {fileID: 2877133897637639699, guid: 1649cae019bb94248aab01d61d049262, type: 3}
       propertyPath: m_Name
       value: Glow Volume
+      objectReference: {fileID: 0}
+    - target: {fileID: 2877133897637639699, guid: 1649cae019bb94248aab01d61d049262, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3541780994534051027, guid: 1649cae019bb94248aab01d61d049262, type: 3}
       propertyPath: m_LocalPosition.x
