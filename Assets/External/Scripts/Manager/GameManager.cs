@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public bool isPaused => CurrentPhase == GamePhase.Paused;
 
     private string playerName;
-    private bool secondPanelReady = false; // 두 번째 패널 엔터 체크용
+    private bool secondPanelReady = false; // ??번째 ?�널 ?�터 체크??
 
     [Header("UI Settings")]
     [SerializeField] private GameObject gameOverPanel;
@@ -56,6 +56,8 @@ public class GameManager : MonoBehaviour
 
     private Coroutine chargeGaugeCor;
     private bool canCharge;
+    private EventSystem cachedEventSystem;
+    private StandaloneInputModule standaloneInputModule;
 
     private void Awake()
     {
@@ -67,9 +69,11 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        EnsureEventSystemModules();
         OnTraceEnded += StartChargeWait;
+
     }
 
     private void Start()
@@ -89,15 +93,10 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space) && CurrentPhase == GamePhase.Paused)
             ChangePhase(GamePhase.Replay);
 
-        if (Input.GetKeyDown(KeyCode.R) && !firstClearPanel.activeSelf)
-        {
-            RestartGame();
-        }
-
         HandleGauge();
 
-        // 두 번째 패널 엔터 입력
-        // Update() 안 두 번째 패널 엔터 입력 처리
+        // ??번째 ?�널 ?�터 ?�력
+        // Update() ????번째 ?�널 ?�터 ?�력 처리
         if (secondPanelReady && secondClearPanel != null && secondClearPanel.activeSelf && Input.GetKeyDown(KeyCode.Return))
         {
             secondClearPanel.SetActive(false);
@@ -106,10 +105,10 @@ public class GameManager : MonoBehaviour
             clearText?.SetActive(true);
             timerText?.SetActive(true);
 
-            // ✅ 세 번째 패널에서 Restart 버튼 포커스 설정
-            SetUIFocus(thirdSelectButton); // 혹은 thirdPanel에서 사용할 버튼 지정
+            // ????번째 ?�널?�서 Restart 버튼 ?�커???�정
+            SetUIFocus(thirdSelectButton); // ?��? thirdPanel?�서 ?�용??버튼 지??
 
-            secondPanelReady = false; // 다시 초기화
+            secondPanelReady = false; // ?�시 초기??
         }
     }
 
@@ -150,6 +149,7 @@ public class GameManager : MonoBehaviour
     {
         IsPaused = true;
         Time.timeScale = 0f;
+
         if (pauseMenu != null)
         {
             pauseMenu.SetActive(true);
@@ -161,6 +161,7 @@ public class GameManager : MonoBehaviour
     {
         IsPaused = false;
         Time.timeScale = 1f;
+
         if (pauseMenu != null)
         {
             pauseMenu.SetActive(false);
@@ -195,7 +196,7 @@ public class GameManager : MonoBehaviour
         OnGameClear?.Invoke();
     }
 
-    // 첫 번째 패널 제출
+    // �?번째 ?�널 ?�출
     public void OnFirstPanelSubmit()
     {
         playerName = nameInputField.text;
@@ -214,7 +215,7 @@ public class GameManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(null);
 
-        // 한 프레임 딜레이 후 두 번째 패널 엔터 가능
+        // ???�레???�레??????번째 ?�널 ?�터 가??
         StartCoroutine(EnableSecondPanelInputNextFrame());
     }
 
@@ -229,7 +230,7 @@ public class GameManager : MonoBehaviour
         if (LeaderboardManager.Instance == null) return;
 
         var leaderboard = LeaderboardManager.Instance.GetLeaderboard();
-        int count = Mathf.Min(leaderboard.Count, 10); // 최대 10개까지만 표시
+        int count = Mathf.Min(leaderboard.Count, 10); // 최�? 10개까지�??�시
 
         rankText.text = "";
         nameText.text = "";
@@ -290,6 +291,25 @@ public class GameManager : MonoBehaviour
     }
 
     private void StartCharge() => canCharge = true;
+    private void EnsureEventSystemModules()
+    {
+        if (cachedEventSystem == null)
+            cachedEventSystem = EventSystem.current != null
+                ? EventSystem.current
+                : FindObjectOfType<EventSystem>();
+
+        if (cachedEventSystem == null)
+        {
+            var esObj = new GameObject("EventSystem");
+            cachedEventSystem = esObj.AddComponent<EventSystem>();
+        }
+
+        if (standaloneInputModule == null)
+            standaloneInputModule = cachedEventSystem.GetComponent<StandaloneInputModule>();
+        if (standaloneInputModule == null)
+            standaloneInputModule = cachedEventSystem.gameObject.AddComponent<StandaloneInputModule>();
+    }
+
     #endregion
 
     #region Scene & UI Interaction

@@ -1,11 +1,11 @@
-using System; // Action 사용을 위해 추가
+using System; // Action ?�용???�해 추�?
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour
 {
-    // --- 싱글톤 ---
+    // --- ?��???---
     private static WaveManager instance = null;
     public static WaveManager Instance
     {
@@ -30,27 +30,40 @@ public class WaveManager : MonoBehaviour
         enemySpawner = GetComponent<EnemySpawner>();
     }
 
-    // --- UI와 통신할 이벤트 선언 ---
-    // (현재 웨이브 번호, 전체 웨이브 개수)
+    private void OnEnable()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnGameOver += StopSpawning;
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnGameOver -= StopSpawning;
+    }
+
+    // --- UI?� ?�신???�벤???�언 ---
+    // (?�재 ?�이�?번호, ?�체 ?�이�?개수)
     public event Action<int, int> OnWaveUpdated; 
     
-    // (남은 적 개수, 현재 웨이브의 총 적 개수)
+    // (?��? ??개수, ?�재 ?�이브의 �???개수)
     public event Action<int, int> OnEnemyProgressUpdated; 
 
-    // --- 보스용 이벤트 추가 ---
-    public event Action<bool> OnWaveModeChanged;       // true면 보스 모드, false면 일반 모드
-    public event Action<float, float> OnBossHpUpdated; // 보스 현재 체력, 최대 체력
+    // --- 보스???�벤??추�? ---
+    public event Action<bool> OnWaveModeChanged;       // true�?보스 모드, false�??�반 모드
+    public event Action<float, float> OnBossHpUpdated; // 보스 ?�재 체력, 최�? 체력
     // -------------------------
 
-    public event Action<Action> OnWaveTransitionStarted; // 연출 완료 콜백을 받을 이벤트
+    public event Action<Action> OnWaveTransitionStarted; // ?�출 ?�료 콜백??받을 ?�벤??
 
-    // --- 변수 ---
-    [SerializeField] private WaveData[] waves; // 인스펙터에서 ScriptableObject 데이터 할당
+    // --- 변??---
+    [SerializeField] private WaveData[] waves; // ?�스?�터?�서 ScriptableObject ?�이???�당
     private int currentWaveIndex = 0;
     private int enemiesRemainingToSpawn = 0;
     private int enemiesRemainingAlive = 0;
-    private int totalEnemiesInCurrentWave = 0; // 현재 웨이브 총 적 수 기록용
+    private int totalEnemiesInCurrentWave = 0; // ?�재 ?�이�?�?????기록??
     private EnemySpawner enemySpawner;
+    private bool isSpawningStopped = false;
 
     void Start()
     {
@@ -64,31 +77,31 @@ public class WaveManager : MonoBehaviour
         {
             WaveData currentWave = waves[currentWaveIndex];
             
-            // 1. UI 갱신: 웨이브가 시작될 때 호출 (인덱스는 0부터이므로 +1)
+            // 1. UI 갱신: ?�이브�? ?�작?????�출 (?�덱?�는 0부?�이므�?+1)
             OnWaveUpdated?.Invoke(currentWaveIndex + 1, waves.Length);
 
             if (currentWave.isBossWave)
             {
-                // UI를 보스 모드로 전환
+                // UI�?보스 모드�??�환
                 OnWaveModeChanged?.Invoke(true); 
                 
                 totalEnemiesInCurrentWave = 1;
                 enemiesRemainingToSpawn = 0;
                 enemiesRemainingAlive = 1;
 
-                // 보스 소환
+                // 보스 ?�환
                 GameObject bossObj = Instantiate(currentWave.enemies[0].enemyPrefab, Vector3.zero, Quaternion.identity);
                 Enemy bossEnemy = bossObj.GetComponent<Enemy>();
 
                 if (bossEnemy != null)
                 {
-                    // 보스가 데미지를 입을 때마다 UI로 전달하도록 연결
+                    // 보스가 ?��?지�??�을 ?�마??UI�??�달?�도�??�결
                     bossEnemy.OnHpChanged += (currentHp, maxHp) => 
                     {
                         OnBossHpUpdated?.Invoke(currentHp, maxHp);
                     };
 
-                    // 스폰 직후 꽉 찬 체력을 UI에 전송
+                    // ?�폰 직후 �?�?체력??UI???�송
                     OnBossHpUpdated?.Invoke(bossEnemy.MaxHp, bossEnemy.MaxHp);
                 }
             }
@@ -102,7 +115,7 @@ public class WaveManager : MonoBehaviour
                 enemiesRemainingToSpawn = totalEnemiesInCurrentWave;
                 enemiesRemainingAlive = 0;
                 
-                // 웨이브 시작 시 가득 찬 게이지 갱신
+                // ?�이�??�작 ??가??�?게이지 갱신
                 OnEnemyProgressUpdated?.Invoke(totalEnemiesInCurrentWave, totalEnemiesInCurrentWave);
 
                 foreach (var enemy in currentWave.enemies)
@@ -111,18 +124,18 @@ public class WaveManager : MonoBehaviour
                 }
             }
 
-            // 2. 현재 웨이브의 적이 모두 죽을 때까지 대기
+            // 2. ?�재 ?�이브의 ?�이 모두 죽을 ?�까지 ?��?
             while (enemiesRemainingToSpawn > 0 || enemiesRemainingAlive > 0)
             {
                 yield return null;
             }
-            // 3. 웨이브 클리어 연출 시작을 알림 (진행 여부를 체크할 변수 생성)
+            // 3. ?�이�??�리???�출 ?�작???�림 (진행 ?��?�?체크??변???�성)
             bool isTransitionFinished = false;
 
-            // UI 쪽에 연출을 지시하고, 연출이 끝나면 isTransitionFinished를 true로 바꾸라는 콜백 함수를 넘겨줌
+            // UI 쪽에 ?�출??지?�하�? ?�출???�나�?isTransitionFinished�?true�?바꾸?�는 콜백 ?�수�??�겨�?
             OnWaveTransitionStarted?.Invoke(() => isTransitionFinished = true);
 
-            // UI 연출이 완전히 끝날 때까지 다음 웨이브로 넘어가지 않고 대기
+            // UI ?�출???�전???�날 ?�까지 ?�음 ?�이브로 ?�어가지 ?�고 ?��?
             while (!isTransitionFinished)
             {
                 yield return null;
@@ -131,8 +144,8 @@ public class WaveManager : MonoBehaviour
             currentWaveIndex++;
         }
 
-        // 4. 모든 웨이브 종료 시 게임 클리어 처리
-        GameManager.Instance.GameClear(); // 게임 상태 변경 (타이머 정지 등)
+        // 4. 모든 ?�이�?종료 ??게임 ?�리??처리
+        GameManager.Instance.GameClear(); // 게임 ?�태 변�?(?�?�머 ?��? ??
     }
 
     private IEnumerator SpawnEnemy(enemyData enemy)
@@ -140,6 +153,12 @@ public class WaveManager : MonoBehaviour
         float timer = 0f;
         while(timer < enemy.spawnStartTime)
         {
+            if (isSpawningStopped)
+            {
+                yield return null;
+                continue;
+            }
+
             if (GameManager.Instance.CurrentPhase != GamePhase.Paused)
             {
                 timer += Time.deltaTime;
@@ -150,6 +169,11 @@ public class WaveManager : MonoBehaviour
         int leftSpawnCnt = enemy.enemyCount;
         while (leftSpawnCnt > 0)
         {
+            if (isSpawningStopped)
+            {
+                yield return null;
+                continue;
+            }
 
             if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
             {
@@ -159,26 +183,42 @@ public class WaveManager : MonoBehaviour
                 leftSpawnCnt--;
             }
 
-            yield return new WaitForSeconds(enemy.spawnInterval);
+            float wait = 0f;
+            while (wait < enemy.spawnInterval)
+            {
+                if (!isSpawningStopped)
+                    wait += Time.deltaTime;
+                yield return null;
+            }
         }
     }
 
-    // 적이 죽었을 때 호출되는 함수 (적 스크립트에서 이 함수를 호출해야 함)
+    // ?�이 죽었?????�출?�는 ?�수 (???�크립트?�서 ???�수�??�출?�야 ??
     public void OnEnemyKilled()
     {
         enemiesRemainingAlive--;
         
-        // 안전 장치: 음수 방지 (중복 호출 대비)
+        // ?�전 ?�치: ?�수 방�? (중복 ?�출 ?��?
         if (enemiesRemainingAlive < 0)
         {
             Debug.LogWarning("[WaveManager] enemiesRemainingAlive went negative! Clamping to 0.");
             enemiesRemainingAlive = 0;
         }
 
-        // 남은 전체 적 = 아직 스폰 안 된 적 + 현재 맵에 살아있는 적
+        // ?��? ?�체 ??= ?�직 ?�폰 ??????+ ?�재 맵에 ?�아?�는 ??
         int totalRemaining = enemiesRemainingToSpawn + enemiesRemainingAlive;
         
-        // 4. UI 갱신: 적이 죽을 때마다 게이지 업데이트
+        // 4. UI 갱신: ?�이 죽을 ?�마??게이지 ?�데?�트
         OnEnemyProgressUpdated?.Invoke(totalRemaining, totalEnemiesInCurrentWave);
+    }
+
+    public void StopSpawning()
+    {
+        isSpawningStopped = true;
+    }
+
+    public void ResumeSpawning()
+    {
+        isSpawningStopped = false;
     }
 }
