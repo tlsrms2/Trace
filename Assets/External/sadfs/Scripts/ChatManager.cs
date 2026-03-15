@@ -188,7 +188,7 @@ public class ChatManager : MonoBehaviour
         if (notificationRect != null)
             notificationRect.anchoredPosition = pos;
         else if (notificationObject != null)
-            notificationObject.transform.localPosition = pos;
+            notificationObject.transform.localPosition = pos; // 오케이
     }
 
     private ChatMessage GetLastMessage()
