@@ -84,6 +84,13 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (ChatManager.Instance != null && ChatManager.Instance.IsChatSceneLoaded())
+            return;
+
+        if ((gameOverPanel != null && gameOverPanel.activeSelf) ||
+            (gameClearPanel != null && gameClearPanel.activeSelf))
+            return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
 

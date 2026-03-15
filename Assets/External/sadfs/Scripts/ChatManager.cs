@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class ChatManager : MonoBehaviour
 {
@@ -17,20 +18,11 @@ public class ChatManager : MonoBehaviour
     [SerializeField] private float moveDuration = 0.35f;
     [SerializeField] private float holdDuration = 1.2f;
     [SerializeField] private bool testShowOnStart = true;
-    [SerializeField] private bool testOpenOnKey = false;
-    [SerializeField] private KeyCode testOpenKey = KeyCode.F1;
-
-    [Header("Auto Opponent Message")]
-    [SerializeField] private bool autoOpponentMessageEnabled = true;
-    [SerializeField] private float autoOpponentMessageInterval = 10f;
-    [SerializeField] private string autoOpponentSenderId = "npc_auto";
-    [SerializeField] private string autoOpponentSenderName = "Operator";
-    [SerializeField] private string autoOpponentText = "Hi";
 
     private RectTransform notificationRect;
+    private Button notificationButton;
     private Vector3 startLocalPos;
     private Coroutine notifyCor;
-    private Coroutine autoOpponentCor;
 
     private readonly List<ChatMessage> messages = new List<ChatMessage>();
 
@@ -39,6 +31,16 @@ public class ChatManager : MonoBehaviour
     public event Action OnChatSceneClosed;
 
     private const string ChatSceneName = "ChatScene";
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+    }
 
     private void Awake()
     {
@@ -59,6 +61,8 @@ public class ChatManager : MonoBehaviour
                 : notificationObject.transform.localPosition;
 
             CacheNotificationTextTargets();
+            CacheNotificationButton();
+            BindNotificationButton();
         }
     }
 
@@ -66,15 +70,20 @@ public class ChatManager : MonoBehaviour
     {
         if (testShowOnStart)
             ShowNotification();
-
-        if (autoOpponentMessageEnabled)
-            autoOpponentCor = StartCoroutine(AutoOpponentMessageLoop());
     }
 
     private void Update()
     {
-        if (testOpenOnKey && Input.GetKeyDown(testOpenKey))
-            OpenChatScene();
+        if (IsChatSceneLoaded())
+        {
+            if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.Escape))
+                CloseChatScene();
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.F1))
+                OpenChatScene();
+        }
     }
 
     public IReadOnlyList<ChatMessage> GetMessages()
@@ -99,7 +108,6 @@ public class ChatManager : MonoBehaviour
         messages.Add(msg);
         OnMessageAdded?.Invoke(msg);
 
-        // 채팅창이 열려있지 않을 때만 알림
         if (!msg.IsPlayer && !IsChatSceneLoaded())
             ShowNotification();
     }
@@ -137,30 +145,10 @@ public class ChatManager : MonoBehaviour
         Vector3 endLocalPos = startLocalPos + Vector3.up * moveUpDistance;
 
         yield return MoveLocal(startLocalPos, endLocalPos, moveDuration);
-
         yield return new WaitForSeconds(holdDuration);
-
         yield return MoveLocal(endLocalPos, startLocalPos, moveDuration);
 
         notifyCor = null;
-    }
-
-    private IEnumerator AutoOpponentMessageLoop()
-    {
-        var wait = new WaitForSecondsRealtime(Mathf.Max(0.1f, autoOpponentMessageInterval));
-
-        while (true)
-        {
-            yield return wait;
-
-            AddMessage(new ChatMessage(
-                senderId: autoOpponentSenderId,
-                senderName: autoOpponentSenderName,
-                text: autoOpponentText,
-                isPlayer: false,
-                timestampUnix: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-            ));
-        }
     }
 
     private IEnumerator MoveLocal(Vector3 from, Vector3 to, float duration)
@@ -176,9 +164,7 @@ public class ChatManager : MonoBehaviour
         while (t < 1f)
         {
             t += Time.deltaTime / duration;
-
             SetLocalPos(Vector3.Lerp(from, to, Mathf.Clamp01(t)));
-
             yield return null;
         }
     }
@@ -188,13 +174,12 @@ public class ChatManager : MonoBehaviour
         if (notificationRect != null)
             notificationRect.anchoredPosition = pos;
         else if (notificationObject != null)
-            notificationObject.transform.localPosition = pos; // 오케이
+            notificationObject.transform.localPosition = pos;
     }
 
     private ChatMessage GetLastMessage()
     {
         if (messages.Count == 0) return null;
-
         return messages[messages.Count - 1];
     }
 
@@ -207,6 +192,33 @@ public class ChatManager : MonoBehaviour
 
         if (notificationBodyText != null)
             notificationBodyText.text = msg.Text ?? "";
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != "GameScene") return;
+        RebindNotification();
+    }
+
+    private void RebindNotification()
+    {
+        if (notificationObject == null)
+            notificationObject = GameObject.Find("kraft");
+
+        if (notificationObject == null) return;
+
+        notificationRect = notificationObject.GetComponent<RectTransform>();
+        startLocalPos = notificationRect != null
+            ? (Vector3)notificationRect.anchoredPosition
+            : notificationObject.transform.localPosition;
+
+        notificationNameText = null;
+        notificationBodyText = null;
+        notificationButton = null;
+
+        CacheNotificationTextTargets();
+        CacheNotificationButton();
+        BindNotificationButton();
     }
 
     private void CacheNotificationTextTargets()
@@ -229,11 +241,28 @@ public class ChatManager : MonoBehaviour
         }
     }
 
+    private void CacheNotificationButton()
+    {
+        if (notificationObject == null) return;
+        if (notificationButton != null) return;
+
+        notificationButton = notificationObject.GetComponent<Button>();
+        if (notificationButton == null)
+            notificationButton = notificationObject.GetComponentInChildren<Button>(true);
+    }
+
+    private void BindNotificationButton()
+    {
+        if (notificationButton == null) return;
+
+        notificationButton.onClick.RemoveListener(OpenChatScene);
+        notificationButton.onClick.AddListener(OpenChatScene);
+    }
+
     public void OpenChatScene()
     {
         Debug.Log("OpenChatScene called");
 
-        // 채팅방 열릴 때 알림 제거
         HideNotification();
 
         if (!IsChatSceneLoaded())
@@ -242,7 +271,6 @@ public class ChatManager : MonoBehaviour
                 GameManager.Instance.PauseGame();
 
             SceneManager.LoadScene(ChatSceneName, LoadSceneMode.Additive);
-
             OnChatSceneOpened?.Invoke();
         }
     }
@@ -252,7 +280,6 @@ public class ChatManager : MonoBehaviour
         if (IsChatSceneLoaded())
         {
             SceneManager.UnloadSceneAsync(ChatSceneName);
-
             OnChatSceneClosed?.Invoke();
         }
     }

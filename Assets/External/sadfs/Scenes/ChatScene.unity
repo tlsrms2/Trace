@@ -867,7 +867,7 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_RichText: 1
-  m_GlobalFontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_GlobalFontAsset: {fileID: 11400000, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
   m_OnFocusSelectAll: 1
   m_ResetOnDeActivation: 1
   m_KeepTextSelectionVisible: 0
@@ -929,6 +929,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   inputField: {fileID: 952366124}
   currentText: 
+  gemini: {fileID: 1462542008}
+  geminiSenderId: gemini
+  geminiSenderName: Gemini
 --- !u!1 &1088880285
 GameObject:
   m_ObjectHideFlags: 0
@@ -1064,7 +1067,7 @@ MonoBehaviour:
   m_text: "\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
-  m_sharedMaterial: {fileID: -2216022461460983035, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
+  m_sharedMaterial: {fileID: -9058721323408523721, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1141,6 +1144,74 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1254141307}
   m_CullTransparentMesh: 1
+--- !u!1001 &1462542007
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2226882521313964509, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_Name
+      value: GeminiManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1061.214
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 557.4007
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6790926721026085120, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+--- !u!114 &1462542008 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6015506993103287062, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
+  m_PrefabInstance: {fileID: 1462542007}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78417bd5ae2625248a4a516c72971fa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1563416162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,6 +1462,8 @@ MonoBehaviour:
   messageContainer: {fileID: 1563416163}
   playerMessagePrefab: {fileID: 1568918300858016537, guid: a9fe50ffbe86bcd479483392c25ffa4d, type: 3}
   opponentMessagePrefab: {fileID: 4222307588290115480, guid: e9a53d7462420a54ab891741d28a054c, type: 3}
+  scrollRect: {fileID: 280472633}
+  autoScrollToBottom: 1
 --- !u!4 &1621132997
 Transform:
   m_ObjectHideFlags: 0
@@ -1435,8 +1508,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a5f375f06510e545b733b35f685bd86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OponentController
-  opponentMessage: "\uC548\uB155\uD558\uC138\uC694"
-  sendOnStart: 0
 --- !u!4 &1772647472
 Transform:
   m_ObjectHideFlags: 0
@@ -1544,3 +1615,4 @@ SceneRoots:
   - {fileID: 1777527333}
   - {fileID: 1621132997}
   - {fileID: 1772647472}
+  - {fileID: 1462542007}

@@ -1213,8 +1213,8 @@ MonoBehaviour:
   testOpenOnKey: 1
   testOpenKey: 282
   autoOpponentMessageEnabled: 1
-  autoOpponentMessageInterval: 10
-  autoOpponentSenderId: npc_auto
+  autoOpponentMessageInterval: 5
+  autoOpponentSenderId: DaHyun
   autoOpponentSenderName: "\uB2E4\uD604"
   autoOpponentText: "\uC751"
 --- !u!4 &874917369

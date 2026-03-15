@@ -84,8 +84,13 @@ public class PlayerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
+        float x = 0f;
+        float y = 0f;
+
+        if (Input.GetKey(KeyCode.LeftArrow)) x -= 1f;
+        if (Input.GetKey(KeyCode.RightArrow)) x += 1f;
+        if (Input.GetKey(KeyCode.DownArrow)) y -= 1f;
+        if (Input.GetKey(KeyCode.UpArrow)) y += 1f;
 
         Vector2 inputDir = new Vector2(x, y).normalized;
 
