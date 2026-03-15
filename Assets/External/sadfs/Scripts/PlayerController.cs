@@ -12,6 +12,11 @@ public class PlayerController : MonoBehaviour
     [Header("Output")]
     public string currentText;
 
+    [Header("Gemini Reply")]
+    [SerializeField] private UnityAndGeminiV3 gemini;
+    [SerializeField] private string geminiSenderId = "gemini";
+    [SerializeField] private string geminiSenderName = "Gemini";
+
     void Start()
     {
         if (inputField == null) return;
@@ -32,7 +37,7 @@ public class PlayerController : MonoBehaviour
         if (string.IsNullOrEmpty(text)) return;
 
         currentText = text;
-        Debug.Log($"í”Œë ˆì´ì–´ ìž…ë ¥: {currentText}");
+        Debug.Log($"ÇÃ·¹ÀÌ¾î ÀÔ·Â: {currentText}");
 
         if (ChatManager.Instance != null)
         {
@@ -44,6 +49,24 @@ public class PlayerController : MonoBehaviour
                 timestampUnix: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             );
             ChatManager.Instance.AddMessage(msg);
+        }
+
+        if (gemini != null)
+        {
+            gemini.SendChatMessage(currentText, reply =>
+            {
+                if (string.IsNullOrEmpty(reply)) return;
+                if (ChatManager.Instance == null) return;
+
+                var botMsg = new ChatMessage(
+                    senderId: geminiSenderId,
+                    senderName: geminiSenderName,
+                    text: reply,
+                    isPlayer: false,
+                    timestampUnix: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                );
+                ChatManager.Instance.AddMessage(botMsg);
+            });
         }
 
         inputField.text = "";

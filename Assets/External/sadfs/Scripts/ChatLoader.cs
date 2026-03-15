@@ -7,16 +7,35 @@ public class ChatLoader : MonoBehaviour
     [SerializeField] private ChatUIController ui;
     [SerializeField] private TextAsset chatJson;
     [SerializeField] private bool loadFromJsonOnStart = true;
+    private static bool s_loadedJson;
 
     private void Start()
     {
         if (ui == null || ChatManager.Instance == null) return;
 
-        if (loadFromJsonOnStart && chatJson != null && ChatManager.Instance.GetMessages().Count == 0)
+        if (loadFromJsonOnStart && chatJson != null && !s_loadedJson)
         {
             var loaded = ParseMessages(chatJson.text);
             if (loaded != null)
-                ChatManager.Instance.SetMessages(loaded);
+            {
+                var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                for (int i = 0; i < loaded.Count; i++)
+                    loaded[i].TimestampUnix = now + i;
+
+                var existing = ChatManager.Instance.GetMessages();
+                if (existing.Count == 0)
+                {
+                    ChatManager.Instance.SetMessages(loaded);
+                }
+                else
+                {
+                    var merged = new List<ChatMessage>(loaded.Count + existing.Count);
+                    merged.AddRange(loaded);
+                    merged.AddRange(existing);
+                    ChatManager.Instance.SetMessages(merged);
+                }
+                s_loadedJson = true;
+            }
         }
 
         ui.RenderAll(ChatManager.Instance.GetMessages());

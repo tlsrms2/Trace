@@ -69,7 +69,7 @@ MonoBehaviour:
   m_text: "\uC624\uD6C4 13:01"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
-  m_sharedMaterial: {fileID: -2216022461460983035, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
+  m_sharedMaterial: {fileID: -9058721323408523721, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -539,7 +539,7 @@ MonoBehaviour:
   m_text: "\uB2E4\uD604"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
-  m_sharedMaterial: {fileID: -2216022461460983035, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
+  m_sharedMaterial: {fileID: -9058721323408523721, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -705,7 +705,6 @@ MonoBehaviour:
   bodyText: {fileID: 6620410268046001903}
   timeText: {fileID: 7792486708711755120}
   unreadCountText: {fileID: 215736458741363124}
-  unreadTickDelay: 0.25
 --- !u!1 &5840468535867706962
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,7 +884,7 @@ MonoBehaviour:
   m_text: "\u3147\u3134\u3139\u3134\u3147\u3139\u3134\u3147\u3139"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
-  m_sharedMaterial: {fileID: -2216022461460983035, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
+  m_sharedMaterial: {fileID: -9058721323408523721, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1046,6 +1045,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ReadText
       objectReference: {fileID: 0}
+    - target: {fileID: 4979052282000983483, guid: c001afcb933c72f4b84c4d4e55acd3a6, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -9058721323408523721, guid: 3f0d68ec3f58d9b49bd45e52d94bf9a1, type: 2}
     - target: {fileID: 4979052282000983483, guid: c001afcb933c72f4b84c4d4e55acd3a6, type: 3}
       propertyPath: m_HorizontalAlignment
       value: 4
