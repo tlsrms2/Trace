@@ -47,8 +47,10 @@ public class ShipController : MonoBehaviour
     [Header("유령선과 슬립스트림 시각 효과")]
     [Tooltip("유령선의 시각적 표현으로 사용할 프리팹")]
     [SerializeField] private GameObject ghostShipPrefab;
-    [Tooltip("슬립스트림 진입 범위를 시각적으로 표시하는 Image (예: 원형 이미지)")]
-    [SerializeField] private GameObject slipstreamIndicator;
+    [Tooltip("슬립스트림(유령선이 지나간 선)을 시각적으로 표시하는 슬립스트림 Meterial")]
+    [SerializeField] private Material slipstreamLineMaterial;
+    [Tooltip("슬립스트림 궤적의 폭")]
+    [SerializeField] private float slipstreamLineWidth = 0.3f;
     private GameObject ghostShipInstance;
 
     [Header("운명 동기화(Sync) 설정")]
@@ -68,6 +70,10 @@ public class ShipController : MonoBehaviour
     [Tooltip("코너 이탈 방지용: 궤적 중심으로 당겨주는 자력(그립력)")]
     [SerializeField] private float slipstreamGripForce = 3.0f;
 
+    [Header("항해 경로(Planning) 설정")]
+    [Tooltip("계획 페이즈에서 플레이어가 그릴 수 있는 최대 궤적 포인트 수 (길이 제한)")]
+    [SerializeField] private int maxTracePoints = 200;
+
     // 조작감 향상을 위한 슬립스트림 보간 변수
     private float currentSlipstreamMultiplier = 1.0f;
 
@@ -78,12 +84,17 @@ public class ShipController : MonoBehaviour
 
     [Header("시각 효과")]
     [SerializeField] private Material routeMaterial;
-    [SerializeField] private float lineWidth = 0.2f;
+    [SerializeField] private float lineWidth = 0.3f;
 
     private Rigidbody2D rb;
     private LineRenderer lineRenderer;
+    private LineRenderer slipstreamLineRenderer;
     
     private List<Vector3> tracePoints = new List<Vector3>();
+
+    // 렌더링 최적화를 위한 캐싱 버퍼
+    private Vector3[] slipstreamBuffer = new Vector3[200];
+    private Vector3[] futureBuffer = new Vector3[200];
 
     private int ghostTargetIndex = 0; // 유령선이 향하는 목표 인덱스
     private bool isDrawing = false;
@@ -97,6 +108,9 @@ public class ShipController : MonoBehaviour
     public bool IsLost { get; private set; } = false; 
     // 운명 궤도에서의 이탈 정도 (플레이어와 유령선 간의 현재 거리)
     public float CurrentFateDeviation { get; private set; }
+    
+    // UI에 제공할 궤적 사용률 (0.0 ~ 1.0)
+    public float GetTraceProgress() => maxTracePoints > 0 ? Mathf.Clamp01((float)tracePoints.Count / maxTracePoints) : 0f;
 
     // 자발적 분리 상태 (Shift 키로 강제 분리)
     private bool isVoluntarilyDetached = false;
@@ -130,11 +144,19 @@ public class ShipController : MonoBehaviour
 
     private void Start()
     {
+        // 항해 경로용 라인 렌더러
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.startWidth = lineWidth;
         lineRenderer.endWidth = lineWidth;
         lineRenderer.material = routeMaterial;
         lineRenderer.useWorldSpace = true;
+
+        // 슬립스트림 표시용 라인 렌더러
+        slipstreamLineRenderer = ghostShipInstance.GetComponent<LineRenderer>();
+        slipstreamLineRenderer.startWidth = lineWidth;
+        slipstreamLineRenderer.endWidth = lineWidth;
+        slipstreamLineRenderer.material = slipstreamLineMaterial;
+        slipstreamLineRenderer.useWorldSpace = true;
     }
 
     private void Update()
@@ -149,14 +171,16 @@ public class ShipController : MonoBehaviour
 
             // 1. 순수 수학/논리 연산 (랜더 프레임에 맞춰 부드럽게 실행)
             UpdateGhostShipPosition(dt);
-            UpdateSyncState();
             ConsumeTracePoints();
 
             // 2. 시각적 연산
             UpdateGhostShipVisuals();
             UpdateLineRenderer();
 
-            // 3. 입력 연산
+            // 3. 결합 여부 연산 (시각적 연산이 완료된 이후 진행하여 유령선의 위치 동기화 과정 중계를 방지)  
+            UpdateSyncState();
+
+            // 4. 입력 연산
             UpdateCannonAngle();
             if (Input.GetMouseButtonDown(0) && cannonShooter != null) cannonShooter.TryShoot(CannonAngle);
         }
@@ -218,8 +242,11 @@ public class ShipController : MonoBehaviour
         {
             if (tracePoints.Count > 0 && Vector3.Distance(tracePoints[tracePoints.Count - 1], mousePos) > 1f)
             {
-                tracePoints.Add(mousePos);
-                UpdateLineRenderer();
+                if (tracePoints.Count < maxTracePoints)
+                {
+                    tracePoints.Add(mousePos);
+                    UpdateLineRenderer();
+                }
             }
         }
         else if (Input.GetMouseButtonUp(0)) isDrawing = false;
@@ -263,9 +290,8 @@ public class ShipController : MonoBehaviour
     // 시각적 유령선 이동 (Update에서 호출, Lerp 보간)
     private void UpdateGhostShipVisuals()
     {
-        if (ghostShipInstance == null || !ghostShipInstance.activeSelf) return;
+        if (ghostShipInstance == null) return;
 
-        // 실제 논리 좌표(ghostShipPos)로 부드럽게 추적
         ghostShipInstance.transform.position = Vector3.Lerp(ghostShipInstance.transform.position, ghostShipPos, Time.deltaTime * 15f);
 
         // 진행 방향으로 회전 보간
@@ -327,7 +353,7 @@ public class ShipController : MonoBehaviour
     {
         if (IsSynchronized == state) return;
         IsSynchronized = state;
-        // 결합 상태로 변경될 때 가속 레벨을 유령선과 일치시켜 부드러운 전환 유도
+        // 결합 상태로 변경될 때 가속 레벨을 유령선과 일치시켜 속도 정렬 및 부드러운 전환 유도
         accelLevel = ghostAccelLevel; 
         // 유령선 시각적 피드백: 분리되면 나타나고, 결합하면 숨겨짐
         if (ghostShipInstance != null)
@@ -413,27 +439,91 @@ public class ShipController : MonoBehaviour
             ghostTargetIndex--; // 0번 인덱스가 지워졌으므로 유령선 타겟 인덱스도 1 감소
         }
     }
+    
+    private void EnsureBufferSize(ref Vector3[] buffer, int requiredSize)
+    {
+        if (buffer == null || buffer.Length < requiredSize)
+        {
+            int newSize = buffer == null ? 200 : buffer.Length * 2;
+            while (newSize < requiredSize) newSize *= 2;
+            buffer = new Vector3[newSize];
+        }
+    }
 
     private void UpdateLineRenderer()
     {
         if (tracePoints.Count == 0)
         {
             lineRenderer.positionCount = 0;
+            slipstreamLineRenderer.positionCount = 0;
             return;
         }
 
-        lineRenderer.positionCount = tracePoints.Count;
-        lineRenderer.SetPositions(tracePoints.ToArray());
+        if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
+        {
+            lineRenderer.positionCount = tracePoints.Count;
+            slipstreamLineRenderer.positionCount = tracePoints.Count;
+            EnsureBufferSize(ref futureBuffer, tracePoints.Count);
+            tracePoints.CopyTo(futureBuffer);
+            lineRenderer.SetPositions(futureBuffer);
+            slipstreamLineRenderer.SetPositions(futureBuffer);
+            return;
+        }
 
-        // 실행 페이즈일 경우: 배의 꽁무니부터 선이 실시간으로 소거되는 시각 효과 연출
+        // 실행 페이즈일 경우: 유령선을 기준으로 지나온 길과 앞으로 갈 길을 나눔
         if (GameManager.Instance.CurrentPhase == GamePhase.RealTime)
         {
-            if (TryGetSlipstreamData(out Vector2 nearestPoint, out int segmentStartIndex))
+            if (ghostTargetIndex > 0 && ghostTargetIndex < tracePoints.Count)
             {
-                if (segmentStartIndex == 0)
+                // 1. 유령선이 지나간 경로 (플레이어 꽁무니(0) ~ 유령선 위치)
+                if (slipstreamLineRenderer != null)
                 {
-                    lineRenderer.SetPosition(0, nearestPoint);
+                    int slipCount = ghostTargetIndex + 1;
+                    EnsureBufferSize(ref slipstreamBuffer, slipCount);
+                    
+                    for (int i = 0; i < ghostTargetIndex; i++)
+                    {
+                        slipstreamBuffer[i] = tracePoints[i];
+                    }
+                    slipstreamBuffer[ghostTargetIndex] = ghostShipPos;
+                    
+                    slipstreamLineRenderer.positionCount = slipCount;
+                    slipstreamLineRenderer.SetPositions(slipstreamBuffer);
                 }
+
+                // 2. 유령선이 앞으로 갈 경로 (유령선 위치 ~ 목표 끝점)
+                int futurePointCount = tracePoints.Count - ghostTargetIndex + 1;
+                EnsureBufferSize(ref futureBuffer, futurePointCount);
+                
+                futureBuffer[0] = ghostShipPos;
+                for (int i = ghostTargetIndex; i < tracePoints.Count; i++)
+                {
+                    futureBuffer[i - ghostTargetIndex + 1] = tracePoints[i];
+                }
+                
+                lineRenderer.positionCount = futurePointCount;
+                lineRenderer.SetPositions(futureBuffer);
+            }
+            else if (ghostTargetIndex >= tracePoints.Count)
+            {
+                // 유령선이 끝까지 도달했을 때 (전부 지나간 경로)
+                if (slipstreamLineRenderer != null)
+                {
+                    slipstreamLineRenderer.positionCount = tracePoints.Count;
+                    EnsureBufferSize(ref slipstreamBuffer, tracePoints.Count);
+                    tracePoints.CopyTo(slipstreamBuffer);
+                    slipstreamLineRenderer.SetPositions(slipstreamBuffer);
+                }
+                lineRenderer.positionCount = 0;
+            }
+            else
+            {
+                lineRenderer.positionCount = tracePoints.Count;
+                EnsureBufferSize(ref futureBuffer, tracePoints.Count);
+                tracePoints.CopyTo(futureBuffer);
+                lineRenderer.SetPositions(futureBuffer);
+                
+                if (slipstreamLineRenderer != null) slipstreamLineRenderer.positionCount = 0;
             }
         }
     }

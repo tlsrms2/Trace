@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using TMPro;
 
 public enum GamePhase { Paused, Replay, RealTime }
@@ -50,6 +51,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private TMP_InputField nameInputField;
 
+    [Header("Path Planning UI")]
+    [Tooltip("계획 페이즈에서 그릴 수 있는 남은 궤적을 보여주는 슬라이더")]
+    [SerializeField] private Slider pathLimitSlider;
+    [Tooltip("슬라이더를 감싸는 UI 컨테이너 (계획 페이즈에서만 활성화)")]
+    [SerializeField] private GameObject pathLimitUIContainer;
+
     [Header("UI Keyboard Focus Settings")]
     [SerializeField] private GameObject firstTitleButton;
     [SerializeField] private GameObject firstPauseButton;
@@ -92,6 +99,7 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true; // 계획 페이즈를 위해 마우스 커서 활성화
         Cursor.lockState = CursorLockMode.None;
         OnPlanningEnded += StartChargeWait;
+        OnPlanningEnded += HandlePathLimitUI;
 
         //초기 설정
         CurrentMaxSyncRate = absoluteMaxSyncRate;
@@ -132,6 +140,7 @@ public class GameManager : MonoBehaviour
         
         HandleSteeringGauge();
         HandleFateSyncRate();
+        HandlePathLimitUI();
 
         if (secondPanelReady && secondClearPanel != null && secondClearPanel.activeSelf && Input.GetKeyDown(KeyCode.Return))
         {
@@ -141,6 +150,21 @@ public class GameManager : MonoBehaviour
             timerText?.SetActive(true);
             SetUIFocus(thirdSelectButton); 
             secondPanelReady = false; 
+        }
+    }
+
+    #region UI Logic
+    // 항해 경로 최대 그리기 제한 UI
+    private void HandlePathLimitUI()
+    {
+        if (CurrentPhase == GamePhase.Paused && pathLimitSlider != null && shipController != null)
+        {
+            pathLimitSlider.value = shipController.GetTraceProgress();
+        }
+
+        if (CurrentPhase == GamePhase.RealTime && pathLimitUIContainer != null)
+        {
+            pathLimitUIContainer.SetActive(false);
         }
     }
 
@@ -181,6 +205,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
     #region Game Flow & Phase Control
     public void ChangePhase(GamePhase nextPhase)
@@ -391,6 +416,8 @@ public class GameManager : MonoBehaviour
         if (chargeGaugeCor != null) StopCoroutine(chargeGaugeCor);
         chargeGaugeCor = StartCoroutine(WaitChargeGauge());
     }
+
+
 
     private IEnumerator WaitChargeGauge()
     {

@@ -43,5 +43,29 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: WorldMap
+    uniqueID: 3456460651
+    locked: 0
+  - name: Sea
+    uniqueID: 111437279
+    locked: 0
+  - name: Island
+    uniqueID: 129675241
+    locked: 0
+  - name: Line
+    uniqueID: 2334841559
+    locked: 0
+  - name: Ghost
+    uniqueID: 704655825
+    locked: 0
+  - name: Object
+    uniqueID: 3144463625
+    locked: 0
+  - name: Cloud
+    uniqueID: 421586013
+    locked: 0
+  - name: UI
+    uniqueID: 1627546037
+    locked: 0
   m_RenderingLayers:
   - Default
