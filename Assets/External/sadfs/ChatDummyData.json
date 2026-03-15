@@ -1,0 +1,25 @@
+{
+  "Messages": [
+    {
+      "SenderId": "npc_01",
+      "SenderName": "Guide",
+      "Text": "테스트용 첫 메시지입니다.",
+      "TimestampUnix": 1710000000,
+      "IsPlayer": false
+    },
+    {
+      "SenderId": "player",
+      "SenderName": "You",
+      "Text": "네, 확인했어요.",
+      "TimestampUnix": 1710000060,
+      "IsPlayer": true
+    },
+    {
+      "SenderId": "npc_02",
+      "SenderName": "Operator",
+      "Text": "두 번째 더미 메시지입니다.",
+      "TimestampUnix": 1710000120,
+      "IsPlayer": false
+    }
+  ]
+}

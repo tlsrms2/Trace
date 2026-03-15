@@ -6,6 +6,7 @@ public class ChatUIController : MonoBehaviour
     [SerializeField] private Transform messageContainer;
     [SerializeField] private GameObject playerMessagePrefab;
     [SerializeField] private GameObject opponentMessagePrefab;
+    [SerializeField] private int participantCount = 2;
 
     public void RenderAll(IReadOnlyList<ChatMessage> messages)
     {
@@ -22,6 +23,9 @@ public class ChatUIController : MonoBehaviour
     {
         if (msg == null) return;
         if (messageContainer == null) return;
+
+        if (msg.UnreadCount < 0)
+            msg.UnreadCount = Mathf.Max(0, participantCount - 1);
 
         var prefab = msg.IsPlayer ? playerMessagePrefab : opponentMessagePrefab;
         if (prefab == null) return;

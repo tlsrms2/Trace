@@ -8,6 +8,7 @@ public class ChatMessage
     public string Text;
     public long TimestampUnix;
     public bool IsPlayer;
+    public int UnreadCount = -1;
 
     public ChatMessage(string senderId, string senderName, string text, bool isPlayer, long timestampUnix)
     {
@@ -16,5 +17,6 @@ public class ChatMessage
         Text = text;
         IsPlayer = isPlayer;
         TimestampUnix = timestampUnix;
+        UnreadCount = -1;
     }
 }

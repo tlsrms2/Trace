@@ -1417,7 +1417,7 @@ GameObject:
   - component: {fileID: 1772647472}
   - component: {fileID: 1772647471}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: OpponentController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1436,7 +1436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OponentController
   opponentMessage: "\uC548\uB155\uD558\uC138\uC694"
-  sendOnStart: 1
+  sendOnStart: 0
 --- !u!4 &1772647472
 Transform:
   m_ObjectHideFlags: 0
@@ -1463,7 +1463,7 @@ GameObject:
   - component: {fileID: 1777527333}
   - component: {fileID: 1777527332}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: ChatLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1482,6 +1482,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChatLoader
   ui: {fileID: 1621132996}
+  chatJson: {fileID: 4900000, guid: d9104f9405b96ef4c8563886fda2dfdf, type: 3}
+  loadFromJsonOnStart: 1
 --- !u!4 &1777527333
 Transform:
   m_ObjectHideFlags: 0

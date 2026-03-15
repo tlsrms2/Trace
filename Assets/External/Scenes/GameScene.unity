@@ -1204,12 +1204,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChatManager
   notificationObject: {fileID: 1368842709}
+  notificationNameText: {fileID: 1183765138}
+  notificationBodyText: {fileID: 879444048}
   moveUpDistance: 120
   moveDuration: 0.5
   holdDuration: 3
   testShowOnStart: 1
   testOpenOnKey: 1
   testOpenKey: 282
+  autoOpponentMessageEnabled: 1
+  autoOpponentMessageInterval: 10
+  autoOpponentSenderId: npc_auto
+  autoOpponentSenderName: "\uB2E4\uD604"
+  autoOpponentText: "\uC751"
 --- !u!4 &874917369
 Transform:
   m_ObjectHideFlags: 0
