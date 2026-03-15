@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
         if (string.IsNullOrEmpty(text)) return;
 
         currentText = text;
-        Debug.Log($"ÇÃ·¹ÀÌ¾î ÀÔ·Â: {currentText}");
+        Debug.Log($"í”Œë ˆì´ì–´ ì…ë ¥: {currentText}");
 
         if (ChatManager.Instance != null)
         {
