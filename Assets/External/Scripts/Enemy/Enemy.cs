@@ -1,97 +1,158 @@
 using UnityEngine;
-using System; // Action 사용을 위해 추가
+using System;
+
+public enum EnemyState { Patrol, Chase, Attack }
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField] protected float speed;
     [SerializeField] protected float increaseSpeed;
     [SerializeField] protected float Hp;
-    [SerializeField] private GameObject destroyParticle;
+    [SerializeField] private GameObject destroyParticle; // 사망 시 사용할 큰 폭발
     
-    // --- 추가된 부분 ---
+    [Tooltip("피격 시 사용할 작은 파티클 (배의 자식 오브젝트로 미리 넣어두세요)")]
+    [SerializeField] private ParticleSystem hitParticleSystem; 
+    
+    [Header("Physics & AI Settings")]
+    public float detectionRadius = 15f;
+    [SerializeField] protected float turnSpeed = 1.0f;
+    [SerializeField] protected float avoidanceRadius = 3.0f;
+    [SerializeField] protected float avoidanceForce = 2.0f;
+    [SerializeField] protected LayerMask enemyLayerMask = ~0; 
+    public EnemyState currentState = EnemyState.Patrol;
+
+    [Header("Planning Phase Intel")]
+    [SerializeField] public GameObject intelVisual;
+    [SerializeField] protected GameObject shipVisual;
+
+    [Header("Detection Scaling")]
+    [SerializeField] protected float detectionGrowthPerSecond = 0.5f; 
+    [SerializeField] protected float maxDetectionRadius = 40f;
+
     public float MaxHp { get; private set; } 
-    public event Action<float, float> OnHpChanged; // <현재 체력, 최대 체력>
-    // -------------------
+    public event Action<float, float> OnHpChanged; 
 
     protected Transform target;
     protected Collider2D col;
     protected SpriteRenderer spriteRenderer;
+    protected Rigidbody2D rb;
 
     protected virtual void Awake()
     {
         col = GetComponent<Collider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        target = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null) target = playerObj.transform;
+
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null) rb = gameObject.AddComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.gravityScale = 0f;
+        rb.linearDamping = 1.5f; 
         
-        // 스폰될 때 초기 체력을 최대 체력으로 기억
         MaxHp = Hp; 
     }
 
-    protected virtual void Start()
-    {
-        increaseSpeed = 0.1f;
-    }
+    protected virtual void Start() { }
 
     protected virtual void Update()
+{
+    if (GameManager.Instance.CurrentPhase == GamePhase.Paused)
     {
-        if (target && GameManager.Instance.CurrentPhase != GamePhase.Paused && Vector2.Distance(transform.position, target.position) > 0.1f)    
+        if (intelVisual != null) intelVisual.SetActive(true);
+        if (shipVisual != null) shipVisual.SetActive(false);
+    }
+    else 
+    {
+        if (intelVisual != null) intelVisual.SetActive(false);
+        if (shipVisual != null) shipVisual.SetActive(true);
+
+        // 시간 비례 탐지 범위 증가 로직 추가
+        detectionRadius = Mathf.Min(maxDetectionRadius, detectionRadius + detectionGrowthPerSecond * Time.deltaTime);
+    }
+}
+
+    protected void MoveTowardsWithPhysics(Vector2 targetPos, float moveForce)
+    {
+        Vector2 dir = (targetPos - (Vector2)transform.position).normalized;
+        if (dir == Vector2.zero) return;
+
+        Collider2D[] nearbyColliders = Physics2D.OverlapCircleAll(transform.position, avoidanceRadius, enemyLayerMask);
+        Vector2 avoidanceVector = Vector2.zero;
+        int avoidCount = 0;
+
+        foreach (Collider2D collider in nearbyColliders)
         {
-            Move();
-            speed += increaseSpeed * Time.deltaTime;
+            if (collider.gameObject == this.gameObject) continue;
+            
+            if (collider.GetComponent<Enemy>() != null || collider.GetComponent<Island>() != null)
+            {
+                Vector2 awayFromEnemy = (Vector2)transform.position - (Vector2)collider.transform.position;
+                float dist = awayFromEnemy.magnitude;
+                if (dist < 0.1f) dist = 0.1f; 
+
+                avoidanceVector += (awayFromEnemy.normalized / dist);
+                avoidCount++;
+            }
+        }
+
+        if (avoidCount > 0)
+        {
+            avoidanceVector /= avoidCount;
+            dir = (dir + avoidanceVector * avoidanceForce).normalized;
+        }
+
+        float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        float currentAngle = Mathf.MoveTowardsAngle(rb.rotation, targetAngle, turnSpeed * 100f * Time.fixedDeltaTime);
+        rb.MoveRotation(currentAngle);
+
+        float angleDiff = Mathf.Abs(Mathf.DeltaAngle(rb.rotation, targetAngle));
+        if (angleDiff < 60f && moveForce > 0f)
+        {
+            rb.AddForce(transform.right * moveForce);
         }
     }
 
-    protected virtual void Move()
-    {
-        transform.position = Vector2.MoveTowards(
-            transform.position,
-            target.position,
-            speed * Time.deltaTime
-        );
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
+{
+    AttackData attack;
+    float beforeHp = Hp;
+    if (collision.TryGetComponent(out attack))
     {
-        AttackData attack;
-        float beforeHp = Hp;
-        if (collision.TryGetComponent(out attack))
-        {
-            Hp -= attack.Damage;
+        // 플레이어의 공격이 아닌 경우 (적의 공격인 경우) 팀킬 방지 및 자폭 방지
+        if (!attack.IsPlayerAttack) return;
 
-            // --- 추가된 부분: 체력이 깎일 때마다 이벤트 발생 ---
-            OnHpChanged?.Invoke(Hp, MaxHp);
-            // ---------------------------------------------------
+        Hp -= attack.Damage;
+        OnHpChanged?.Invoke(Hp, MaxHp);
 
             if (Hp <= 0)
             {
-                WaveManager.Instance.OnEnemyKilled();
+                if (WaveManager.Instance != null) WaveManager.Instance.OnEnemyKilled();
 
-                // 🔹 보스 여부 체크 후 효과음 재생
-                if (TryGetComponent<BossEnemy>(out BossEnemy boss))
-                {
-                    AudioManager.Instance.PlayBossDeath(); // 보스 전용 효과음
-                }
-                else
-                {
-                    AudioManager.Instance.PlayEnemyDeath2(); // 일반 적
-                }
+                if (TryGetComponent<BossEnemy>(out BossEnemy boss)) AudioManager.Instance.PlayBossDeath(); 
+                else AudioManager.Instance.PlayEnemyDeath2(); 
 
-                var particle = Instantiate(destroyParticle, transform.position, Quaternion.identity);
+                // 사망 시에만 Instantiate 사용 (큰 폭발)
+                Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, -1f);
+                var particle = Instantiate(destroyParticle, spawnPos, Quaternion.identity);
+                
                 ParticleSystem ps = particle.GetComponent<ParticleSystem>();
                 var main = ps.main;
-                main.startColor = spriteRenderer.color;
+                Color particleColor = spriteRenderer.color;
+                particleColor.a = 1f;
+                main.startColor = particleColor;
+                ps.Play();
 
                 Destroy(gameObject);
-
-                if (collision.gameObject.name == "FilledShape")
-                {
-                    GameTimer.Instance.ReduceTime(2);
-                }
             }
             else if (beforeHp > Hp)
             {
-                ParticleSystem hitEffect = Instantiate(destroyParticle, transform.position, Quaternion.identity).GetComponent<ParticleSystem>();
-                hitEffect.Play();
+                // [수정완료] 무분별한 Instantiate를 제거하고 Emit 방식으로 성능 최적화 및 타격감 차등 부여
+                if (hitParticleSystem != null)
+                {
+                    // 입은 데미지에 비례하여 파티클 입자 방출
+                    hitParticleSystem.Emit(attack.Damage * 5);
+                }
             }
         }
     }

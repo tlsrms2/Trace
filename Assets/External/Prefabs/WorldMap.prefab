@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3287214049623285233}
   - component: {fileID: 2836445046047930917}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 2167599939919575852}
   - component: {fileID: 695405766612663613}
   - component: {fileID: 431747112955616574}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -367,7 +367,7 @@ GameObject:
   - component: {fileID: 6375849290973119589}
   - component: {fileID: 8456604660336762438}
   - component: {fileID: 3836868871587148550}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1068,7 +1068,7 @@ GameObject:
   - component: {fileID: 6999080875335298657}
   - component: {fileID: 3009251494780705425}
   - component: {fileID: 2174412182802973150}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1407,7 +1407,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3690390106732020048}
   - component: {fileID: 2597328828133631670}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1953,7 +1953,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7043940395424934883}
   - component: {fileID: 6199716415667740276}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2044,7 +2044,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1100688580920479271}
   - component: {fileID: 330873220289822784}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2408,7 +2408,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5701904325895901171}
   - component: {fileID: 6048972641858937188}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (23)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2498,7 +2498,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3884110227665064570}
-  m_Layer: 0
+  - component: {fileID: 5531585236124331985}
+  m_Layer: 6
   m_Name: S lsland
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2522,6 +2523,72 @@ Transform:
   - {fileID: 827916638803300561}
   m_Father: {fileID: 1649414292020075035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!60 &5531585236124331985
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216267481987015083}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -1.24, y: -8.31}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.1366713, y: 0.3628292}
+      - {x: -0.1923846, y: 0.2169075}
+      - {x: -0.5523566, y: 0.19181538}
+      - {x: -0.8250203, y: 0.044745445}
+      - {x: -0.8606489, y: -0.12517262}
+      - {x: -0.8749857, y: -0.30047894}
+      - {x: -0.87674236, y: -0.3857422}
+      - {x: -0.5775707, y: -0.5876713}
+      - {x: -0.33808017, y: -0.5537338}
+      - {x: -0.18930256, y: -0.49245453}
+      - {x: -0.082059145, y: -0.4627514}
+      - {x: 0.16837263, y: -0.77499104}
+      - {x: 0.42208797, y: -0.79486847}
+      - {x: 0.61118233, y: -0.6708641}
+      - {x: 0.71221936, y: -0.51662445}
+      - {x: 0.71424633, y: -0.24182034}
+      - {x: 0.6968291, y: -0.050899506}
+      - {x: 0.6500572, y: 0.19386101}
+      - {x: 0.5145631, y: 0.3609891}
+  m_UseDelaunayMesh: 1
 --- !u!1 &223746677028051869
 GameObject:
   m_ObjectHideFlags: 0
@@ -2623,7 +2690,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9057828847247203341}
   - component: {fileID: 6926015158303731950}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2714,7 +2781,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4962260577935659333}
   - component: {fileID: 4692311204806773580}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (30)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2805,7 +2872,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4558635902108572781}
   - component: {fileID: 4677698511612044036}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3416,7 +3483,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5142230317001352627}
   - component: {fileID: 7717447359307580116}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3507,7 +3574,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8829648448085982920}
   - component: {fileID: 3746482683589944628}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Middle NW Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3819,7 +3886,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8499109459928568493}
   - component: {fileID: 1334121679407368214}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Middle E Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4293,7 +4360,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4660616446241544939}
   - component: {fileID: 2204267335955140289}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Middle NE Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4600,7 +4667,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4993368277367719466}
   - component: {fileID: 2746497465231843718}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt(2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4860,7 +4927,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2811423795521719119}
   - component: {fileID: 7820921762059679279}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5042,7 +5109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1245952225658078639}
   - component: {fileID: 2591845314944509914}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SE lsland
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5585,7 +5652,7 @@ GameObject:
   - component: {fileID: 3024081606224191039}
   - component: {fileID: 2566909622899683657}
   - component: {fileID: 2811903368692443406}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6343,7 +6410,7 @@ GameObject:
   - component: {fileID: 5550580098280995398}
   - component: {fileID: 5349726198472056716}
   - component: {fileID: 6343596686454050014}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7261,7 +7328,7 @@ GameObject:
   - component: {fileID: 2394226387214008879}
   - component: {fileID: 2707018037401987930}
   - component: {fileID: 8512120097604343728}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt&Ice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7765,7 +7832,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8805673841344203428}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7827,7 +7894,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2383630273881882132}
   - component: {fileID: 503505476014960765}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (29)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7918,7 +7985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 632952967345544973}
   - component: {fileID: 2932819729381324707}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: NW Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8761,7 +8828,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3102082357465211937}
   - component: {fileID: 6425019132614151051}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8852,7 +8919,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3146665665027176761}
   - component: {fileID: 1926827984219991639}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (22)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9307,7 +9374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4905132643823352149}
   - component: {fileID: 487067272973413175}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (24)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9490,7 +9557,7 @@ GameObject:
   - component: {fileID: 2913277942378531258}
   - component: {fileID: 366118374355781518}
   - component: {fileID: 1826418183766429409}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9880,7 +9947,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90957978560359576}
   - component: {fileID: 2933098418107809081}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10777,7 +10844,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5778408983548709945}
   - component: {fileID: 3002600991956172834}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (30)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11287,7 +11354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5022570406719791384}
   - component: {fileID: 701390421794790380}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Middle SE Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11448,7 +11515,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4448397926077434797
 Transform:
   m_ObjectHideFlags: 0
@@ -11581,7 +11648,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4899304328825676153}
   - component: {fileID: 8980340975704173172}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SW lsland
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12097,7 +12164,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3081450488170222682}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12381,7 +12448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9087891023241891784}
   - component: {fileID: 134906570897081286}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (22)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12473,7 +12540,7 @@ GameObject:
   - component: {fileID: 8098957165383497041}
   - component: {fileID: 1049699468026296199}
   - component: {fileID: 1339170508184681541}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12983,7 +13050,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8025745139978676772}
   - component: {fileID: 8509657984298568605}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (28)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13166,7 +13233,7 @@ GameObject:
   - component: {fileID: 5310095228497935157}
   - component: {fileID: 2521316516512730750}
   - component: {fileID: 2673941163267353815}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13518,7 +13585,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7044401759181836598}
   - component: {fileID: 4236107397924823016}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (33)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13609,7 +13676,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4083588907523389400}
   - component: {fileID: 4580641779651890751}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13979,7 +14046,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6014100581779181290
 Transform:
   m_ObjectHideFlags: 0
@@ -14386,7 +14453,7 @@ GameObject:
   - component: {fileID: 4538313917813813965}
   - component: {fileID: 3340893586728765306}
   - component: {fileID: 5324941699634588456}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14602,7 +14669,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2358756385217805462}
   - component: {fileID: 4015670347557914592}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14876,7 +14943,7 @@ GameObject:
   - component: {fileID: 8808880332784229908}
   - component: {fileID: 8134359291609612123}
   - component: {fileID: 1339882850087183331}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15783,7 +15850,7 @@ GameObject:
   - component: {fileID: 3509905572615428184}
   - component: {fileID: 2485658144806827097}
   - component: {fileID: 6910990286703311985}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16479,7 +16546,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1449628262739462365}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16724,7 +16791,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1493924049533888482}
   - component: {fileID: 354342333099473306}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18817,7 +18884,7 @@ GameObject:
   m_Component:
   - component: {fileID: 690099374749697317}
   - component: {fileID: 4069334327668532762}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19364,7 +19431,7 @@ GameObject:
   - component: {fileID: 1848600480036440299}
   - component: {fileID: 8854511879671205668}
   - component: {fileID: 7892454258292144529}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19593,7 +19660,7 @@ GameObject:
   - component: {fileID: 5904936091900574488}
   - component: {fileID: 4411646286810488059}
   - component: {fileID: 5572408323363101777}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Step
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19858,7 +19925,7 @@ GameObject:
   - component: {fileID: 3883820049047284646}
   - component: {fileID: 98299088769878606}
   - component: {fileID: 2194010467200083286}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21043,7 +21110,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3769174855752145960}
   - component: {fileID: 3180772964046263911}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (29)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21225,7 +21292,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6255026615173516023}
   - component: {fileID: 2512401970600932866}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (29)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21407,7 +21474,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3478041319920641346}
   - component: {fileID: 5570466143335101764}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (34)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22408,7 +22475,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3020471777313715929}
   - component: {fileID: 7158962165844448032}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22681,7 +22748,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3713910538403136694}
   - component: {fileID: 6226148587585758285}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (28)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23045,7 +23112,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1584061281830690141}
   - component: {fileID: 4811870420231442114}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23396,7 +23463,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6553877028033810361}
   - component: {fileID: 3050286280812040245}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (24)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23669,7 +23736,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7686019971377974610}
   - component: {fileID: 7958884198721711307}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23761,7 +23828,7 @@ GameObject:
   - component: {fileID: 2843861935427609556}
   - component: {fileID: 4058647669012724300}
   - component: {fileID: 4573949551198195354}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24049,7 +24116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7123475948073071001}
   - component: {fileID: 5252590579295197401}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24504,7 +24571,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2530190051466758006}
   - component: {fileID: 686613000624860468}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow(3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25323,7 +25390,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7488684562921467983}
   - component: {fileID: 1937684000966023850}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25505,7 +25572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4315536244804303426}
   - component: {fileID: 4888012930837435798}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25596,7 +25663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 97684987497730059}
   - component: {fileID: 471774059183691293}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25870,7 +25937,7 @@ GameObject:
   - component: {fileID: 8602526464910631883}
   - component: {fileID: 6011998740945647345}
   - component: {fileID: 7327213043369304436}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26498,7 +26565,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6013600783978891638}
   - component: {fileID: 6311745016741585087}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26680,7 +26747,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9173007372427534724}
   - component: {fileID: 4287306197941062166}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (28)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26771,7 +26838,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6767166686808874243}
   - component: {fileID: 176456142668820823}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26863,7 +26930,7 @@ GameObject:
   - component: {fileID: 3471336018731512189}
   - component: {fileID: 8013278680294266273}
   - component: {fileID: 4328795022097563525}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27540,7 +27607,7 @@ GameObject:
   - component: {fileID: 4679564300179070900}
   - component: {fileID: 8541251697358385017}
   - component: {fileID: 554161454683619797}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27815,7 +27882,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8346748100568800574}
   - component: {fileID: 8663760326001495672}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (24)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28180,7 +28247,7 @@ GameObject:
   - component: {fileID: 8609775066810896060}
   - component: {fileID: 844977914865971130}
   - component: {fileID: 9002196322933322849}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: E Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28424,7 +28491,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8014340538964117014}
   - component: {fileID: 73460384821799809}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29243,7 +29310,7 @@ GameObject:
   m_Component:
   - component: {fileID: 312719079060443859}
   - component: {fileID: 5668781223863015342}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (23)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29881,7 +29948,7 @@ GameObject:
   - component: {fileID: 6500595216624330505}
   - component: {fileID: 4423470051213510237}
   - component: {fileID: 6445972202123793112}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30526,7 +30593,7 @@ GameObject:
   - component: {fileID: 2105433901353251940}
   - component: {fileID: 1720263219462491316}
   - component: {fileID: 8780250270176294610}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30805,7 +30872,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4217087894014229001}
-  m_Layer: 0
+  - component: {fileID: 4511341798086591327}
+  m_Layer: 6
   m_Name: SE lsland (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30830,6 +30898,70 @@ Transform:
   - {fileID: 1816626105952974259}
   m_Father: {fileID: 1649414292020075035}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!60 &4511341798086591327
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4023549076047205305}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 4.26, y: -6.21}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.37939692, y: 0.23056602}
+      - {x: -0.036656857, y: 0.27774048}
+      - {x: -0.12254, y: 0.23728037}
+      - {x: -0.40850186, y: 0.053352356}
+      - {x: -0.46498895, y: -0.0596056}
+      - {x: -0.36349964, y: -0.39818478}
+      - {x: -0.32967973, y: -0.45806694}
+      - {x: -0.25571537, y: -0.48300362}
+      - {x: -0.12528563, y: -0.5544338}
+      - {x: -0.010733128, y: -0.5894041}
+      - {x: 0.108431816, y: -0.5708537}
+      - {x: 0.18965769, y: -0.5337901}
+      - {x: 0.35022068, y: -0.4000392}
+      - {x: 0.44520855, y: -0.26933336}
+      - {x: 0.48859406, y: -0.13859701}
+      - {x: 0.4962635, y: 0.01683569}
+      - {x: 0.45041227, y: 0.1749134}
+  m_UseDelaunayMesh: 1
 --- !u!1 &4032071952950121317
 GameObject:
   m_ObjectHideFlags: 0
@@ -30932,7 +31064,7 @@ GameObject:
   - component: {fileID: 7066672097762060274}
   - component: {fileID: 931888244272257722}
   - component: {fileID: 6209987099550681437}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31898,7 +32030,7 @@ GameObject:
   - component: {fileID: 5054568910484866615}
   - component: {fileID: 2196739696229990467}
   - component: {fileID: 122806790223638297}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: W Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32147,7 +32279,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5109742098023353614}
   - component: {fileID: 4270804921533791779}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (32)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33421,7 +33553,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6080978755515568365}
   - component: {fileID: 9135794974750744323}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33603,7 +33735,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4335433284145503018}
   - component: {fileID: 6911891985534655241}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33694,7 +33826,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9200935232020485092}
   - component: {fileID: 287702956966751427}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34155,7 +34287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6982287424637761022
 Transform:
   m_ObjectHideFlags: 0
@@ -34197,7 +34329,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5662648540853813726}
   - component: {fileID: 9062820017576089308}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34931,7 +35063,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5826259282483224878
 Transform:
   m_ObjectHideFlags: 0
@@ -35155,7 +35287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2204439324282235893}
   - component: {fileID: 7248563391577675626}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (33)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35428,7 +35560,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7857428807021717168}
   - component: {fileID: 591414803742324935}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (32)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35883,7 +36015,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7455699056833393823}
   - component: {fileID: 5812455229800890318}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36248,7 +36380,7 @@ GameObject:
   - component: {fileID: 2301130739216436130}
   - component: {fileID: 2952183308005767290}
   - component: {fileID: 3215118818150964461}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36449,7 +36581,7 @@ GameObject:
   - component: {fileID: 8800613713956525773}
   - component: {fileID: 171377165672561562}
   - component: {fileID: 2356133667306273011}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37130,7 +37262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3214147157227743663}
   - component: {fileID: 7634066660822545000}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37222,7 +37354,7 @@ GameObject:
   - component: {fileID: 4512274623517626252}
   - component: {fileID: 1007459809981063568}
   - component: {fileID: 5422122920758713749}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37406,7 +37538,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8842078190227870661}
   - component: {fileID: 4219642016762298837}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37809,7 +37941,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7109526771774544632}
   - component: {fileID: 1661175114838768117}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37991,7 +38123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5915351452633486378}
   - component: {fileID: 8363410009286521917}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38173,7 +38305,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2324748185281437875}
   - component: {fileID: 6840685037093603600}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38629,7 +38761,7 @@ GameObject:
   - component: {fileID: 6577969472182671048}
   - component: {fileID: 1202522487471292190}
   - component: {fileID: 5934048091139869785}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39027,7 +39159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6119579569104655089}
   - component: {fileID: 7940979654784517968}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39543,7 +39675,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7542680490257079141}
   - component: {fileID: 4677670511492967991}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39640,7 +39772,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7976294335578573322
 Transform:
   m_ObjectHideFlags: 0
@@ -39864,7 +39996,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2657262503520736339}
   - component: {fileID: 3810704610558069357}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (30)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40501,7 +40633,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6800474913411147254}
   - component: {fileID: 514605992218279653}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40593,7 +40725,7 @@ GameObject:
   - component: {fileID: 7844581249157442369}
   - component: {fileID: 2843978352302308377}
   - component: {fileID: 5572260702142885213}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41055,7 +41187,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7026290340356251607}
   - component: {fileID: 4766963333187741755}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (26)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41511,7 +41643,7 @@ GameObject:
   - component: {fileID: 767348457208904934}
   - component: {fileID: 8744089848315191518}
   - component: {fileID: 4011087597409759924}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41923,7 +42055,7 @@ GameObject:
   - component: {fileID: 8799305527783847177}
   - component: {fileID: 3692861690160790444}
   - component: {fileID: 3453292080924275088}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dessert
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42380,7 +42512,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7793786967832195838}
   - component: {fileID: 7314773285737288160}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: N Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42849,7 +42981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4466895334514029778}
   - component: {fileID: 2811760713388063776}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42940,7 +43072,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1488244095976281400}
   - component: {fileID: 1243650349850629514}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (31)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43122,7 +43254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7014725731118997137}
   - component: {fileID: 7859611121469732958}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SE lsland (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43590,7 +43722,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6159505279409076622}
   - component: {fileID: 6111039755135784162}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (27)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43681,7 +43813,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5562296835165588550}
   - component: {fileID: 5851002850817174099}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44045,7 +44177,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5678011887815701098}
   - component: {fileID: 4037041841673469181}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44365,7 +44497,7 @@ GameObject:
   m_Component:
   - component: {fileID: 643227348912813667}
   - component: {fileID: 2348210843341670127}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Middle Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44650,7 +44782,7 @@ GameObject:
   - component: {fileID: 3432385600702811241}
   - component: {fileID: 8751814719259016555}
   - component: {fileID: 336772345070607761}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44957,7 +45089,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6356287264248131644}
   - component: {fileID: 2127791067340018731}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45048,7 +45180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4070788285475133420}
   - component: {fileID: 747947301167088329}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45139,7 +45271,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7937686404879863975}
   - component: {fileID: 724368149502614444}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45321,7 +45453,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3401143561132064971}
   - component: {fileID: 8725569580325103676}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45412,7 +45544,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7187878046339314660}
   - component: {fileID: 6870557037823488671}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45958,7 +46090,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4979541736008647031}
   - component: {fileID: 2987485808521035198}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (35)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46232,7 +46364,7 @@ GameObject:
   - component: {fileID: 1240605581136102964}
   - component: {fileID: 6764048348526277064}
   - component: {fileID: 2036451427015366098}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46968,7 +47100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5525506688551212077}
   - component: {fileID: 7188078556397987254}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (32)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47332,7 +47464,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8552773259060254939}
   - component: {fileID: 6227414718763046616}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (27)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47605,7 +47737,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5327397743298549713}
   - component: {fileID: 700016856865245121}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48248,7 +48380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6003512566746977565
 Transform:
   m_ObjectHideFlags: 0
@@ -48655,7 +48787,7 @@ GameObject:
   - component: {fileID: 2973719438131183710}
   - component: {fileID: 703919872137427743}
   - component: {fileID: 7380771392244519386}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48947,7 +49079,7 @@ GameObject:
   - component: {fileID: 660890423181409577}
   - component: {fileID: 5336584792600502818}
   - component: {fileID: 8821331927698724599}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49402,7 +49534,7 @@ GameObject:
   - component: {fileID: 376677822675863778}
   - component: {fileID: 8590252314860272401}
   - component: {fileID: 5333426682183215413}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50195,7 +50327,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3200147267410994263}
   - component: {fileID: 7807596480461398285}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50287,7 +50419,7 @@ GameObject:
   - component: {fileID: 704497386746908824}
   - component: {fileID: 755014780755007252}
   - component: {fileID: 7020935425019128439}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50579,7 +50711,7 @@ GameObject:
   - component: {fileID: 1328400469475078483}
   - component: {fileID: 6530007786996160170}
   - component: {fileID: 8439533466193008032}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50899,7 +51031,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4987707194259684984}
   - component: {fileID: 4939330973738019644}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (27)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50991,7 +51123,7 @@ GameObject:
   - component: {fileID: 827916638803300561}
   - component: {fileID: 1339366061061282304}
   - component: {fileID: 8401230299525753641}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51175,7 +51307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9155828288826242996}
   - component: {fileID: 4707432511420218245}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (33)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51630,7 +51762,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2813645260462608123}
   - component: {fileID: 1709212282683794622}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (25)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51812,7 +51944,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5068843177254841218}
   - component: {fileID: 8167780296534875465}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52345,7 +52477,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5045910655871638557}
   - component: {fileID: 1873693821363167881}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52821,7 +52953,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6688849414019421584}
   - component: {fileID: 3953799469138426218}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (26)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52915,7 +53047,7 @@ GameObject:
   - component: {fileID: 5488134353510252261}
   - component: {fileID: 1120959370056866572}
   - component: {fileID: 2441411970846903823}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53297,7 +53429,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6386522915058148629}
   - component: {fileID: 3269433672561870178}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53479,7 +53611,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2161887081215078162}
   - component: {fileID: 2793357571613221352}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53752,7 +53884,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8221345986562823184}
   - component: {fileID: 6561068719275581981}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54203,7 +54335,7 @@ GameObject:
   - component: {fileID: 1000526427382012965}
   - component: {fileID: 5664613094098213136}
   - component: {fileID: 1587349861298792901}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow(2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54705,7 +54837,7 @@ GameObject:
   - component: {fileID: 398862986890063128}
   - component: {fileID: 466102574171674043}
   - component: {fileID: 122628929843784881}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass(2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54833,7 +54965,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4646635995060535825}
   - component: {fileID: 6207220363757686107}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (31)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55431,7 +55563,7 @@ GameObject:
   m_Component:
   - component: {fileID: 885307489133540327}
   - component: {fileID: 6734229495218375063}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (34)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55523,7 +55655,7 @@ GameObject:
   - component: {fileID: 9079431554384882783}
   - component: {fileID: 4005566301709562473}
   - component: {fileID: 4837213472207689641}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56603,7 +56735,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3444706251485318840}
   - component: {fileID: 7432886236676516415}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (34)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57473,7 +57605,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6786483030678622356}
   - component: {fileID: 5447582732136621492}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (25)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58019,7 +58151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6034102352065981361}
   - component: {fileID: 5636376514541304138}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (22)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58202,7 +58334,7 @@ GameObject:
   - component: {fileID: 6180267479134241535}
   - component: {fileID: 8606184650358538276}
   - component: {fileID: 9005740902669451576}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58804,7 +58936,7 @@ GameObject:
   - component: {fileID: 1816626105952974259}
   - component: {fileID: 6187492255422794639}
   - component: {fileID: 6406677213931703032}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59906,7 +60038,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9146619615743782427}
   - component: {fileID: 8666316962458608708}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61085,7 +61217,7 @@ GameObject:
   - component: {fileID: 3940240112013065445}
   - component: {fileID: 782565387088744225}
   - component: {fileID: 306428383167024388}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61500,7 +61632,7 @@ GameObject:
   - component: {fileID: 1489523032633955731}
   - component: {fileID: 5340453591802051166}
   - component: {fileID: 7276189047630082594}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61882,7 +62014,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7483787531996941540}
   - component: {fileID: 7893939297615108116}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62338,7 +62470,7 @@ GameObject:
   - component: {fileID: 1993912543786708222}
   - component: {fileID: 8166364223237530916}
   - component: {fileID: 3242882264934657215}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62856,7 +62988,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8084607449205686367}
   - component: {fileID: 9063784228594510917}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63255,7 +63387,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1935607280300199528}
   - component: {fileID: 1144278780303636406}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (23)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63529,7 +63661,7 @@ GameObject:
   - component: {fileID: 1455418715916061261}
   - component: {fileID: 3640125408704750024}
   - component: {fileID: 7131305340500652509}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63769,7 +63901,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5564287545672388562}
   - component: {fileID: 6973853369860995107}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64406,7 +64538,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6980141920134868895}
   - component: {fileID: 3890790761671283373}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: NE Island
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64545,7 +64677,7 @@ GameObject:
   - component: {fileID: 7438281163070840828}
   - component: {fileID: 8028370050512245800}
   - component: {fileID: 7894012202075256564}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64916,7 +65048,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6803224761271072201}
   - component: {fileID: 1284303568165669991}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (25)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65232,7 +65364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4378215447847906447}
   - component: {fileID: 217407890388335017}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65323,7 +65455,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1856535627949529145}
   - component: {fileID: 8930963231978042119}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass(2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65597,7 +65729,7 @@ GameObject:
   - component: {fileID: 2791565738204866846}
   - component: {fileID: 8947862286952804298}
   - component: {fileID: 5983114236059654932}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65797,7 +65929,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3291179086584154489}
   - component: {fileID: 8352434309696841219}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (31)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66253,7 +66385,7 @@ GameObject:
   - component: {fileID: 4442278312834579492}
   - component: {fileID: 6681719991833086579}
   - component: {fileID: 7338704976729890248}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66525,7 +66657,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5554606844629150607}
   - component: {fileID: 2493244579539822300}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hexagon Flat Top (26)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

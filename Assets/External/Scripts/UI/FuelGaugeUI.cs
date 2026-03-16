@@ -32,14 +32,12 @@ public class FuelGaugeUI : MonoBehaviour
 
     private void Update()
     {
-        // GameManager 인스턴스가 없으면 예외 방지
         if (GameManager.Instance == null) return;
 
-        // 1. GameManager로부터 현재 게이지 비율 (0.0f ~ 1.0f) 가져오기
-        float currentGaugePercent = GameManager.Instance.GetGaugePercentage();
-        fuelSlider.value = 1 - currentGaugePercent;
-
-        // 2. 텍스트 업데이트
+    float currentGaugePercent = GameManager.Instance.GetGaugePercentage();
+    
+        // 기존의 1 - currentGaugePercent 방식을 버리고 직관적으로 매핑
+        fuelSlider.value = currentGaugePercent;
         UpdateFuelText(currentGaugePercent);
     }
 

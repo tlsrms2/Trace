@@ -15,6 +15,7 @@ public class ShootEnemyBullet : MonoBehaviour
     private Rigidbody2D rb;
     private PolygonCollider2D col;
     private bool isPaused = false;
+    private bool isReflected = false;
 
     public void Initialize(Vector2 dir, float bulletSpeed, int bulletDamage, Transform shooter)
     {
@@ -28,6 +29,11 @@ public class ShootEnemyBullet : MonoBehaviour
         {
             rb.linearVelocity = direction * speed; 
         }
+
+        // 발사체의 기본 데미지 설정 (Enemy.cs 등에서 이 AttackData를 읽어 데미지를 입음)
+        AttackData attackData = GetComponent<AttackData>();
+        if (attackData == null) attackData = gameObject.AddComponent<AttackData>();
+        attackData.Damage = damage;
 
         StartCoroutine(DestroyAfterTime());
     }
@@ -53,30 +59,51 @@ public class ShootEnemyBullet : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision) {
-        Vector2 knockbackDirection = Vector2.zero;
-        AttackData attack;
-        if (collision.TryGetComponent(out attack) && collision.gameObject.CompareTag("Player"))
+    private void OnTriggerEnter2D(Collider2D collision) 
+    {
+        // 1. 벽이나 섬에 부딪히면 소멸
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Island"))
         {
-            if (shooterTransform != null)
+            Destroy(gameObject);
+            return;
+        }
+
+        // 2. 플레이어와 충돌 시
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            ShipController playerShip = collision.GetComponent<ShipController>();
+            if (playerShip != null) 
             {
-                knockbackDirection = (shooterTransform.position - transform.position).normalized;
+                // [수정] 하드코딩된 내부 damage 변수 대신, CharacterShoot이 주입한 AttackData의 데미지를 우선 적용
+                AttackData attackData = GetComponent<AttackData>();
+                int finalDamage = attackData != null ? attackData.Damage : damage;
+                
+                playerShip.TakeDamage(finalDamage); 
             }
-            else
+
+            // 실제 플레이어 본체에 부딪힌 경우 (발사자가 플레이어 본인인 경우 팀킬 방지)
+            if (shooterTransform != null && shooterTransform.CompareTag("Player") && !isReflected) return;
+
+            Destroy(gameObject);
+            return;
+        }
+
+        // 3. 적과 충돌 시
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // 방금 쏜 발사자 본인과의 즉시 충돌 방지 및 적끼리의 팀킬 방지 (반사된 총알은 예외)
+            if (shooterTransform != null && !isReflected)
             {
-                knockbackDirection = -rb.linearVelocity.normalized;
+                if (collision.gameObject == shooterTransform.gameObject || shooterTransform.CompareTag("Enemy"))
+                {
+                    return;
+                }
             }
 
-            rb.linearVelocity = knockbackDirection * speed * 1.5f;
-            col = GetComponent<PolygonCollider2D>();
-            col.isTrigger = true;
-
-            float angle = Mathf.Atan2(knockbackDirection.y, knockbackDirection.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0f, 0f, angle);
-
-            AttackData attackData = gameObject.GetComponent<AttackData>();
-            attackData.Damage = 5;
-        }   
+            // 다른 경우(플레이어가 쏜 총알이거나 반사된 총알)에는 적을 맞추고 파괴
+            Destroy(gameObject);
+            return;
+        }
     }
 
     private IEnumerator DestroyAfterTime()

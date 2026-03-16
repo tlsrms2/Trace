@@ -5,7 +5,6 @@ using UnityEngine;
 public struct enemyData
 {
     public GameObject enemyPrefab;
-    public float spawnInterval;
     public int enemyCount;
     public float spawnStartTime;
 }

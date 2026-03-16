@@ -78,7 +78,19 @@ public class TimeFreezeBorderUI : MonoBehaviour
 
         float targetThicknessValue = isTimeFrozen ? targetThickness : 0f;
         float targetFlowBlend = isTimeFrozen ? 1f : 0f;
-        float targetDimAlpha = isTimeFrozen ? dimAlphaWhenPressed : 0f;
+        
+        // 단절 상태이며 운명 일치율이 50% 이하로 떨어졌을 때 Dim 서서히 등장
+        float targetDimAlpha = 0f;
+        if (GameManager.Instance.IsDetached)
+        {
+            float syncPercentage = GameManager.Instance.GetFateSyncPercentage();
+            if (syncPercentage <= 0.5f)
+            {
+                // 50% -> 0.0 Alpha, 10% -> 최대 Alpha(dimAlphaWhenPressed)
+                float t = Mathf.InverseLerp(0.5f, 0.1f, syncPercentage);
+                targetDimAlpha = Mathf.Lerp(0f, dimAlphaWhenPressed, t);
+            }
+        }
 
         // unscaledDeltaTime을 사용하여 TimeScale = 0(일시정지)일 때도 부드럽게 UI가 애니메이션 되도록 처리
         currentThickness = Mathf.MoveTowards(

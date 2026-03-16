@@ -739,7 +739,8 @@ GameObject:
   - component: {fileID: 1788437243634643703}
   - component: {fileID: 1005786062277153981}
   - component: {fileID: 475886974046044731}
-  - component: {fileID: 9036187972770106170}
+  - component: {fileID: -6546899281859978777}
+  - component: {fileID: -249104431909588815}
   m_Layer: 0
   m_Name: Cloud
   m_TagString: Untagged
@@ -888,7 +889,44 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &9036187972770106170
+--- !u!70 &-6546899281859978777
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8427040957464176001}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 3, y: 0.8}
+  m_Direction: 1
+--- !u!114 &-249104431909588815
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -897,10 +935,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8427040957464176001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a6762d630ad2ac448a4323d14f2abec, type: 3}
+  m_Script: {fileID: 11500000, guid: 029b076419413ae49879f41f13d81439, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CrossEnemy
+  m_EditorClassIdentifier: Assembly-CSharp::CloudController
   speed: 5
-  increaseSpeed: 0
-  Hp: 1
-  destroyParticle: {fileID: 0}

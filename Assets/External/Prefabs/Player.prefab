@@ -620,13 +620,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5992537981668252337}
-  - component: {fileID: 1367263565960367852}
   - component: {fileID: 5879673273813815623}
   - component: {fileID: 4997190373680605742}
   - component: {fileID: 7554450748568977450}
   - component: {fileID: 6487657545128968133}
   - component: {fileID: 1036222269345955011}
   - component: {fileID: 2699202960822108497}
+  - component: {fileID: 1774416724931495832}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -655,20 +655,6 @@ Transform:
   - {fileID: 2786809080571293530}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1367263565960367852
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6903252855027750859}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b61cce0dffc8f6d41ac925a37187ecf7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHit
-  destroyParticle: {fileID: 7710619616481920721, guid: ac9e6f9b16fe61d4cba48d58fdb4c43e, type: 3}
-  isInvincibility: 0
 --- !u!212 &5879673273813815623
 SpriteRenderer:
   serializedVersion: 2
@@ -925,7 +911,7 @@ MonoBehaviour:
   turnSpeed: 0.5
   waterFriction: 1.5
   speedDisplay: {fileID: 0}
-  attachRangeIndicator: {fileID: 0}
+  attachRangeIndicator: {fileID: 1137751097720390162, guid: 286e4115ee9db37408f1bb7869e998d3, type: 3}
   fateDeviationIndicator: {fileID: 0}
   fateLostUI: {fileID: 0}
   fateDeviationSlider: {fileID: 0}
@@ -934,12 +920,14 @@ MonoBehaviour:
   slipstreamLineWidth: 0.3
   detachThreshold: 3
   attachThreshold: 2
-  maxFateDistance: 15
+  maxFateDistance: 5
   syncSpringForce: 5
   maxSlipstreamMultiplier: 1.2
   slipstreamRadius: 2
   slipstreamGripForce: 3
   maxTracePoints: 300
+  rewindSpeed: 100
+  maxHp: 50
   cannonShooter: {fileID: 2699202960822108497}
   maxCannonDeviation: 40
   cannonSprite: {fileID: 149517120407976975}
@@ -957,13 +945,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c6f1b58278a5d44ab3d8075102f2c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterShoot
-  bulletPrefab: {fileID: 5612879478203917923, guid: da30e7cf941241c44bb168d5c022e4c9, type: 3}
+  bulletPrefab: {fileID: 5612879478203917923, guid: 2ad3b104d3e3d844393884c0fc159ff9, type: 3}
   firePoints:
   - {fileID: 5436671860749060595}
   fireCooldown: 2
-  bulletSpeed: 15
-  damage: 10
+  bulletSpeed: 10
+  damage: 5
   isPlayer: 1
+--- !u!114 &1774416724931495832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6903252855027750859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc2c40ce6f658da44beb5dbc71350668, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AttackData
 --- !u!1 &7150634954861249109
 GameObject:
   m_ObjectHideFlags: 0

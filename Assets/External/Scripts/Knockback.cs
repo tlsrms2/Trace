@@ -4,7 +4,7 @@ using UnityEngine;
 /// 이 스크립트를 적(돌진형)이나 고정된 암초의 Collider2D(IsTrigger = false) 객체에 부착하십시오.
 /// 플레이어 함선과 충돌 시 강제적인 넉백 물리력을 가해 운명 궤도에서 분리시킵니다.
 /// </summary>
-public class FateKnockback : MonoBehaviour
+public class Knockback : MonoBehaviour
 {
     [Header("Knockback Settings")]
     [Tooltip("충돌 시 플레이어를 밀어내는 힘의 크기")]
@@ -41,7 +41,8 @@ public class FateKnockback : MonoBehaviour
                 playerRb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
 
                 // 데미지 처리 로직이 있다면 여기서 호출
-                // if (damageAmount > 0) collision.gameObject.GetComponent<PlayerStatus>()?.TakeDamage(damageAmount);
+                if (damageAmount > 0) 
+                    collision.gameObject.GetComponent<ShipController>()?.TakeDamage(damageAmount);
                 
                 // 효과음 발생
                 if (AudioManager.Instance != null)

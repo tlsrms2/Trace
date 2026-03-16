@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEditor.Rendering;
+using System;
 
 public class GameTimer : MonoBehaviour
 {
@@ -36,6 +37,9 @@ public class GameTimer : MonoBehaviour
     public int minutes;
     public int seconds;
     public int milliseconds;
+
+    public event Action<int> OnMonthChanged; // 달이 바뀔 때 발생하는 이벤트
+    public event Action<int> OnWeekChanged;  // 주가 바뀔 때 발생하는 이벤트
 
     private int previousTotalDays = -1;
     private int currentYear = 1;
@@ -160,12 +164,18 @@ public class GameTimer : MonoBehaviour
             }
         }
 
+        int previousMonth = months;
+        int previousWeek = weeks;
+
         months = tempMonth;
         days = 1 + tempDays;
         currentYear = tempYear;
 
         // 주(Week) 계산: 현재 달의 몇 주차인지 계산 (1~5주차)
         weeks = Mathf.FloorToInt((days - 1) / 7f) + 1;
+
+        if (previousMonth != months && OnMonthChanged != null) OnMonthChanged.Invoke(months);
+        if (previousWeek != weeks && OnWeekChanged != null) OnWeekChanged.Invoke(weeks);
 
         UpdateDayTimerDisplay();
         UpdateWeekTimerDisplay();
@@ -198,11 +208,14 @@ public class GameTimer : MonoBehaviour
 
     void UpdateGameOverDisplay()
     {
-        hours = Mathf.FloorToInt(currentTime / 3600f);
-        minutes = Mathf.FloorToInt((currentTime % 3600f) / 60f);
-        seconds = Mathf.FloorToInt(currentTime % 60f);
-        
-        gameOverTimerText.text = string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
+        if (days == 1)
+        gameOverTimerText.text = string.Format("DEATH: " + " Jan. {0:00}st", days);
+        else if (days == 2)
+        gameOverTimerText.text = string.Format("DEATH: " + " Jan. {0:00}nd", days);
+        else if (days == 3)
+        gameOverTimerText.text = string.Format("DEATH: " + " Jan. {0:00}rd", days);
+        else
+        gameOverTimerText.text = string.Format("DEATH: " + "Jan. {0:00}th", days);
     }
 
     void UpdateGameClearDisplay()

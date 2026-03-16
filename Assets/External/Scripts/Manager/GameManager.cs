@@ -16,24 +16,18 @@ public class GameManager : MonoBehaviour
     public event Action OnGameClear;
     public event Action OnPlanningStarted;
     public event Action OnPlanningEnded;
-    
-    // 조타수 개입(Shift) 유지 실패 시 발생하는 이벤트
     public event Action OnSteeringExhausted; 
 
     public bool IsPaused { get; private set; }
     
-    // 시작 시 계획 페이즈(Paused)로 돌입하도록 변경
     public GamePhase CurrentPhase = GamePhase.Paused; 
     public bool isPaused => CurrentPhase == GamePhase.Paused;
 
     [Header("운명 일치율 (Fate Sync Rate)")]
-    [Tooltip("절대적인 최대 운명 일치율")]
     [SerializeField] private float absoluteMaxSyncRate = 100f;
-    [Tooltip("단절 상태일 때 초당 감소하는 일치율")]
-    [SerializeField] private float syncDepletionRate = 10f; 
-    [Tooltip("단절 상태일 때 초당 깎여나가는 '최대치(영구적 저주)'")]
+    [SerializeField] private float syncDepletionRate = 5f; 
+    [SerializeField] private float lostDepletionMultiplier = 3f;
     [SerializeField] private float maxSyncPenaltyRate = 1f; 
-    [Tooltip("궤도 결합(Synced) 상태일 때 회복되는 일치율 속도")]
     [SerializeField] private float syncRecoveryRate = 5f;
 
     public float CurrentMaxSyncRate { get; private set; }
@@ -52,10 +46,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField;
 
     [Header("Path Planning UI")]
-    [Tooltip("계획 페이즈에서 그릴 수 있는 남은 궤적을 보여주는 슬라이더")]
     [SerializeField] private Slider pathLimitSlider;
-    [Tooltip("슬라이더를 감싸는 UI 컨테이너 (계획 페이즈에서만 활성화)")]
     [SerializeField] private GameObject pathLimitUIContainer;
+
+    [Header("RealTime UI Settings")]
+    [SerializeField] private Slider fateSyncSlider;
+    [SerializeField] private GameObject calenderObj;
+    [SerializeField] private TextMeshProUGUI accelLevelText;
+    [SerializeField] private GameObject steeringObj;
+
+    [Header("Cursor Settings")]
+    [SerializeField] private GameObject dynamicUICursorObj;
 
     [Header("UI Keyboard Focus Settings")]
     [SerializeField] private GameObject firstTitleButton;
@@ -82,26 +83,19 @@ public class GameManager : MonoBehaviour
     private bool secondPanelReady = false; 
     private string playerName;
     
-    // 외부(ShipController)에서 참조할 조타수 모드 상태
     public bool IsSteeringMode { get; private set; } = false;
-    private ShipController shipController; // 참조할 ShipController 컴포넌트
+    private ShipController shipController; 
+    
+    public bool IsDetached => shipController != null && !shipController.IsSynchronized;
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Cursor.visible = true; // 계획 페이즈를 위해 마우스 커서 활성화
-        Cursor.lockState = CursorLockMode.None;
+        if (Instance == null) Instance = this;
+        else { Destroy(gameObject); return; }
+        
         OnPlanningEnded += StartChargeWait;
         OnPlanningEnded += HandlePathLimitUI;
 
-        //초기 설정
         CurrentMaxSyncRate = absoluteMaxSyncRate;
         CurrentFateSyncRate = absoluteMaxSyncRate;
     }
@@ -109,7 +103,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         shipController = FindFirstObjectByType<ShipController>();
-        if (shipController == null)
+        if (shipController != null) 
         {
             shipController.OnLostStateChanged += HandleLostState;
         }
@@ -117,26 +111,19 @@ public class GameManager : MonoBehaviour
         TitleUIFocus();
         UpdateLeaderboardUI();
         
-        ChangePhase(GamePhase.Paused); // 시작 시 계획 페이즈로 진입
+        ChangePhase(GamePhase.Paused); 
     }
 
     private void OnDestroy()
     {
-        if (shipController != null)
-        {
-            shipController.OnLostStateChanged -= HandleLostState;
-        }
+        if (shipController != null) shipController.OnLostStateChanged -= HandleLostState;
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            TogglePause();
-        // [Space] 키 : 계획 페이즈(해도를 다 그림) -> 실행 페이즈(출항) 전환
-        if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.Paused && !IsPaused)
-            ChangePhase(GamePhase.RealTime);
-        if (Input.GetKeyDown(KeyCode.R) && !firstClearPanel.activeSelf)
-            RestartGame();
+        if (Input.GetKeyDown(KeyCode.Escape)) TogglePause();
+        if (Input.GetKeyDown(KeyCode.Space) && CurrentPhase == GamePhase.Paused && !IsPaused) ChangePhase(GamePhase.RealTime);
+        if (Input.GetKeyDown(KeyCode.R) && !firstClearPanel.activeSelf) RestartGame();
         
         HandleSteeringGauge();
         HandleFateSyncRate();
@@ -153,55 +140,70 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    #region UI Logic
-    // 항해 경로 최대 그리기 제한 UI
+    // [추가완료] 웨이브 전환 시 맵을 청소하고 상태를 리셋하는 코어 함수
+    public void PrepareNextWave()
+    {
+        // 1. 맵 상의 모든 적과 발사체 강제 삭제
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var enemy in enemies) Destroy(enemy);
+
+        // 발사체 태그가 없다면 Enemy 총알 스크립트를 찾아 지웁니다.
+        ShootEnemyBullet[] bullets = GameObject.FindObjectsByType<ShootEnemyBullet>(FindObjectsSortMode.None);
+        foreach (var bullet in bullets) Destroy(bullet.gameObject);
+        
+        BossBullet[] bossBullets = GameObject.FindObjectsByType<BossBullet>(FindObjectsSortMode.None);
+        foreach (var bullet in bossBullets) Destroy(bullet.gameObject);
+
+        // 2. 플레이어 함선의 이전 궤적 초기화
+        if (shipController != null)
+        {
+            shipController.ResetPathForNextWave();
+        }
+
+        // 3. 현재 운명 일치율(Fate Sync Rate)은 CurrentFateSyncRate 변수에 자연스럽게 유지됨.
+        
+        // 4. 강제로 계획 페이즈로 전환하여 시간을 멈춤
+        ChangePhase(GamePhase.Paused);
+    }
+
+    #region UI & State Logic
     private void HandlePathLimitUI()
     {
         if (CurrentPhase == GamePhase.Paused && pathLimitSlider != null && shipController != null)
         {
             pathLimitSlider.value = shipController.GetTraceProgress();
         }
-
         if (CurrentPhase == GamePhase.RealTime && pathLimitUIContainer != null)
         {
             pathLimitUIContainer.SetActive(false);
         }
     }
 
-    private void HandleLostState(bool lost)
-    {
-        isShipLost = lost;
-    }
+    private void HandleLostState(bool lost) { isShipLost = lost; }
 
     private void HandleFateSyncRate()
     {
         if (CurrentPhase != GamePhase.RealTime) return;
 
-        if (isShipLost)
+        if (IsDetached)
         {
-            // 1. 현재 일치율 급속 감소
-            CurrentFateSyncRate -= syncDepletionRate * Time.deltaTime;
-            // 2. 일치율 최대치(Max) 영구 감소 (어뷰징 방지용 흉터)
-            CurrentMaxSyncRate -= maxSyncPenaltyRate * Time.deltaTime;
+            float currentDepletionRate = isShipLost ? (syncDepletionRate * lostDepletionMultiplier) : syncDepletionRate;
+            float currentMaxPenaltyRate = isShipLost ? (maxSyncPenaltyRate * lostDepletionMultiplier) : maxSyncPenaltyRate;
+
+            CurrentFateSyncRate -= currentDepletionRate * Time.deltaTime;
+            CurrentMaxSyncRate -= currentMaxPenaltyRate * Time.deltaTime;
             
-            CurrentMaxSyncRate = Mathf.Max(1f, CurrentMaxSyncRate); // 최소 1%의 최대치는 보장
+            CurrentMaxSyncRate = Mathf.Max(1f, CurrentMaxSyncRate); 
             CurrentFateSyncRate = Mathf.Max(0f, CurrentFateSyncRate);
 
-            if (CurrentFateSyncRate <= 0)
-            {
-                GameOver(); // 저주 침식으로 인한 게임오버
-            }
+            if (CurrentFateSyncRate <= 0) GameOver(); 
         }
-        else
+        else 
         {
-            // 결합 상태(Synced)일 때 서서히 회복하되, 훼손된 'CurrentMaxSyncRate'까지만 회복됨
-            if (shipController != null && shipController.IsSynchronized)
+            if (CurrentFateSyncRate < CurrentMaxSyncRate)
             {
-                if (CurrentFateSyncRate < CurrentMaxSyncRate)
-                {
-                    CurrentFateSyncRate += syncRecoveryRate * Time.deltaTime;
-                    CurrentFateSyncRate = Mathf.Min(CurrentFateSyncRate, CurrentMaxSyncRate);
-                }
+                CurrentFateSyncRate += syncRecoveryRate * Time.deltaTime;
+                CurrentFateSyncRate = Mathf.Min(CurrentFateSyncRate, CurrentMaxSyncRate);
             }
         }
     }
@@ -222,45 +224,36 @@ public class GameManager : MonoBehaviour
 
         switch (nextPhase)
         {
-            case GamePhase.Paused: AudioManager.Instance.SetSlowBgm(); break;
+            case GamePhase.Paused: 
+                AudioManager.Instance.SetSlowBgm(); 
+                SetPlanningUIAndCursor(true);
+                break;
             case GamePhase.Replay:
-            case GamePhase.RealTime: AudioManager.Instance.SetNormalBgm(); break;
+            case GamePhase.RealTime: 
+                AudioManager.Instance.SetNormalBgm(); 
+                SetPlanningUIAndCursor(false);
+                break;
         }
     }
 
-    public void TogglePause()
+    private void SetPlanningUIAndCursor(bool isPlanning)
     {
-        if (IsPaused) ResumeGame();
-        else PauseGame();
+        Cursor.visible = !isPlanning;
+        Cursor.lockState = isPlanning ? CursorLockMode.Confined : CursorLockMode.None;
+
+        if (dynamicUICursorObj != null) dynamicUICursorObj.SetActive(isPlanning);
+
+        bool isRealTime = !isPlanning;
+        if (fateSyncSlider != null) fateSyncSlider.gameObject.SetActive(isRealTime);
+        if (calenderObj != null) calenderObj.SetActive(isRealTime);
+        if (accelLevelText != null) accelLevelText.gameObject.SetActive(isRealTime);
+        if (steeringObj != null) steeringObj.SetActive(isRealTime);
     }
 
-    public void TitleUIFocus()
-    {
-        if (firstTitleButton != null)
-            SetUIFocus(firstTitleButton);
-    }
-
-    public void PauseGame()
-    {
-        IsPaused = true;
-        Time.timeScale = 0f;
-        if (pauseMenu != null)
-        {
-            pauseMenu.SetActive(true);
-            SetUIFocus(firstPauseButton);
-        }
-    }
-
-    public void ResumeGame()
-    {
-        IsPaused = false;
-        Time.timeScale = 1f;
-        if (pauseMenu != null)
-        {
-            pauseMenu.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(null);
-        }
-    }
+    public void TogglePause() { if (IsPaused) ResumeGame(); else PauseGame(); }
+    public void TitleUIFocus() { if (firstTitleButton != null) SetUIFocus(firstTitleButton); }
+    public void PauseGame() { IsPaused = true; Time.timeScale = 0f; if (pauseMenu != null) { pauseMenu.SetActive(true); SetUIFocus(firstPauseButton); } }
+    public void ResumeGame() { IsPaused = false; Time.timeScale = 1f; if (pauseMenu != null) { pauseMenu.SetActive(false); EventSystem.current.SetSelectedGameObject(null); } }
 
     public void GameOver()
     {
@@ -273,49 +266,26 @@ public class GameManager : MonoBehaviour
     private IEnumerator ShowGameOverPanelRoutine()
     {
         yield return new WaitForSeconds(1f);
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-            SetUIFocus(firstGameOverButton);
-        }
+        if (gameOverPanel != null) { gameOverPanel.SetActive(true); SetUIFocus(firstGameOverButton); }
     }
 
     public void GameClear()
     {
-        if (gameClearPanel != null)
-        {
-            gameClearPanel.SetActive(true);
-            firstClearPanel.SetActive(true);
-            SetUIFocus(firstGameClearInputButton);
-        }
+        if (gameClearPanel != null) { gameClearPanel.SetActive(true); firstClearPanel.SetActive(true); SetUIFocus(firstGameClearInputButton); }
         OnGameClear?.Invoke();
     }
 
     public void OnFirstPanelSubmit()
     {
-        playerName = nameInputField.text;
-        if (string.IsNullOrEmpty(playerName))
-            playerName = "Unnamed";
-
+        playerName = string.IsNullOrEmpty(nameInputField.text) ? "Unnamed" : nameInputField.text;
         LeaderboardManager.Instance.AddScore(playerName, GameTimer.Instance.currentTime);
-
-        firstClearPanel.SetActive(false);
-        secondClearPanel.SetActive(true);
-
-        clearText.SetActive(false);
-        timerText.SetActive(false);
-
+        firstClearPanel.SetActive(false); secondClearPanel.SetActive(true);
+        clearText.SetActive(false); timerText.SetActive(false);
         UpdateSecondPanelLeaderboard();
-
         EventSystem.current.SetSelectedGameObject(null);
         StartCoroutine(EnableSecondPanelInputNextFrame());
     }
-
-    private IEnumerator EnableSecondPanelInputNextFrame()
-    {
-        yield return null;
-        secondPanelReady = true;
-    }
+    private IEnumerator EnableSecondPanelInputNextFrame() { yield return null; secondPanelReady = true; }
 
     private void UpdateSecondPanelLeaderboard()
     {
@@ -326,12 +296,9 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var entry = leaderboard[i];
-            rankText.text += entry.rank + "\n";
-            nameText.text += entry.playerName + "\n";
-            timeText.text += entry.clearTime.ToString("F2") + "\n";
+            rankText.text += $"{entry.rank}\n"; nameText.text += $"{entry.playerName}\n"; timeText.text += $"{entry.clearTime:F2}\n";
         }
     }
-
     private void SetUIFocus(GameObject firstSelected)
     {
         if (firstSelected != null && EventSystem.current != null)
@@ -344,89 +311,28 @@ public class GameManager : MonoBehaviour
 
     #region Gauge(Focus) Logic
     public float GetCurrentGauge() => CurrentGauge;
-    public float GetGaugePercentage() => CurrentGauge / MaxGauge;
+    public float GetGaugePercentage() => IsSteeringMode ? 1f : 0f;
 
-    // UI에서 현재 일치율 비율을 가져갈 때 사용 (0.0 ~ 1.0)
     public float GetFateSyncPercentage() => CurrentFateSyncRate / absoluteMaxSyncRate;
-    // UI에서 최대치 훼손율을 가져갈 때 사용 (Vignette 이펙트 등에 활용)
     public float GetMaxSyncPenaltyPercentage() => CurrentMaxSyncRate / absoluteMaxSyncRate;
-    // 기존의 HandleFocusGauge를 토글 방식의 HandleSteeringGauge로 변경
+    
     private void HandleSteeringGauge()
     {
-        // 계획 페이즈에서는 게이지 변동 없음
         if (CurrentPhase != GamePhase.RealTime)
         {
-            if (IsSteeringMode) 
-            {
-                DisableSteeringMode();
-            }
-            canCharge = false;
+            IsSteeringMode = false;
             return;
         }
 
-        // '자발적 분리'를 위해 Shift 키 입력만 있으면 무조건 SteeringMode를 활성화
-        bool isHoldingShift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-
-        // 조타수 모드 진입 조건: Shift 키를 누르고 있고, 게이지가 남아있어야 함
-        if (isHoldingShift && CurrentGauge > 0)
-        {
-            IsSteeringMode = true;
-            canCharge = false;
-            // 게이지 감소 처리 (초당 ConsumptionRate만큼 감소)
-            if (chargeGaugeCor != null) 
-            { 
-                StopCoroutine(chargeGaugeCor); 
-                chargeGaugeCor = null; 
-            }
-
-            CurrentGauge -= ConsumptionRate * Time.deltaTime;
-            
-            // 게이지가 0 이하로 떨어지면 조타수 모드 강제 해제
-            if (CurrentGauge <= 0)
-            {
-                CurrentGauge = 0;
-                DisableSteeringMode();
-                OnSteeringExhausted?.Invoke();
-            }
-        }
-        else
-        {
-            // 조타수 모드가 아닐 때는 게이지 회복 처리
-            if (IsSteeringMode) 
-            {
-                DisableSteeringMode();
-            }
-            // 게이지 회복 처리 (초당 RecoveryRate만큼 회복)
-            if (canCharge) 
-            {
-                CurrentGauge = Mathf.Min(MaxGauge, CurrentGauge + RecoveryRate * Time.deltaTime);
-            }
-        }
+        // Shift 키를 누르고 있는 동안만 활성화, 게이지 제약 삭제
+        IsSteeringMode = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
     }
-
-    // 모드 해제 시 공통으로 처리해야 할 로직(회복 유예 코루틴 시작 등)을 묶음
-    private void DisableSteeringMode()
-    {
-        IsSteeringMode = false;
-        StartChargeWait();
-    }
-
-    private void StartChargeWait()
-    {
-        if (chargeGaugeCor != null) StopCoroutine(chargeGaugeCor);
-        chargeGaugeCor = StartCoroutine(WaitChargeGauge());
-    }
-
-
-
-    private IEnumerator WaitChargeGauge()
-    {
-        yield return new WaitForSeconds(RecoveryStartTime);
-        canCharge = true;
-    }
+    
+    private void StartChargeWait() { if (chargeGaugeCor != null) StopCoroutine(chargeGaugeCor); chargeGaugeCor = StartCoroutine(WaitChargeGauge()); }
+    private IEnumerator WaitChargeGauge() { yield return new WaitForSeconds(RecoveryStartTime); canCharge = true; }
     #endregion
 
-    #region Scene & UI Interaction
+    #region Scene Interaction
     public void UpdateLeaderboardUI()
     {
         if (LeaderboardManager.Instance == null || rankText == null) return;
@@ -434,26 +340,12 @@ public class GameManager : MonoBehaviour
         rankText.text = ""; nameText.text = ""; timeText.text = "";
         foreach (var entry in leaderboard)
         {
-            rankText.text += entry.rank + "\n";
-            nameText.text += entry.playerName + "\n";
-            timeText.text += entry.clearTime.ToString("F2") + "\n";
+            rankText.text += $"{entry.rank}\n"; nameText.text += $"{entry.playerName}\n"; timeText.text += $"{entry.clearTime:F2}\n";
         }
     }
-    public void RestartGame() 
-    { 
-        Time.timeScale = 1f; SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
-    }
-    public void GoToMainMenu() 
-    { 
-        Time.timeScale = 1f; SceneManager.LoadScene("TitleScene"); 
-    }
-    public void StartGame() 
-    { 
-        Time.timeScale = 1f; SceneManager.LoadScene("GameScene"); 
-    }
-    public void QuitGame() 
-    { 
-        Application.Quit(); 
-    }
+    public void RestartGame() { Time.timeScale = 1f; SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void GoToMainMenu() { Time.timeScale = 1f; SceneManager.LoadScene("TitleScene"); }
+    public void StartGame() { Time.timeScale = 1f; SceneManager.LoadScene("GameScene"); }
+    public void QuitGame() { Application.Quit(); }
     #endregion
 }

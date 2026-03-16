@@ -59,14 +59,14 @@ public class CharacterShoot : MonoBehaviour
                 rb.linearVelocity = fireDirection * bulletSpeed;
             }
 
-            // 2. 데미지 세팅 (기존 AttackData 재활용)
+            // 2. 데미지 세팅 부분 수정
             AttackData attackData = bulletObj.GetComponent<AttackData>();
             if (attackData == null)
             {
-                // 포탄에 AttackData가 없으면 강제로 붙여서라도 작동하게 만듦
                 attackData = bulletObj.AddComponent<AttackData>();
             }
             attackData.Damage = damage;
+            attackData.IsPlayerAttack = isPlayer; // 발사 주체가 누구인지 총알에 각인
             
             // 3. 적 탄막일 경우, 플레이어와 충돌 시 넉백 기준점이 되도록 슈터(자신)를 전달할 수 있으나
             // MVP 최적화를 위해 발사 방향의 반대 방향으로 넉백되도록 총알 스크립트를 개조하는 것이 유리합니다.

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Wall
   - Enemy
+  - Island
+  - Ship
   layers:
   - Default
   - TransparentFX
@@ -13,7 +15,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Island
   - 
   - 
   - 
@@ -63,6 +65,9 @@ TagManager:
     locked: 0
   - name: Cloud
     uniqueID: 421586013
+    locked: 0
+  - name: Pointer
+    uniqueID: 3380474815
     locked: 0
   - name: UI
     uniqueID: 1627546037
