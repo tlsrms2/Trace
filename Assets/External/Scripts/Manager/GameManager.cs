@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     public event Action OnGameClear;
     public event Action OnPlanningStarted;
     public event Action OnPlanningEnded;
-    public event Action OnSteeringExhausted; 
 
     public bool IsPaused { get; private set; }
     
@@ -72,14 +71,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeText;
 
     [Header("Gauge(Steering) Settings")]
-    [SerializeField] private float MaxGauge = 100f;
     [SerializeField] private float CurrentGauge = 100f;
-    [SerializeField] private float ConsumptionRate = 20f;
-    [SerializeField] private float RecoveryRate = 10f;
     [SerializeField] private float RecoveryStartTime = 1f;
 
     private Coroutine chargeGaugeCor;
-    private bool canCharge;
     private bool secondPanelReady = false; 
     private string playerName;
     
@@ -329,7 +324,7 @@ public class GameManager : MonoBehaviour
     }
     
     private void StartChargeWait() { if (chargeGaugeCor != null) StopCoroutine(chargeGaugeCor); chargeGaugeCor = StartCoroutine(WaitChargeGauge()); }
-    private IEnumerator WaitChargeGauge() { yield return new WaitForSeconds(RecoveryStartTime); canCharge = true; }
+    private IEnumerator WaitChargeGauge() { yield return new WaitForSeconds(RecoveryStartTime); }
     #endregion
 
     #region Scene Interaction

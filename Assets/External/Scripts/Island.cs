@@ -14,7 +14,7 @@ public class Island : MonoBehaviour
     
     [Header("Damage (Optional)")]
     [Tooltip("HP가 있다면 넉백과 동시에 데미지를 가합니다.")]
-    [SerializeField] private int damageAmount = 0;
+    [SerializeField] private int damageAmount = 1;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

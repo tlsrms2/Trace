@@ -23,7 +23,6 @@ public class WaveManager : MonoBehaviour
     public event Action<int, int> OnEnemyProgressUpdated; 
     public event Action<bool> OnWaveModeChanged;       
     public event Action<float, float> OnBossHpUpdated; 
-    public event Action<Action> OnWaveTransitionStarted; 
 
     [SerializeField] private WaveData[] waves; 
     private int currentWaveIndex = 0;

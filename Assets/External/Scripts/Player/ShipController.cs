@@ -12,8 +12,6 @@ public class ShipController : MonoBehaviour
     [SerializeField] private float baseSpeed = 0f;
     [SerializeField] private float accelLevel = 1.0f;
     [SerializeField] private float ghostAccelLevel = 2.0f;
-    [SerializeField] private float maxForwardSpeed = 4.0f;
-    [SerializeField] private float maxBackwardSpeed = -2.0f;
     [SerializeField] private float forwardAccel = 2.0f;     
     [SerializeField] private float backwardAccel = 1.0f;    
     [SerializeField] private float autoAccelMult = 1.0f;   
